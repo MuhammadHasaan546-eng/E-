@@ -98,8 +98,6 @@ const CommonFrom = ({
       <div className="flex flex-col gap-3">
         {fromControls.map((control) => (
           <div key={control.name} className="grid w-full gap-1.5">
-            {console.log(control)}
-
             <Label className="mb-1"> {control.label} </Label>
             {renderItemComponentType(control)}
           </div>

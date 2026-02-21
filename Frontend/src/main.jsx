@@ -26,6 +26,7 @@ import ShoppingCheckout from "./pages/shopping/Checkout.jsx";
 import ShoppingAccount from "./pages/shopping/Account.jsx";
 import CheckedAuth from "./components/common/CheckedAuth.jsx";
 import UnAuth from "./pages/unauth/index.jsx";
+import { Toaster } from "sonner";
 
 const isAuthenticated = true;
 // const user = {
@@ -99,6 +100,7 @@ createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
+      <Toaster />
     </Provider>
   </React.StrictMode>,
 );

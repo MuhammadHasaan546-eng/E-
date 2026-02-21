@@ -1,17 +1,35 @@
 import { registerFromControls } from "./../../config/index.js";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CommonFrom from "./../../components/common/From";
+import { useDispatch } from "react-redux";
+import { registerUser } from "@/store/auth-slice/index.js";
+import { toast } from "sonner";
+
 const initialState = {
   userName: "",
   email: "",
   password: "",
 };
 
-const handleSubmit = (data) => {};
-
 const AuthRegister = () => {
   const [form, setForm] = useState(initialState);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSubmit = (data) => {
+    data.preventDefault();
+    dispatch(registerUser(form)).then((data) => {
+      if (data?.payload?.success) {
+        toast.success(data?.payload?.message);
+        navigate("/auth/login");
+      }
+      console.log(data);
+    });
+
+    setForm(initialState);
+  };
+
   return (
     <div className="mx-auto w-full max-w-sm space-y-6  ">
       <div className="text-center ">

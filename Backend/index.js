@@ -20,7 +20,7 @@ mongoose
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:5173/",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: [
       "Content-Type",
@@ -39,5 +39,15 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoute);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Something went wrong";
+  return res.status(statusCode).json({
+    success: false,
+    message,
+  });
+});
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

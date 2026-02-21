@@ -9,23 +9,22 @@ export const registerUser = async (req, res) => {
   try {
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
-      userName,
+      username: userName,
       email,
       password: hashPassword,
     });
-    newUser.save();
-    res.status("201").json({
+    const user = await newUser.save();
+
+    res.status(201).json({
       success: true,
       message: "User created successfully",
+      user,
     });
   } catch (error) {
-    res.status("500").json(
-      {
-        success: false,
-        message: error.message,
-      },
-      error,
-    );
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -35,7 +34,7 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
   } catch (error) {
-    res.status("500").json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
