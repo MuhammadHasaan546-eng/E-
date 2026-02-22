@@ -1,6 +1,6 @@
 import { loginFromControls } from "./../../config/index.js";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CommonFrom from "./../../components/common/From";
 import { useDispatch } from "react-redux";
 import { loginUser } from "@/api/auth/login.js";
@@ -14,16 +14,16 @@ const AuthLogin = () => {
   const [form, setForm] = useState(initialState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const handleSubmit = (fromData) => {
     fromData.preventDefault();
     dispatch(loginUser(form)).then((data) => {
       if (data.payload.success) {
         toast.success(data?.payload?.message);
-        // navigate("/");
+        navigate(location?.state?.from?.pathname || "/");
       } else {
         toast.warning(data?.payload?.message, { duration: 2000 });
-        navigate("/auth/login");
       }
     });
     setForm(initialState);

@@ -1,3 +1,4 @@
+import { chexkAuth } from "@/api/auth/check-auth";
 import { loginUser } from "@/api/auth/login";
 import { registerUser } from "@/api/auth/register";
 import { createSlice } from "@reduxjs/toolkit";
@@ -5,6 +6,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isAuthenticated: false,
   isLogin: false,
+  isLoading: true,
   user: null,
 };
 
@@ -12,12 +14,9 @@ const initialState = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  isLoading: false,
   reducers: {
     setUser: (state, action) => {},
   },
-
-  // extraReducer for  register
   extraReducers: (builder) => {
     builder.addCase(registerUser.pending, (state) => {
       state.isLoading = true;
@@ -27,25 +26,35 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
     });
-    builder.addCase(registerUser.rejected, (state, action) => {
+    builder.addCase(registerUser.rejected, (state) => {
       state.isLoading = false;
       state.user = null;
       state.isAuthenticated = false;
     });
-  },
 
-  // extraReducer for  login
-  extraReducers: (builder) => {
     builder.addCase(loginUser.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(loginUser.fulfilled, (state, action) => {
-      console.log(action);
-      state.isLoading = action.payload.success ? false : true;
+      state.isLoading = false;
       state.user = action.payload.success ? action.payload.user : null;
       state.isAuthenticated = action.payload.success;
     });
-    builder.addCase(loginUser.rejected, (state, action) => {
+    builder.addCase(loginUser.rejected, (state) => {
+      state.isLoading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+    });
+
+    builder.addCase(chexkAuth.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(chexkAuth.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload.success ? action.payload.user : null;
+      state.isAuthenticated = action.payload.success;
+    });
+    builder.addCase(chexkAuth.rejected, (state) => {
       state.isLoading = false;
       state.user = null;
       state.isAuthenticated = false;

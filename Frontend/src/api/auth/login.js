@@ -8,7 +8,9 @@ export const loginUser = createAsyncThunk(
       const response = await axios.post(
         "http://localhost:3000/api/auth/login",
         formData,
-        { withCredentials: true },
+        {
+          withCredentials: true,
+        },
       );
       return response.data;
     } catch (error) {

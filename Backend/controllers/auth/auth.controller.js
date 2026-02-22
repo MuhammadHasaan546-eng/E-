@@ -69,7 +69,7 @@ export const loginUser = async (req, res) => {
       const options = {
         expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: true,
+        secure: false,
       };
       res
         .cookie("token", token, options)
@@ -94,3 +94,31 @@ export const loginUser = async (req, res) => {
 };
 
 // logout
+
+export const logoutUser = async (req, res) => {
+  res.clearCookie("token").status(200).json({
+    success: true,
+    message: "User logged out successfully",
+  });
+};
+
+// check auth
+const authMiddleware = async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({
+      success: true,
+      message: "Unauthorized user",
+    });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: true,
+      message: "Unauthorized user",
+    });
+  }
+};

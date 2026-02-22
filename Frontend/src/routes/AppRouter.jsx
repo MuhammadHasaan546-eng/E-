@@ -1,3 +1,4 @@
+import { chexkAuth } from "@/api/auth/check-auth";
 import App from "@/App";
 import AdminLayout from "@/components/admin/Layout";
 import AuthLayout from "@/components/auth/Layout";
@@ -14,15 +15,26 @@ import ShoppingCheckout from "@/pages/shopping/Checkout";
 import ShoppingHome from "@/pages/shopping/Home";
 import ShoppingListing from "@/pages/shopping/Listing";
 import UnAuth from "@/pages/unauth";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-const isAuthenticated = false;
-const user = {
-  roll: null,
-};
+import { Skeleton } from "@/components/ui/skeleton";
 
 function AppRouter() {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, isLoading } = useSelector(
+    (state) => state.auth,
+  );
+  console.log("isAuthenticated", isAuthenticated);
+  console.log("user", user);
+  console.log("isLoading", isLoading);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(chexkAuth());
+  }, [dispatch]);
+  if (isLoading) {
+    return <Skeleton className="h-16 w-full rounded-full" />;
+  }
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -51,7 +63,7 @@ function AppRouter() {
         </CheckedAuth>
       ),
       children: [
-        // { index: true, element: <AdminDashboard /> },
+        { index: true, element: <AdminDashboard /> },
         { path: "dashboard", element: <AdminDashboard /> },
         { path: "products", element: <AdminProduct /> },
         { path: "orders", element: <AdminOrder /> },
