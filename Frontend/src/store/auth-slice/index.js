@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { loginUser } from "@/api/auth/login";
+import { registerUser } from "@/api/auth/register";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isAuthenticated: false,
@@ -7,30 +8,16 @@ const initialState = {
   user: null,
 };
 
-export const registerUser = createAsyncThunk(
-  "auth/register", // action type prefix
-  async (formData, thunkAPI) => {
-    // payloadCreator
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
-        formData,
-        { withCredentials: true },
-      );
-      return response.data; // ✅ ye payload banega fulfilled me
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data);
-    }
-  },
-);
-
+// authSlice
 const authSlice = createSlice({
   name: "auth",
   initialState,
+  isLoading: false,
   reducers: {
     setUser: (state, action) => {},
   },
 
+  // extraReducer for  register
   extraReducers: (builder) => {
     builder.addCase(registerUser.pending, (state) => {
       state.isLoading = true;
@@ -41,6 +28,24 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     });
     builder.addCase(registerUser.rejected, (state, action) => {
+      state.isLoading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+    });
+  },
+
+  // extraReducer for  login
+  extraReducers: (builder) => {
+    builder.addCase(loginUser.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(loginUser.fulfilled, (state, action) => {
+      console.log(action);
+      state.isLoading = action.payload.success ? false : true;
+      state.user = action.payload.success ? action.payload.user : null;
+      state.isAuthenticated = action.payload.success;
+    });
+    builder.addCase(loginUser.rejected, (state, action) => {
       state.isLoading = false;
       state.user = null;
       state.isAuthenticated = false;

@@ -1,16 +1,33 @@
 import { loginFromControls } from "./../../config/index.js";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CommonFrom from "./../../components/common/From";
+import { useDispatch } from "react-redux";
+import { loginUser } from "@/api/auth/login.js";
+import { toast } from "sonner";
 const initialState = {
   email: "",
   password: "",
 };
 
-const handleSubmit = (data) => {};
-
 const AuthLogin = () => {
   const [form, setForm] = useState(initialState);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSubmit = (fromData) => {
+    fromData.preventDefault();
+    dispatch(loginUser(form)).then((data) => {
+      if (data.payload.success) {
+        toast.success(data?.payload?.message);
+        // navigate("/");
+      } else {
+        toast.warning(data?.payload?.message, { duration: 2000 });
+        navigate("/auth/login");
+      }
+    });
+    setForm(initialState);
+  };
   return (
     <div className="mx-auto w-full max-w-sm space-y-6  ">
       <div className="text-center ">

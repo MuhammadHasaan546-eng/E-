@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CommonFrom from "./../../components/common/From";
 import { useDispatch } from "react-redux";
-import { registerUser } from "@/store/auth-slice/index.js";
 import { toast } from "sonner";
+import { registerUser } from "@/api/auth/register.js";
 
 const initialState = {
   userName: "",
@@ -23,8 +23,10 @@ const AuthRegister = () => {
       if (data?.payload?.success) {
         toast.success(data?.payload?.message);
         navigate("/auth/login");
+      } else {
+        toast.warning(data?.payload?.message, { duration: 2000 });
+        navigate("/auth/register");
       }
-      console.log(data);
     });
 
     setForm(initialState);
