@@ -24,9 +24,6 @@ function AppRouter() {
   const { isAuthenticated, user, isLoading } = useSelector(
     (state) => state.auth,
   );
-  console.log("isAuthenticated", isAuthenticated);
-  console.log("user", user);
-  console.log("isLoading", isLoading);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(chexkAuth());

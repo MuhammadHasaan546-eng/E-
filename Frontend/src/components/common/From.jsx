@@ -4,6 +4,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Select } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -17,26 +18,36 @@ const types = {
 
 const CommonFrom = ({
   fromControls,
+  controls,
+  fromData,
   formData,
   setFromData,
   onSubmit,
   buttonText,
 }) => {
+  const resolvedControls = fromControls ?? controls ?? [];
+  const resolvedFormData = formData ?? fromData ?? {};
+
   const renderItemComponentType = (control) => {
     let element = null;
-    const value = formData[control.name];
+    const value = resolvedFormData?.[control.name] ?? "";
     switch (control.componentType) {
-      case fromControls.input:
+      case types.input:
         element = (
           <Input
             name={control.name}
             placeholder={control.placeholder}
             id={control.name}
             type={control.type}
-            value={value}
-            onChange={(e) =>
-              setFromData({ ...formData, [control.name]: e.target.value })
-            }
+            value={control.type === "file" ? undefined : value}
+            onChange={(e) => {
+              const nextValue =
+                control.type === "file" ? e.target.files?.[0] : e.target.value;
+              setFromData({
+                ...resolvedFormData,
+                [control.name]: nextValue,
+              });
+            }}
           />
         );
         break;
@@ -44,9 +55,10 @@ const CommonFrom = ({
         element = (
           <Select
             onValueChange={(value) =>
-              setFromData({ ...formData, [control.name]: value })
+              setFromData({ ...resolvedFormData, [control.name]: value })
             }
             name={control.name}
+            value={value}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder={control.placeholder} />
@@ -54,7 +66,10 @@ const CommonFrom = ({
             <SelectContent>
               {control.options && control.options.length > 0
                 ? control.options.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
+                    <SelectItem
+                      key={option.value ?? option.id}
+                      value={option.value ?? option.id}
+                    >
                       {option.label}
                     </SelectItem>
                   ))
@@ -70,6 +85,12 @@ const CommonFrom = ({
             id={control.id}
             name={control.name}
             value={value}
+            onChange={(e) =>
+              setFromData({
+                ...resolvedFormData,
+                [control.name]: e.target.value,
+              })
+            }
           />
         );
         break;
@@ -82,10 +103,12 @@ const CommonFrom = ({
             placeholder={control.placeholder}
             id={control.name}
             type={control.type}
-            value={value}
-            onChange={(e) =>
-              setFromData({ ...formData, [control.name]: e.target.value })
-            }
+            value={control.type === "file" ? undefined : value}
+            onChange={(e) => {
+              const nextValue =
+                control.type === "file" ? e.target.files?.[0] : e.target.value;
+              setFromData({ ...resolvedFormData, [control.name]: nextValue });
+            }}
           />
         );
 
@@ -93,10 +116,15 @@ const CommonFrom = ({
     }
     return element;
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit?.(resolvedFormData);
+  };
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-3">
-        {fromControls.map((control) => (
+        {resolvedControls.map((control) => (
           <div key={control.name} className="grid w-full gap-1.5">
             <Label className="mb-1"> {control.label} </Label>
             {renderItemComponentType(control)}

@@ -17,9 +17,8 @@ const AuthRegister = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = (data) => {
-    data.preventDefault();
-    dispatch(registerUser(form)).then((data) => {
+  const handleSubmit = (submittedForm) => {
+    dispatch(registerUser(submittedForm)).then((data) => {
       if (data?.payload?.success) {
         toast.success(data?.payload?.message);
         navigate("/auth/login");

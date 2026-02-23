@@ -1,16 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./Sidebar";
 import AdminHeader from "./Header";
 
+// const AdminLayout = () => {
+//   const [open, setOpen] = useState(false);
+//   const toggleSidebar = () => setOpen(!open);
+//   return (
+//     <div className="flex min-h-screen w-full">
+//       {/* admin Sidebar */}
+//       <AdminSidebar open={open} onOpenChange={setOpen} />
+//       <div className="flex flex-1 flex-col">
+//         {/* admin Header */}
+//         <AdminHeader onOpenChange={setOpen} />
+//         <main className="flex-1 flex bg-muted/40 p-4 md:p-6">
+//           <Outlet />
+//         </main>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AdminLayout;
 const AdminLayout = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen w-full">
-      {/* admin Sidebar */}
-      <AdminSidebar />
+      <AdminSidebar open={open} onOpenChange={setOpen} />
+
       <div className="flex flex-1 flex-col">
-        {/* admin Header */}
-        <AdminHeader />
+        <AdminHeader onOpenChange={setOpen} />
         <main className="flex-1 flex bg-muted/40 p-4 md:p-6">
           <Outlet />
         </main>

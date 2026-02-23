@@ -1,5 +1,3 @@
-import { ChartSpline, LayoutDashboard, ShoppingBasket } from "lucide-react";
-
 export const registerFromControls = [
   {
     name: "userName",
@@ -41,28 +39,56 @@ export const loginFromControls = [
   },
 ];
 
-export const adminSidebarMenues = [
+export const productFormControls = [
   {
-    id: 1,
-    label: "Dashboard",
-    path: "/admin/dashboard",
-    icon: <LayoutDashboard />,
+    name: "title",
+    label: "Product Title",
+    placeholder: "Enter product title",
+    componentType: "input",
+    type: "text",
   },
   {
-    id: 2,
-    label: "Products",
-    path: "/admin/products",
-    icon: <ShoppingBasket />,
+    name: "description",
+    label: "Description",
+    placeholder: "Enter product description",
+    componentType: "textarea",
   },
   {
-    id: 3,
-    label: "Orders",
-    path: "/admin/orders",
-    icon: <ChartSpline />,
+    name: "category",
+    label: "Category",
+    placeholder: "Select category",
+    componentType: "select",
+    options: [
+      { label: "Men", value: "men" },
+      { label: "Women", value: "women" },
+      { label: "Other", value: "other" },
+    ],
   },
   {
-    id: 4,
-    label: "Users",
-    path: "/admin/users",
+    name: "brand",
+    label: "Brand",
+    placeholder: "Enter brand name",
+    componentType: "input",
+    type: "text",
+  },
+  {
+    name: "price",
+    label: "Price",
+    placeholder: "Enter product price",
+    componentType: "input",
+    type: "number",
+  },
+  {
+    name: "stock",
+    label: "Stock Quantity",
+    placeholder: "Enter stock quantity",
+    componentType: "input",
+    type: "number",
+  },
+  {
+    name: "image",
+    label: "Product Image",
+    componentType: "input",
+    type: "file",
   },
 ];

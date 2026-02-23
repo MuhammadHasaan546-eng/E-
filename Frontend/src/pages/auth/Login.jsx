@@ -16,9 +16,8 @@ const AuthLogin = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const handleSubmit = (fromData) => {
-    fromData.preventDefault();
-    dispatch(loginUser(form)).then((data) => {
+  const handleSubmit = (submittedForm) => {
+    dispatch(loginUser(submittedForm)).then((data) => {
       if (data.payload.success) {
         toast.success(data?.payload?.message);
         navigate(location?.state?.from?.pathname || "/");
