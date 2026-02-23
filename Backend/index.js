@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv/config";
+import adminProducts from "./routes/admin/product-routes.js";
 
 // import routes
 import authRoute from "./routes/auth/auth-router.js";
@@ -39,6 +40,7 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoute);
+app.use("/api/admin/products", adminProducts);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
