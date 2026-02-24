@@ -119,7 +119,11 @@ const CommonFrom = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(e);
+
+    console.log(resolvedFormData);
     onSubmit?.(resolvedFormData);
+    setFromData({});
   };
   return (
     <form onSubmit={handleSubmit}>

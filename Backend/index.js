@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv/config";
 import adminProducts from "./routes/admin/product-routes.js";
+import multer from "multer";
 
 // import routes
 import authRoute from "./routes/auth/auth-router.js";
@@ -21,7 +22,7 @@ mongoose
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: [
       "Content-Type",
