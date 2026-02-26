@@ -63,7 +63,7 @@ export const addNewProduct = async (req, res) => {
 // Fetch ALL Products
 export const fetchAllProduct = async (req, res) => {
   try {
-    const listOfData = Product.find({});
+    const listOfData = await Product.find();
     res.status(200).json({
       success: true,
       message: "All products fetched successfully",
@@ -92,7 +92,7 @@ export const editProduct = async (req, res) => {
       price,
       salePrice,
     } = req.body;
-    const findProduct = Product.findById(id);
+    const findProduct = await Product.findById(id);
     if (!findProduct) {
       return res.status(404).json({
         success: false,

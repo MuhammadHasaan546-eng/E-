@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/sheet";
 import { productFormControls } from "@/config";
 // import CommonFrom from "@/components/common/From";
-import { createProduct, fetchProducts } from "@/api/auth/admin/products";
-import { useDispatch, useSelector } from "react-redux";
 import CommonFrom from "@/components/common/From";
 import ProductImageUpload from "@/components/admin/ImageUpload";
-
+import { useDispatch } from "react-redux";
+import { createProduct, fetchProducts } from "@/api/admin/products";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
 const installFromData = {
   image: null,
   title: "",
@@ -28,12 +29,34 @@ const AdminProduct = () => {
 
   const [imageFile, setImageFile] = useState(null);
   const [uploadImageUrl, setUploadImageUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [ImageUploadLoading, setImageUploadLoading] = useState(false);
 
   const [openCreateProduct, setCreateProductOpen] = useState(false);
+  const { productLists } = useSelector((state) => state.adminProducts);
+  const dispatch = useDispatch();
 
-  const onSubmit = async (data) => {};
-  console.log(fromData);
+  const onSubmit = (event) => {
+    dispatch(
+      createProduct({
+        ...fromData,
+        image: uploadImageUrl,
+      }),
+    ).then((data) => {
+      console.log(data);
+      if (data.payload.success) {
+        setCreateProductOpen(false);
+        dispatch(fetchProducts());
+        setFromData(installFromData);
+        setImageFile(null);
+        setUploadImageUrl("");
+        toast.success("Product added successfully");
+      }
+    });
+  };
+  console.log(uploadImageUrl);
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   return (
     <>
@@ -87,7 +110,8 @@ const AdminProduct = () => {
             setImageFile={setImageFile}
             uploadImageUrl={uploadImageUrl}
             setUploadUrl={setUploadImageUrl}
-            setIsLoading={setIsLoading}
+            setImageUploadLoading={setImageUploadLoading}
+            ImageUploadLoading={ImageUploadLoading}
           />
           <div>
             <CommonFrom
