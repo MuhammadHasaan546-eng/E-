@@ -70,6 +70,12 @@ export const productFormControls = [
     placeholder: "Enter brand name",
     componentType: "input",
     type: "text",
+
+    options: [
+      { label: "Nike", value: "nike" },
+      { label: "Adidas", value: "adidas" },
+      { label: "Puma", value: "puma" },
+    ],
   },
   {
     name: "price",
@@ -84,11 +90,5 @@ export const productFormControls = [
     placeholder: "Enter stock quantity",
     componentType: "input",
     type: "number",
-  },
-  {
-    name: "image",
-    label: "Product Image",
-    componentType: "input",
-    type: "file",
   },
 ];

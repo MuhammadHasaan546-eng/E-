@@ -31,6 +31,7 @@ const CommonFrom = ({
   const renderItemComponentType = (control) => {
     let element = null;
     const value = resolvedFormData?.[control.name] ?? "";
+
     switch (control.componentType) {
       case types.input:
         element = (
@@ -39,18 +40,17 @@ const CommonFrom = ({
             placeholder={control.placeholder}
             id={control.name}
             type={control.type}
-            value={control.type === "file" ? undefined : value}
-            onChange={(e) => {
-              const nextValue =
-                control.type === "file" ? e.target.files?.[0] : e.target.value;
+            value={value}
+            onChange={(e) =>
               setFromData({
                 ...resolvedFormData,
-                [control.name]: nextValue,
-              });
-            }}
+                [control.name]: e.target.value,
+              })
+            }
           />
         );
         break;
+
       case types.select:
         element = (
           <Select
@@ -64,25 +64,24 @@ const CommonFrom = ({
               <SelectValue placeholder={control.placeholder} />
             </SelectTrigger>
             <SelectContent>
-              {control.options && control.options.length > 0
-                ? control.options.map((option) => (
-                    <SelectItem
-                      key={option.value ?? option.id}
-                      value={option.value ?? option.id}
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))
-                : null}
+              {control.options?.map((option) => (
+                <SelectItem
+                  key={option.value ?? option.id}
+                  value={option.value ?? option.id}
+                >
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         );
         break;
+
       case types.textarea:
         element = (
           <Textarea
             placeholder={control.placeholder}
-            id={control.id}
+            id={control.name}
             name={control.name}
             value={value}
             onChange={(e) =>
@@ -96,46 +95,44 @@ const CommonFrom = ({
         break;
 
       default:
-        element;
         element = (
           <Input
             name={control.name}
             placeholder={control.placeholder}
             id={control.name}
             type={control.type}
-            value={control.type === "file" ? undefined : value}
-            onChange={(e) => {
-              const nextValue =
-                control.type === "file" ? e.target.files?.[0] : e.target.value;
-              setFromData({ ...resolvedFormData, [control.name]: nextValue });
-            }}
+            value={value}
+            onChange={(e) =>
+              setFromData({
+                ...resolvedFormData,
+                [control.name]: e.target.value,
+              })
+            }
           />
         );
-
         break;
     }
+
     return element;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(e);
-
-    console.log(resolvedFormData);
     onSubmit?.(resolvedFormData);
-    setFromData({});
   };
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-3">
         {resolvedControls.map((control) => (
           <div key={control.name} className="grid w-full gap-1.5">
-            <Label className="mb-1"> {control.label} </Label>
+            <Label className="mb-1">{control.label}</Label>
             {renderItemComponentType(control)}
           </div>
         ))}
       </div>
-      <Button className={"mt-4 w-full "} type="submit">
+
+      <Button className="mt-4 w-full" type="submit">
         {buttonText || "Submit"}
       </Button>
     </form>

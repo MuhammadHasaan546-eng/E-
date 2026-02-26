@@ -25,12 +25,12 @@ export const fetchProducts = createAsyncThunk(
   "admin/products/list",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/admin/products/list",
-        {
-          withCredentials: true,
-        },
-      );
+      // const response = await axios.get(
+      //   "http://localhost:3000/api/admin/products/list",
+      //   {
+      //     withCredentials: true,
+      //   },
+      // );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data);

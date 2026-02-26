@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const admnProducts = new mongoose.Schema(
+const Product = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -39,4 +39,4 @@ const admnProducts = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model("AdminProducts", admnProducts);
+export default mongoose.model("Product", Product);

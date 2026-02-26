@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv/config";
 import adminProducts from "./routes/admin/product-routes.js";
 import multer from "multer";
+import adminProductsRoutes from "./routes/admin/product-routes.js";
 
 // import routes
 import authRoute from "./routes/auth/auth-router.js";
@@ -36,12 +37,13 @@ app.use(
 );
 
 // Middleware
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoute);
-app.use("/api/admin/products", adminProducts);
+app.use("/api/admin/products", adminProductsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

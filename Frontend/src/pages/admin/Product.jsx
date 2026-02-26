@@ -7,57 +7,33 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { productFormControls } from "@/config";
-import CommonFrom from "@/components/common/From";
+// import CommonFrom from "@/components/common/From";
 import { createProduct, fetchProducts } from "@/api/auth/admin/products";
 import { useDispatch, useSelector } from "react-redux";
-import ProductFrom from "@/components/common/ProductFrom";
+import CommonFrom from "@/components/common/From";
+import ProductImageUpload from "@/components/admin/ImageUpload";
+
+const installFromData = {
+  image: null,
+  title: "",
+  description: "",
+  category: "",
+  brand: "",
+  price: "",
+  stock: "",
+};
 
 const AdminProduct = () => {
+  const [fromData, setFromData] = useState(installFromData);
+
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadImageUrl, setUploadImageUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const [openCreateProduct, setCreateProductOpen] = useState(false);
-  const dispatch = useDispatch();
 
-  const { products, isLoading } = useSelector((state) => state.adminProduct);
-
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
-
-  const onSubmit = async (data) => {
-    dispatch(createProduct(data));
-
-    // console.log(data);
-    // const fd = new FormData();
-    // fd.append("title", data.title);
-    // fd.append("description", data.description);
-    // fd.append("category", data.category);
-    // fd.append("brand", data.brand);
-    // fd.append("price", data.price);
-    // fd.append("stock", data.stock);
-    // fd.append("subCategory", data.subCategory || "");
-    // fd.append("discountPrice", data.discountPrice || "");
-    // fd.append("sku", data.sku || "");
-    // fd.append("isActive", data.isActive ?? true);
-    // fd.append("isFeatured", data.isFeatured ?? false);
-    // // Multiple images
-    // if (Array.isArray(data.image)) {
-    //   data.image.forEach((file) => {
-    //     fd.append("image", file);
-    //   });
-    // }
-    // console.log(fd);
-    // const resultAction = await dispatch(createProduct(fd));
-    // if (createProduct.fulfilled.match(resultAction)) {
-    //   setFromData(initialValues);
-    //   setCreateProductOpen(false);
-    //   dispatch(fetchProducts());
-    // } else {
-    //   console.log(
-    //     "createProduct rejected:",
-    //     resultAction.payload ?? resultAction.error,
-    //   );
-    // }
-    // console.log(resultAction);
-  };
+  const onSubmit = async (data) => {};
+  console.log(fromData);
 
   return (
     <>
@@ -67,7 +43,7 @@ const AdminProduct = () => {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+      {/* <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
         {products?.map((product) => (
           <div
             key={product._id}
@@ -98,7 +74,7 @@ const AdminProduct = () => {
         {!isLoading && (!products || products.length === 0) ? (
           <div className="text-sm text-muted-foreground">No products yet.</div>
         ) : null}
-      </div>
+      </div> */}
 
       <Sheet open={openCreateProduct} onOpenChange={setCreateProductOpen}>
         <SheetContent side="right" className="overflow-auto p-6">
@@ -106,17 +82,21 @@ const AdminProduct = () => {
             <SheetTitle>Add New Product</SheetTitle>
           </SheetHeader>
 
+          <ProductImageUpload
+            imageFile={imageFile}
+            setImageFile={setImageFile}
+            uploadImageUrl={uploadImageUrl}
+            setUploadUrl={setUploadImageUrl}
+            setIsLoading={setIsLoading}
+          />
           <div>
-            {/* <CommonFrom
+            <CommonFrom
               formData={fromData}
               setFromData={setFromData}
-              
               fromControls={productFormControls}
               buttonText="Add Product"
               onSubmit={onSubmit}
-            /> */}
-
-            <ProductFrom />
+            />
           </div>
         </SheetContent>
       </Sheet>

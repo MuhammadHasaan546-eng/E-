@@ -1,124 +1,161 @@
-import { imageUpload } from "../../config/cloudinary.js";
-import AdminProducts from "../../models/Product.js";
-import multer from "multer";
+import { imageUploadUtlls } from "../../config/cloudinary.js";
+import Product from "../../models/Product.js";
 
-const handleImageUpload = async (req, res) => {
-  console.log(req.file);
+export const handleImageUpload = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Image file is required",
-      });
-    }
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     const url = "data:" + req.file.mimetype + ";base64," + b64;
-    const result = await imageUpload(url);
-    res.status(200).json({
+    const result = await imageUploadUtlls(url);
+
+    res.json({
       success: true,
       message: "Image uploaded successfully",
-      result: result,
+      result,
     });
   } catch (error) {
-    console.error(error);
-    res.status(error.http_code || 500).json({
+    console.log(error);
+    res.status(500).json({
       success: false,
-      message: error.message || "Error while uploading image",
-      error: {
-        name: error.name,
-        http_code: error.http_code,
-      },
+      message: "Error occurred while uploading image",
     });
   }
 };
 
-export const createProduct = async (req, res) => {
-  console.log("[createProduct] body keys:", Object.keys(req.body || {}));
-  console.log(
-    "[createProduct] files:",
-    Array.isArray(req.files) ? req.files.length : req.files,
-  );
-  if (Array.isArray(req.files) && req.files[0]) {
-    console.log("[createProduct] first file:", {
-      fieldname: req.files[0].fieldname,
-      originalname: req.files[0].originalname,
-      mimetype: req.files[0].mimetype,
-      size: req.files[0].size,
-    });
-  }
+//  ADD  New Product
+export const addNewProduct = async (req, res) => {
   try {
-    const { title, description, category, brand, price, stock } = req.body;
-
-    if (
-      !title ||
-      !description ||
-      !category ||
-      price === undefined ||
-      stock === undefined
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields",
-      });
-    }
-
-    const files = req.files;
-    if (!files || files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Product image is required",
-      });
-    }
-
-    const firstFile = files[0];
-    const b64 = Buffer.from(firstFile.buffer).toString("base64");
-    const url = "data:" + firstFile.mimetype + ";base64," + b64;
-    // console.log(url);
-    const uploaded = await imageUpload(url);
-
-    const product = await AdminProducts.create({
+    const {
       title,
       description,
+      image,
       category,
       brand,
-      price: Number(price),
-      stock: Number(stock),
-      image: uploaded.secure_url,
-    });
+      stock,
+      price,
+      salePrice,
+    } = req.body;
 
-    return res.status(201).json({
+    const newProduct = new Product({
+      title,
+      description,
+      image,
+      category,
+      brand,
+      stock,
+      price,
+      salePrice,
+    });
+    await newProduct.save();
+
+    res.status(200).json({
       success: true,
-      message: "Product created successfully",
-      product,
+      message: "Product added successfully",
+      data: newProduct,
     });
   } catch (error) {
-    console.error(error);
-    const statusCode = error.http_code || 500;
-    return res.status(statusCode).json({
+    console.log(error);
+    res.status(500).json({
       success: false,
-      message: error.message || "Error while creating product",
-      error: {
-        name: error.name,
-        http_code: error.http_code,
-      },
+      message: "Error occurred while adding new product",
     });
   }
 };
-
-export const getProducts = async (req, res) => {
+// Fetch ALL Products
+export const fetchAllProduct = async (req, res) => {
   try {
-    const products = await AdminProducts.find().sort({ createdAt: -1 });
-    return res.status(200).json({
+    const listOfData = Product.find({});
+    res.status(200).json({
       success: true,
-      products,
+      message: "All products fetched successfully",
+      data: listOfData,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
+    console.log(error);
+    res.status(500).json({
       success: false,
-      message: error.message || "Error while fetching products",
+      message: "fetching all products failed",
     });
   }
 };
 
-export default handleImageUpload;
+// edit Product
+export const editProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      image,
+      category,
+      brand,
+      stock,
+      price,
+      salePrice,
+    } = req.body;
+    const findProduct = Product.findById(id);
+    if (!findProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    findProduct.title = title || findProduct.title;
+    findProduct.description = description || findProduct.description;
+    findProduct.category = category || findProduct.category;
+    findProduct.brand = brand || findProduct.brand;
+    findProduct.stock = stock || findProduct.stock;
+    findProduct.price = price || findProduct.price;
+    findProduct.salePrice = salePrice || findProduct.salePrice;
+    findProduct.image = image || findProduct.image;
+
+    await findProduct.save();
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      data: findProduct,
+    });
+
+    // const updatedProduct = {
+    //   ...findProduct,
+    //   title,
+    //   description,
+    //   image,
+    //   category,
+    //   brand,
+    //   stock,
+    //   price,
+    //   salePrice,
+    // };
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "editing product failed",
+    });
+  }
+};
+
+// Delete Product
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findByIdAndDelete(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+      // data: product,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Delete product failed",
+    });
+  }
+};
