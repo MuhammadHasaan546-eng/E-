@@ -133,3 +133,51 @@ export const productFormControls = [
     type: "number",
   },
 ];
+
+export const shoppingViewHeaderIcon = [
+  { id: "home", label: "Home", path: "/shop/home" },
+
+  { id: "men", label: "Men", path: "/shop/listing" },
+  { id: "women", label: "Women", path: "/shop/listing" },
+  { id: "kids", label: "Kids", path: "/shop/listing" },
+  { id: "footwear", label: "Footwear", path: "/shop/listing" },
+  { id: "jewelry", label: "Jewelry", path: "/shop/listing" },
+  { id: "accessories", label: "Accessories", path: "/shop/listing" },
+  { id: "bags", label: "Bags", path: "/shop/listing" },
+];
+
+export const filterOptions = {
+  category: [
+    { label: "Men's Clothing" },
+    { label: "Women's Clothing" },
+    { label: "Kids Clothing" },
+    { label: "Shoes" },
+    { label: "Accessories" },
+    { label: "Bags" },
+    { label: "Watches" },
+  ],
+  brand: [
+    { id: "nike", label: "Nike" },
+    { id: "adidas", label: "Adidas" },
+    { id: "puma", label: "Puma" },
+    { id: "under_armour", label: "Under Armour" },
+    { id: "reebok", label: "Reebok" },
+    { id: "new_balance", label: "New Balance" },
+    { id: "asics", label: "ASICS" },
+    { id: "converse", label: "Converse" },
+    { id: "vans", label: "Vans" },
+    { id: "zara", label: "Zara" },
+    { id: "h&m", label: "H&M" },
+    { id: "levis", label: "Levi's" },
+    { id: "uniqlo", label: "Uniqlo" },
+    { id: "gucci", label: "Gucci" },
+    { id: "louis_vuitton", label: "Louis Vuitton" },
+    { id: "balenciaga", label: "Balenciaga" },
+    { id: "prada", label: "Prada" },
+    { id: "skechers", label: "Skechers" },
+    { id: "timberland", label: "Timberland" },
+    { id: "columbia", label: "Columbia" },
+    { id: "the_north_face", label: "The North Face" },
+    { id: "crocs", label: "Crocs" },
+  ],
+};

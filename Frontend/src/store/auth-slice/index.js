@@ -1,5 +1,6 @@
 import { chexkAuth } from "@/api/auth/check-auth";
 import { loginUser } from "@/api/auth/login";
+import { logoutUser } from "@/api/auth/logout";
 import { registerUser } from "@/api/auth/register";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -32,6 +33,8 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     });
 
+    // login user
+
     builder.addCase(loginUser.pending, (state) => {
       state.isLoading = true;
     });
@@ -46,6 +49,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     });
 
+    // chick auth
     builder.addCase(chexkAuth.pending, (state) => {
       state.isLoading = true;
     });
@@ -55,6 +59,13 @@ const authSlice = createSlice({
       state.isAuthenticated = action.payload.success;
     });
     builder.addCase(chexkAuth.rejected, (state) => {
+      state.isLoading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+    });
+
+    // logout
+    builder.addCase(logoutUser.fulfilled, (state) => {
       state.isLoading = false;
       state.user = null;
       state.isAuthenticated = false;
