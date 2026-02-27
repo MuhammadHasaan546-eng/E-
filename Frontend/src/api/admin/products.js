@@ -16,7 +16,7 @@ export const createProduct = createAsyncThunk(
       );
       console.log("createProduct", response);
 
-      return response.data;
+      return await response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data);
     }
@@ -35,7 +35,7 @@ export const fetchProducts = createAsyncThunk(
           },
         },
       );
-      return response.data;
+      return await response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data);
     }
@@ -48,7 +48,7 @@ export const editProduct = createAsyncThunk(
     try {
       console.log(id, formData);
       const response = await axios.put(
-        `http://localhost:3000/api/admin/products/upload-product/edit/${id}`,
+        `http://localhost:3000/api/admin/products/edit/${id}`,
         formData,
         {
           headers: {
@@ -58,7 +58,7 @@ export const editProduct = createAsyncThunk(
       );
       console.log("editProduct", response);
 
-      return response.data;
+      return await response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data);
     }
@@ -67,13 +67,11 @@ export const editProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "admin/products/deleteProduct",
-  async ({ id }) => {
+  async (id, thunkAPI) => {
     try {
-      console.log(id);
       const response = await axios.delete(
-        `http://localhost:3000/api/admin/products/upload-product/delete/${id}`,
+        `http://localhost:3000/api/admin/products/delete/${id}`,
       );
-      console.log("DeleteProduct", response);
 
       return response.data;
     } catch (error) {

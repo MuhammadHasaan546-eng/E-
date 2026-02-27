@@ -24,6 +24,7 @@ const CommonFrom = ({
   setFromData,
   onSubmit,
   buttonText,
+  isButtonDisabled,
 }) => {
   const resolvedControls = fromControls ?? controls ?? [];
   const resolvedFormData = formData ?? fromData ?? {};
@@ -132,7 +133,7 @@ const CommonFrom = ({
         ))}
       </div>
 
-      <Button className="mt-4 w-full" type="submit">
+      <Button disabled={isButtonDisabled} className="mt-4 w-full" type="submit">
         {buttonText || "Submit"}
       </Button>
     </form>

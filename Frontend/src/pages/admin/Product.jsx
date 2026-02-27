@@ -11,9 +11,15 @@ import { productFormControls } from "@/config";
 import CommonFrom from "@/components/common/From";
 import ProductImageUpload from "@/components/admin/ImageUpload";
 import { useDispatch } from "react-redux";
-import { createProduct, fetchProducts } from "@/api/admin/products";
+import {
+  createProduct,
+  deleteProduct,
+  editProduct,
+  fetchProducts,
+} from "@/api/admin/products";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import AdminProductTile from "@/components/admin/project-tile";
 const installFromData = {
   image: null,
   title: "",
@@ -21,6 +27,7 @@ const installFromData = {
   category: "",
   brand: "",
   price: "",
+  salePrice: "",
   stock: "",
 };
 
@@ -30,33 +37,70 @@ const AdminProduct = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploadImageUrl, setUploadImageUrl] = useState("");
   const [ImageUploadLoading, setImageUploadLoading] = useState(false);
-
   const [openCreateProduct, setCreateProductOpen] = useState(false);
+  const [currentEditId, setCurrentEditId] = useState(null);
+
   const { productLists } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
 
   const onSubmit = (event) => {
-    dispatch(
-      createProduct({
-        ...fromData,
-        image: uploadImageUrl,
-      }),
-    ).then((data) => {
-      console.log(data);
+    // TODO: Add validation logic here
+    if (!isFromVaid()) {
+      toast.error("Please fill all the fields");
+      return;
+    }
+    // edit and create
+
+    currentEditId !== null
+      ? dispatch(editProduct({ id: currentEditId, formData: fromData })).then(
+          (data) => {
+            if (data.payload.success) {
+              setCreateProductOpen(false);
+              dispatch(fetchProducts());
+              setFromData(installFromData);
+              setImageFile(null);
+              setUploadImageUrl("");
+              toast.success("Product added successfully");
+            }
+          },
+        )
+      : dispatch(
+          createProduct({
+            ...fromData,
+            image: uploadImageUrl,
+          }),
+        ).then((data) => {
+          if (data.payload.success) {
+            setCreateProductOpen(false);
+            dispatch(fetchProducts());
+            setFromData(installFromData);
+            setImageFile(null);
+            setUploadImageUrl("");
+            toast.success("Product added successfully");
+          }
+        });
+  };
+
+  // DeleteProduct
+  const handleDeleteProduct = (getCurrentProductId) => {
+    dispatch(deleteProduct(getCurrentProductId)).then((data) => {
       if (data.payload.success) {
-        setCreateProductOpen(false);
         dispatch(fetchProducts());
-        setFromData(installFromData);
-        setImageFile(null);
-        setUploadImageUrl("");
-        toast.success("Product added successfully");
+        toast.success("Product deleted successfully");
       }
     });
   };
-  console.log(uploadImageUrl);
+
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  // TODO: Add validation logic here
+  const isFromVaid = () => {
+    return Object.keys(fromData)
+      .map((key) => fromData[key] !== "")
+      .every((item) => item);
+  };
 
   return (
     <>
@@ -66,43 +110,34 @@ const AdminProduct = () => {
         </Button>
       </div>
 
-      {/* <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {products?.map((product) => (
-          <div
-            key={product._id}
-            className="rounded-lg border bg-background p-3 shadow-sm"
-          >
-            <div className="aspect-square w-full overflow-hidden rounded-md bg-muted">
-              {product.image ? (
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="h-full w-full object-cover"
-                />
-              ) : null}
-            </div>
-            <div className="mt-3">
-              <div className="text-sm font-semibold">{product.title}</div>
-              <div className="text-xs text-muted-foreground">
-                {product.category}
-                {product.brand ? ` • ${product.brand}` : ""}
-              </div>
-              <div className="mt-2 flex items-center justify-between">
-                <div className="text-sm font-bold">${product.price}</div>
-                <div className="text-xs">Stock: {product.stock}</div>
-              </div>
-            </div>
-          </div>
-        ))}
-        {!isLoading && (!products || products.length === 0) ? (
-          <div className="text-sm text-muted-foreground">No products yet.</div>
-        ) : null}
-      </div> */}
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {productLists && productLists.length > 0
+          ? productLists.map((productItem) => (
+              <AdminProductTile
+                key={productItem._id}
+                product={productItem}
+                setCurrentEditId={setCurrentEditId}
+                setOpenCurentProductDialog={setCreateProductOpen}
+                setFromData={setFromData}
+                handleDelete={handleDeleteProduct}
+              />
+            ))
+          : "No products found"}
+      </div>
 
-      <Sheet open={openCreateProduct} onOpenChange={setCreateProductOpen}>
+      <Sheet
+        open={openCreateProduct}
+        onOpenChange={() => {
+          setCreateProductOpen(false);
+          setCurrentEditId(null);
+          setFromData(installFromData);
+        }}
+      >
         <SheetContent side="right" className="overflow-auto p-6">
           <SheetHeader>
-            <SheetTitle>Add New Product</SheetTitle>
+            <SheetTitle>
+              {currentEditId ? "Edit Product" : "Add New Product"}
+            </SheetTitle>
           </SheetHeader>
 
           <ProductImageUpload
@@ -112,14 +147,16 @@ const AdminProduct = () => {
             setUploadUrl={setUploadImageUrl}
             setImageUploadLoading={setImageUploadLoading}
             ImageUploadLoading={ImageUploadLoading}
+            idEditMode={currentEditId !== null}
           />
           <div>
             <CommonFrom
               formData={fromData}
               setFromData={setFromData}
               fromControls={productFormControls}
-              buttonText="Add Product"
+              buttonText={currentEditId ? "Update Product" : "Add Product"}
               onSubmit={onSubmit}
+              isButtonDisabled={!isFromVaid()}
             />
           </div>
         </SheetContent>
