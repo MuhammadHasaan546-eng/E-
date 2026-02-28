@@ -2,12 +2,11 @@ import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import dotenv from "dotenv/config";
-import adminProducts from "./routes/admin/product-routes.js";
-import multer from "multer";
-import adminProductsRoutes from "./routes/admin/product-routes.js";
 
 // import routes
+
+import adminProductsRoutes from "./routes/admin/product-routes.js";
+import shopProductsRoutes from "./routes/shop/product.router.js";
 import authRoute from "./routes/auth/auth-router.js";
 
 const app = express();
@@ -23,7 +22,7 @@ mongoose
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5175",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: [
       "Content-Type",
@@ -44,7 +43,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/admin/products", adminProductsRoutes);
-
+app.use("/api/shop/products", shopProductsRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

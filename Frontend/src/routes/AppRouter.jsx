@@ -29,7 +29,12 @@ function AppRouter() {
     dispatch(chexkAuth());
   }, [dispatch]);
   if (isLoading) {
-    return <Skeleton className="h-16 w-full rounded-full" />;
+    return (
+      <div>
+        Loading...
+        <Skeleton className="h-16 w-full rounded-full" />
+      </div>
+    );
   }
 
   const router = createBrowserRouter([

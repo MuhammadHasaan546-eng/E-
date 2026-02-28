@@ -146,17 +146,53 @@ export const shoppingViewHeaderIcon = [
   { id: "bags", label: "Bags", path: "/shop/listing" },
 ];
 
+export const brandOptionMap = {
+  nike: "Nike",
+  adidas: "Adidas",
+  puma: "Puma",
+  under_armour: "Under Armour",
+  reebok: "Reebok",
+  new_balance: "New Balance",
+  asics: "ASICS",
+  converse: "Converse",
+  vans: "Vans",
+  zara: "Zara",
+  hm: "H&M",
+  levis: "Levi's",
+  uniqlo: "Uniqlo",
+  gucci: "Gucci",
+  louis_vuitton: "Louis Vuitton",
+  balenciaga: "Balenciaga",
+  prada: "Prada",
+  skechers: "Skechers",
+  timberland: "Timberland",
+  columbia: "Columbia",
+  the_north_face: "The North Face",
+  crocs: "Crocs",
+};
+
+export const categoryOptionMap = {
+  men: "Men",
+  women: "Women",
+  kids: "Kids",
+  footwear: "Footwear",
+  jewelry: "Jewelry",
+  accessories: "Accessories",
+  bags: "Bags",
+  watches: "Watches",
+};
+
 export const filterOptions = {
-  category: [
-    { label: "Men's Clothing" },
-    { label: "Women's Clothing" },
-    { label: "Kids Clothing" },
-    { label: "Shoes" },
-    { label: "Accessories" },
-    { label: "Bags" },
-    { label: "Watches" },
+  categories: [
+    { id: "mens_clothing", label: "Men's Clothing" },
+    { id: "womens_clothing", label: "Women's Clothing" },
+    { id: "kids_clothing", label: "Kids Clothing" },
+    { id: "shoes", label: "Shoes" },
+    { id: "accessories", label: "Accessories" },
+    { id: "bags", label: "Bags" },
+    { id: "watches", label: "Watches" },
   ],
-  brand: [
+  Brand: [
     { id: "nike", label: "Nike" },
     { id: "adidas", label: "Adidas" },
     { id: "puma", label: "Puma" },
@@ -183,8 +219,8 @@ export const filterOptions = {
 };
 
 export const sortOptions = [
-  { id: "price-asc", label: "Price: Low to High" },
-  { id: "price-desc", label: "Price: High to Low" },
-  { id: "title-asc", label: "Title: A to Z" },
-  { id: "title-desc", label: "Title: Z to A" },
+  { id: "price-lowtohigh", label: "Price: Low to High" },
+  { id: "price-hightolow", label: "Price: High to Low" },
+  { id: "title-atoz", label: "Title: A to Z" },
+  { id: "title-ztoa", label: "Title: Z to A" },
 ];
