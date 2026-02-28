@@ -181,3 +181,10 @@ export const filterOptions = {
     { id: "crocs", label: "Crocs" },
   ],
 };
+
+export const sortOptions = [
+  { id: "price-asc", label: "Price: Low to High" },
+  { id: "price-desc", label: "Price: High to Low" },
+  { id: "title-asc", label: "Title: A to Z" },
+  { id: "title-desc", label: "Title: Z to A" },
+];
