@@ -1,9 +1,10 @@
-import { fetchAllProducts } from "@/api/shop/product";
+import { fetchAllProducts, fetchProductDeatils } from "@/api/shop/product";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   productList: [],
   isLoading: false,
+  productDeatils: null,
 };
 
 const shopingProductSlice = createSlice({
@@ -11,6 +12,7 @@ const shopingProductSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    // fetch all products
     builder.addCase(fetchAllProducts.pending, (state) => {
       state.isLoading = true;
     });
@@ -21,6 +23,18 @@ const shopingProductSlice = createSlice({
     builder.addCase(fetchAllProducts.rejected, (state) => {
       state.isLoading = false;
       state.productList = [];
+    });
+    // fetch product details
+    builder.addCase(fetchProductDeatils.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(fetchProductDeatils.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.productDeatils = action.payload.data;
+    });
+    builder.addCase(fetchProductDeatils.rejected, (state) => {
+      state.isLoading = false;
+      state.productDeatils = null;
     });
   },
 });

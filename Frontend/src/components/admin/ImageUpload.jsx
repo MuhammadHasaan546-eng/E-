@@ -15,12 +15,11 @@ const ProductImageUpload = ({
 }) => {
   const inputRef = useRef(null);
 
-  const handleImageUpload = (evnet) => {
-    console.log(evnet.target.files[0]);
-    const selectImage = evnet.target.files[0];
-
-    if (selectImage) {
-      setImageFile(selectImage);
+  const handleImageUpload = (event) => {
+    const selectedImage = event.target.files[0];
+    if (selectedImage) {
+      setImageFile(selectedImage);
+      setImageUploadLoading?.(true);
     }
   };
 
@@ -30,9 +29,10 @@ const ProductImageUpload = ({
 
   const handleDrop = (event) => {
     event.preventDefault();
-    const selectImage = event.dataTransfer.files[0];
-    if (selectImage) {
-      setImageFile(selectImage);
+    const selectedImage = event.dataTransfer.files[0];
+    if (selectedImage) {
+      setImageFile(selectedImage);
+      setImageUploadLoading?.(true);
     }
   };
 
@@ -52,6 +52,7 @@ const ProductImageUpload = ({
   };
   useEffect(() => {
     if (imageFile !== null) {
+      console.log("uploading image");
       uploadImageToCloudinary(imageFile);
     }
   }, [imageFile]);
@@ -75,31 +76,42 @@ const ProductImageUpload = ({
         {!imageFile ? (
           <Label
             htmlFor="image-upload"
-            className={`flex  flex-col items-center justify-center h-32  cursor-pointer ${idEditMode ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`flex flex-col items-center justify-center h-32 cursor-pointer ${idEditMode ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <UploadCloudIcon className="h-12 w-12 text-muted-foreground" />
-            <span className="mt-2 text-sm text-muted-foreground">
+            <span className="mt-1 text-sm text-muted-foreground">
               Drag and drop or click to upload
             </span>
           </Label>
         ) : (
-          // setImageUploadLoading ? (
-          //   <Skeleton className="h-32 bg-gray-200" />
-          // ) :
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <FileIcon className="w-8 h-8 text-primary mr-2" />
-              <p className="text-sm text-muted-foreground">{imageFile.name}</p>
-              <Button
-                variant="ghost"
-                onClick={() => setImageFile(null)}
-                className="ml-2 hover:text-red-500"
-              >
-                <XIcon className="h-4 w-4" />
-                <span className="sr-only">Remove</span>
-              </Button>
+          <div className="flex items-center justify-between p-2">
+            <div className="flex items-center space-x-2">
+              {imageFile.type.startsWith("image/") ? (
+                <img
+                  src={URL.createObjectURL(imageFile)}
+                  alt="Preview"
+                  className="w-12 h-12 object-cover rounded"
+                />
+              ) : (
+                <FileIcon className="w-8 h-8 text-primary" />
+              )}
+              <p className="text-sm text-muted-foreground truncate max-w-[150px]">
+                {imageFile.name}
+              </p>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setImageFile(null);
+                setUploadUrl("");
+                setImageUploadLoading?.(false);
+              }}
+              className="hover:text-red-500"
+            >
+              <XIcon className="h-4 w-4" />
+              <span className="sr-only">Remove</span>
+            </Button>
           </div>
         )}
       </div>

@@ -7,7 +7,7 @@ const store = configureStore({
   reducer: {
     auth: authSlice,
     adminProducts: adminProductSlice,
-    shopingProductSlice,
+    shopingProductSlice: shopingProductSlice,
   },
 });
 
