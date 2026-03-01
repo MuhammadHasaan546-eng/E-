@@ -8,6 +8,7 @@ import cors from "cors";
 import adminProductsRoutes from "./routes/admin/product-routes.js";
 import shopProductsRoutes from "./routes/shop/product.router.js";
 import authRoute from "./routes/auth/auth-router.js";
+import cartRoute from "./routes/shop/chart.router.js";
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/admin/products", adminProductsRoutes);
 app.use("/api/shop/products", shopProductsRoutes);
+app.use("/api/shop/cart", cartRoute);
 // Error handling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

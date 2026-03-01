@@ -58,10 +58,16 @@ const ProductImageUpload = ({
   }, [imageFile]);
 
   return (
-    <div className="w-full max-w-md mx-auto ">
-      <Label className="text-lg font-semibold block mb-2">Upload Image</Label>
+    <div className="w-full max-w-md mx-auto">
+      <Label className="text-sm font-semibold mb-2 block text-gray-700">
+        Upload Image
+      </Label>
       <div
-        className={` ${idEditMode ? "opacity-50 cursor-not-allowed" : ""}relative border-dashed border-2  rounded-lg p-4 hover:bg-gray-50 `}
+        className={`${
+          idEditMode
+            ? "opacity-50 cursor-not-allowed"
+            : "cursor-pointer hover:border-primary hover:bg-primary/5 hover:shadow-sm"
+        } relative border-2 border-dashed border-gray-300 rounded-xl p-6 transition-all duration-300 bg-gray-50/50 group`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
@@ -76,38 +82,53 @@ const ProductImageUpload = ({
         {!imageFile ? (
           <Label
             htmlFor="image-upload"
-            className={`flex flex-col items-center justify-center h-32 cursor-pointer ${idEditMode ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`${
+              idEditMode ? "cursor-not-allowed" : "cursor-pointer"
+            } flex flex-col items-center justify-center h-32 w-full`}
           >
-            <UploadCloudIcon className="h-12 w-12 text-muted-foreground" />
-            <span className="mt-1 text-sm text-muted-foreground">
+            <div className="bg-white p-3 rounded-full mb-3 shadow-sm border border-gray-100 group-hover:scale-110 group-hover:bg-primary/10 transition-all duration-300">
+              <UploadCloudIcon className="h-6 w-6 text-primary" />
+            </div>
+            <p className="text-sm font-medium text-gray-700 mb-1">
               Drag and drop or click to upload
-            </span>
+            </p>
+            <p className="text-xs text-gray-500">
+              PNG, JPG, JPEG up to 5MB
+            </p>
           </Label>
         ) : (
-          <div className="flex items-center justify-between p-2">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center space-x-4">
               {imageFile.type.startsWith("image/") ? (
                 <img
                   src={URL.createObjectURL(imageFile)}
                   alt="Preview"
-                  className="w-12 h-12 object-cover rounded"
+                  className="w-14 h-14 object-cover rounded-lg border border-gray-100"
                 />
               ) : (
-                <FileIcon className="w-8 h-8 text-primary" />
+                <div className="w-14 h-14 flex items-center justify-center bg-gray-50 rounded-lg border border-gray-100">
+                  <FileIcon className="w-7 h-7 text-primary" />
+                </div>
               )}
-              <p className="text-sm text-muted-foreground truncate max-w-[150px]">
-                {imageFile.name}
-              </p>
+              <div className="flex flex-col">
+                <p className="text-sm font-semibold text-gray-800 truncate max-w-[160px]">
+                  {imageFile.name}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {(imageFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+              </div>
             </div>
             <Button
               variant="ghost"
-              size="sm"
-              onClick={() => {
+              size="icon"
+              onClick={(e) => {
+                e.preventDefault();
                 setImageFile(null);
                 setUploadUrl("");
                 setImageUploadLoading?.(false);
               }}
-              className="hover:text-red-500"
+              className="text-gray-400 hover:text-red-500 hover:bg-red-50 h-9 w-9 rounded-full transition-colors"
             >
               <XIcon className="h-4 w-4" />
               <span className="sr-only">Remove</span>

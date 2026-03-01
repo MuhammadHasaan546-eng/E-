@@ -13,15 +13,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ShopingProductTile from "./Product-tile";
 import ProductFilter from "@/components/product/filter";
-import { createSearchParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping/product-details";
+import { createCart, fetchCartItems } from "@/api/shop/cart";
+import { toast } from "sonner";
 
 const ShoppingListing = () => {
   const { productList, productDeatils } = useSelector(
     (state) => state.shopingProductSlice,
   );
-  console.log(productDeatils);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.shopCart);
 
   const [filter, setFilter] = useState({});
   const [sortOption, setSortOption] = useState(null);
@@ -41,7 +44,6 @@ const ShoppingListing = () => {
   }
 
   const handleSolt = (value) => {
-    console.log("selectValu", value);
     setSortOption(value);
   };
   function handleFilter(sectionId, optionId) {
@@ -68,9 +70,30 @@ const ShoppingListing = () => {
   }
   // getProductDeatils
   function handleGetProductDeatils(getCurrentProductId) {
-    console.log("getCurrentProductId", getCurrentProductId);
     dispatch(fetchProductDeatils(getCurrentProductId));
   }
+
+  // get add to cart
+  function handleAddToCard(getCurrentProductId) {
+    console.log(getCurrentProductId);
+    dispatch(
+      createCart({
+        userId: user.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      }),
+    ).then((data) => {
+      if (data.payload.success) {
+        dispatch(fetchCartItems(user.id));
+        toast.success(data.payload.message);
+      } else {
+        toast.error(data.payload.message);
+      }
+    });
+
+    // dispatch(createCart(getCurrentProductId));
+  }
+
   useEffect(() => {
     if (productDeatils !== null) {
       setOpenDetilsDialog(true);
@@ -96,7 +119,7 @@ const ShoppingListing = () => {
       SetsearchParms(new URLSearchParams(crateQuaryString));
     }
   }, [filter]);
-  console.log(productDeatils, "productDeatils");
+  console.log(cartItems);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6  ">
@@ -141,6 +164,7 @@ const ShoppingListing = () => {
                   key={product.id}
                   product={product}
                   handleGetProductDeatils={handleGetProductDeatils}
+                  handleAddToCard={handleAddToCard}
                 />
               ))
             : null}
@@ -151,6 +175,7 @@ const ShoppingListing = () => {
         open={openDetilsDialog}
         setOpen={setOpenDetilsDialog}
         productDetils={productDeatils}
+        handleAddToCard={handleAddToCard}
       />
     </div>
   );

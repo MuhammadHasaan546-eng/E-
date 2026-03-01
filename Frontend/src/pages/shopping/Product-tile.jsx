@@ -4,9 +4,13 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { brandOptionMap, categoryOptionMap } from "@/config";
 import React from "react";
 
-const ShopingProductTile = ({ product, handleGetProductDeatils }) => {
+const ShopingProductTile = ({
+  product,
+  handleGetProductDeatils,
+  handleAddToCard,
+}) => {
   return (
-    <Card className="w-full max-w-sm  mx-auto mb-6">
+    <Card className="w-full max-w-sm mx-auto transition-all duration-300 hover:scale-[1.03] hover:shadow-lg cursor-pointer">
       <div onClick={() => handleGetProductDeatils(product._id)}>
         <div className="relative">
           <img
@@ -43,10 +47,17 @@ const ShopingProductTile = ({ product, handleGetProductDeatils }) => {
             ) : null}
           </div>
         </CardContent>
-        <CardFooter>
-          <Button className="w-full">Add to Cart</Button>
-        </CardFooter>
       </div>
+      <CardFooter>
+        <Button
+          onClick={() => {
+            handleAddToCard(product._id);
+          }}
+          className="w-full"
+        >
+          Add to Cart
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

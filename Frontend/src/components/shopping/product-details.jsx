@@ -5,6 +5,7 @@ import { StarIcon, X } from "lucide-react"; // X icon
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Input } from "../ui/input";
 
 const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
   if (!productDetils) return <div>Loading...</div>;
@@ -22,7 +23,6 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
       md:shadow-2xl
     "
       >
-        {/* Close Button */}
         <button
           onClick={() => setOpen(false)}
           className="
@@ -39,8 +39,7 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
           <VisuallyHidden>{productDetils.title}</VisuallyHidden>
         </Dialog.Title>
 
-        {/* Product Image Section */}
-        <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-full bg-gray-100 flex items-center justify-center p-4 md:p-8">
+        <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-full   bg-gray-100 flex items-center justify-center p-4 md:p-8">
           <img
             src={productDetils.image}
             alt={productDetils.title}
@@ -48,9 +47,7 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
           />
         </div>
 
-        {/* Product Details & Reviews Section */}
         <div className="flex flex-col p-5 sm:p-8 md:overflow-y-auto">
-
           {/* Top Details */}
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-extrabold pr-10 text-gray-900">
@@ -81,7 +78,10 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
             {/* Add to Cart Container */}
             <div className="mt-6 space-y-4">
               <p className="text-sm text-gray-600">
-                Available in sizes: <span className="font-semibold text-gray-900">XS, S, M, L, XL</span>
+                Available in sizes:{" "}
+                <span className="font-semibold text-gray-900">
+                  XS, S, M, L, XL
+                </span>
               </p>
               <Button className="w-full py-6 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all">
                 Add to Cart
@@ -100,10 +100,14 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
               <div className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
                 {/* Added shrink-0 to prevent avatar from stretching horizontally if text is long */}
                 <Avatar className="w-10 h-10 border border-gray-200 shadow-sm shrink-0">
-                  <AvatarFallback className="bg-white text-gray-700 font-medium">H</AvatarFallback>
+                  <AvatarFallback className="bg-white text-gray-700 font-medium">
+                    H
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
-                  <h3 className="font-semibold text-gray-900 text-sm">Muhammad Hasaan</h3>
+                  <h3 className="font-semibold text-gray-900 text-sm">
+                    Muhammad Hasaan
+                  </h3>
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
                       <StarIcon
@@ -121,12 +125,18 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
               </div>
 
               {/* Additional reviews render here... */}
+              <div className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <Input
+                  placeholder="Write a review"
+                  className="w-full p-2 border border-gray-200 rounded-xl"
+                />
+                <Button>Post</Button>
+              </div>
             </div>
           </div>
         </div>
       </Dialog.Content>
     </Dialog.Root>
-
   );
 };
 

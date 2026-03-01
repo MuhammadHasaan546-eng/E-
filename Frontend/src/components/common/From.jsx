@@ -42,6 +42,11 @@ const CommonFrom = ({
             id={control.name}
             type={control.type}
             value={value}
+            min={control.min}
+            max={control.max}
+            step={control.step}
+            minLength={control.minLength}
+            maxLength={control.maxLength}
             onChange={(e) =>
               setFromData({
                 ...resolvedFormData,
@@ -85,6 +90,8 @@ const CommonFrom = ({
             id={control.name}
             name={control.name}
             value={value}
+            minLength={control.minLength}
+            maxLength={control.maxLength}
             onChange={(e) =>
               setFromData({
                 ...resolvedFormData,
@@ -103,6 +110,11 @@ const CommonFrom = ({
             id={control.name}
             type={control.type}
             value={value}
+            min={control.min}
+            max={control.max}
+            step={control.step}
+            minLength={control.minLength}
+            maxLength={control.maxLength}
             onChange={(e) =>
               setFromData({
                 ...resolvedFormData,

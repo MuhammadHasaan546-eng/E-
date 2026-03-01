@@ -1,4 +1,4 @@
-export const registerFromControls = [
+  export const registerFromControls = [
   {
     name: "userName",
     label: "User",
@@ -46,12 +46,14 @@ export const productFormControls = [
     placeholder: "Enter product title",
     componentType: "input",
     type: "text",
+    minLength: 3,
   },
   {
     name: "description",
     label: "Description",
     placeholder: "Enter product description",
     componentType: "textarea",
+    minLength: 10,
   },
   {
     name: "category",
@@ -115,6 +117,8 @@ export const productFormControls = [
     placeholder: "Enter product price",
     componentType: "input",
     type: "number",
+    min: 0.01,
+    step: "any",
   },
   {
     name: "salePrice",
@@ -123,6 +127,8 @@ export const productFormControls = [
 
     componentType: "input",
     type: "number",
+    min: 0,
+    step: "any",
   },
 
   {
@@ -131,6 +137,7 @@ export const productFormControls = [
     placeholder: "Enter stock quantity",
     componentType: "input",
     type: "number",
+    min: 0,
   },
 ];
 
