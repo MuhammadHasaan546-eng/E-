@@ -13,15 +13,32 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ShopingProductTile from "./Product-tile";
 import ProductFilter from "@/components/product/filter";
+import { createSearchParams, useSearchParams } from "react-router-dom";
 
 const ShoppingListing = () => {
   const { productList } = useSelector((state) => state.shopingProductSlice);
   const [filter, setFilter] = useState({});
   const [sortOption, setSortOption] = useState(null);
+  const [searchParms, SetsearchParms] = useSearchParams();
 
   const dispatch = useDispatch();
 
-  const handleSolt = (value) => {};
+  function createSearchParamsHelper(filterParms) {
+    const quaryPrams = [];
+
+    for (const [key, value] of Object.entries(filterParms)) {
+      if (Array.isArray(value) && value.length > 0) {
+        const parmsValue = value.join(",");
+        quaryPrams.push(`${key}=${encodeURIComponent(parmsValue)}`);
+      }
+    }
+    return quaryPrams.join("&");
+  }
+
+  const handleSolt = (value) => {
+    console.log("selectValu", value);
+    setSortOption(value);
+  };
   function handleFilter(sectionId, optionId) {
     let cpyFilter = { ...filter };
 
@@ -40,7 +57,6 @@ const ShoppingListing = () => {
     } else {
       cpyFilter[sectionId] = [optionId];
     }
-    console.log(cpyFilter);
 
     setFilter(cpyFilter);
     sessionStorage.setItem("filter", JSON.stringify(cpyFilter));
@@ -52,10 +68,21 @@ const ShoppingListing = () => {
     setSortOption("price-lowtohigh");
   }, []);
   useEffect(() => {
-    dispatch(fetchAllProducts());
+    if (filter !== null && sortOption !== null)
+      dispatch(
+        fetchAllProducts({ filterParams: filter, sortParams: sortOption }),
+      );
+  }, [dispatch, filter, sortOption]);
+
+  useEffect(() => {
+    if (filter && Object.keys(filter).length > 0) {
+      const crateQuaryString = createSearchParamsHelper(filter);
+      SetsearchParms(new URLSearchParams(crateQuaryString));
+    }
   }, [filter]);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6  ">
+    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6  ">
       <ProductFilter filter={filter} handleFilter={handleFilter} />
       <div className="bg-background w-full rounded-lg shadow-sm">
         <div className="p-4 border-b flex items-center justify-between gap-4">
