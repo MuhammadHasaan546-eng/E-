@@ -7,7 +7,7 @@ import {
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  cart: [],
+  cartItems: [],
   isLoading: false,
   error: null,
 };
@@ -24,12 +24,12 @@ const shopingCartSlice = createSlice({
       })
       .addCase(createCart.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cart = action.payload.data;
+        state.cartItems = action.payload.data;
       })
       .addCase(createCart.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.cart = [];
+        state.cartItems = [];
         console.log(action.payload);
       });
 
@@ -40,12 +40,12 @@ const shopingCartSlice = createSlice({
       })
       .addCase(fetchCartItems.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cart = action.payload.data;
+        state.cartItems = action.payload.data;
       })
       .addCase(fetchCartItems.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.cart = [];
+        state.cartItems = [];
       });
 
     // delete cart
@@ -55,12 +55,12 @@ const shopingCartSlice = createSlice({
       })
       .addCase(deleteCartItem.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cart = action.payload.data;
+        state.cartItems = action.payload.data;
       })
       .addCase(deleteCartItem.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.cart = [];
+        state.cartItems = [];
       });
 
     // update cart
@@ -70,12 +70,12 @@ const shopingCartSlice = createSlice({
       })
       .addCase(updateCartItem.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cart = action.payload.data;
+        state.cartItems = action.payload.data;
       })
       .addCase(updateCartItem.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.cart = [];
+        state.cartItems = [];
       });
   },
 });

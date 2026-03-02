@@ -1,5 +1,5 @@
 import { BaggageClaim, HousePlug, LogOut, Menu, UserRound } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
@@ -22,6 +22,7 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { logoutUser } from "@/api/auth/logout";
 import UserCartWarp from "./cart-wrap";
+import { fetchCartItems } from "@/api/shop/cart";
 
 const MenuIcons = () => {
   const location = useLocation();
@@ -60,7 +61,11 @@ const HeaderRightContent = () => {
   const handleLogout = () => {
     dispatch(logoutUser());
   };
+  useEffect(() => {
+    dispatch(fetchCartItems(user.id));
+  }, [dispatch]);
 
+  const cartItems = useSelector((state) => state.shopCart.cartItems);
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
       <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
@@ -71,9 +76,21 @@ const HeaderRightContent = () => {
           onClick={() => setOpenCartSheet(true)}
         >
           <BaggageClaim className="h-5 w-5" />
+          {cartItems?.items?.length > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-2 ring-background animate-in zoom-in duration-300">
+              {cartItems.items.length}
+            </span>
+          )}
           <span className="sr-only">Cart</span>
         </Button>
-        <UserCartWarp open={openCartSheet} onOpenChange={setOpenCartSheet} />
+        <UserCartWarp
+          setOpenCartSheet={setOpenCartSheet}
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0
+              ? cartItems.items
+              : []
+          }
+        />
       </Sheet>
 
       <DropdownMenu>
@@ -120,6 +137,7 @@ const HeaderRightContent = () => {
 
 const ShoppinHeader = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl shadow-sm transition-all duration-300">

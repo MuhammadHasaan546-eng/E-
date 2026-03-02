@@ -1,14 +1,36 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { StarIcon, X } from "lucide-react"; // X icon
+import { StarIcon, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Input } from "../ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { createCart, fetchCartItems } from "@/api/shop/cart";
+import { toast } from "sonner";
 
 const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
   if (!productDetils) return <div>Loading...</div>;
+
+  function handleAddToCart(getCurrentProductId) {
+    dispatch(
+      createCart({
+        userId: user?.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      }),
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
+        toast.success(data.payload.message);
+      } else {
+        toast.error(data?.payload?.message || "Failed to add to cart");
+      }
+    });
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -48,7 +70,6 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
         </div>
 
         <div className="flex flex-col p-5 sm:p-8 md:overflow-y-auto">
-          {/* Top Details */}
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-extrabold pr-10 text-gray-900">
               {productDetils.title}
@@ -57,7 +78,6 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
               {productDetils.description}
             </p>
 
-            {/* Price */}
             <div className="flex flex-wrap items-end gap-3 mt-5">
               {productDetils.salePrice > 0 ? (
                 <>
@@ -75,7 +95,6 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
               )}
             </div>
 
-            {/* Add to Cart Container */}
             <div className="mt-6 space-y-4">
               <p className="text-sm text-gray-600">
                 Available in sizes:{" "}
@@ -83,22 +102,22 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
                   XS, S, M, L, XL
                 </span>
               </p>
-              <Button className="w-full py-6 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all">
+              <Button
+                className="w-full py-6 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all"
+                onClick={() => handleAddToCart(productDetils._id)}
+              >
                 Add to Cart
               </Button>
             </div>
           </div>
 
-          {/* Reviews Section */}
           <div className="mt-8 pt-6 border-t border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-4 sticky top-0 bg-white z-10 py-2">
               Reviews
             </h2>
 
             <div className="space-y-4">
-              {/* Example Review */}
               <div className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                {/* Added shrink-0 to prevent avatar from stretching horizontally if text is long */}
                 <Avatar className="w-10 h-10 border border-gray-200 shadow-sm shrink-0">
                   <AvatarFallback className="bg-white text-gray-700 font-medium">
                     H
@@ -124,7 +143,6 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
                 </div>
               </div>
 
-              {/* Additional reviews render here... */}
               <div className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <Input
                   placeholder="Write a review"

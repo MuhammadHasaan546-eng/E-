@@ -47,7 +47,7 @@ export const addChart = async (req, res) => {
 
 export const fetchChartItems = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params;
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -99,7 +99,7 @@ export const fetchChartItems = async (req, res) => {
 export const updateChartItem = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
-    if (userId || !productId || quantity <= 0) {
+    if (!userId || !productId || quantity <= 0) {
       return res.status(400).json({
         success: false,
         message: "Invalid data",
@@ -158,7 +158,7 @@ export const updateChartItem = async (req, res) => {
 export const deleteChartItem = async (req, res) => {
   try {
     const { userId, productId } = req.params;
-    if (userId || !productId) {
+    if (!userId || !productId) {
       return res.status(400).json({
         success: false,
         message: "Invalid data",

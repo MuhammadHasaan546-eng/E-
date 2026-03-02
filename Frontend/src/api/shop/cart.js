@@ -7,7 +7,6 @@ export const createCart = createAsyncThunk(
   "shop/cart/create",
   async ({ userId, productId, quantity }, thunkAPI) => {
     try {
-      console.log(userId, productId, quantity);
       const response = await axios.post(
         `http://localhost:3000/api/shop/cart/add`,
         {
@@ -21,7 +20,6 @@ export const createCart = createAsyncThunk(
           },
         },
       );
-      console.log(response.data);
       return await response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -32,6 +30,7 @@ export const createCart = createAsyncThunk(
 export const fetchCartItems = createAsyncThunk(
   "shop/cart/fetch",
   async (userId, thunkAPI) => {
+    console.log(userId, "userId");
     try {
       const response = await axios.get(
         `http://localhost:3000/api/shop/cart/get/${userId}`,
@@ -41,6 +40,7 @@ export const fetchCartItems = createAsyncThunk(
           },
         },
       );
+      console.log(response.data);
       return await response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -50,6 +50,7 @@ export const fetchCartItems = createAsyncThunk(
 export const deleteCartItem = createAsyncThunk(
   "shop/cart/delete",
   async ({ userId, productId }, thunkAPI) => {
+    console.log(userId, "userId", productId, "productId");
     try {
       const response = await axios.delete(
         `http://localhost:3000/api/shop/cart/${userId}/${productId}`,

@@ -24,7 +24,6 @@ const ShoppingListing = () => {
   );
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const { cartItems } = useSelector((state) => state.shopCart);
 
   const [filter, setFilter] = useState({});
   const [sortOption, setSortOption] = useState(null);
@@ -119,7 +118,6 @@ const ShoppingListing = () => {
       SetsearchParms(new URLSearchParams(crateQuaryString));
     }
   }, [filter]);
-  console.log(cartItems);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6  ">
