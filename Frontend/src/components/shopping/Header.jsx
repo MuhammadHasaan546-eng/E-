@@ -26,16 +26,40 @@ import { fetchCartItems } from "@/api/shop/cart";
 
 const MenuIcons = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  function handleNavigate(getCurrentItem) {
+    sessionStorage.removeItem("filter");
+
+    if (
+      getCurrentItem.id !== "home" &&
+      getCurrentItem.id !== "products" &&
+      getCurrentItem.id !== "search"
+    ) {
+      sessionStorage.setItem(
+        "filter",
+        JSON.stringify({ categories: [getCurrentItem.id] }),
+      );
+      navigate(`/shop/listing?categories=${getCurrentItem.id}`);
+    } else {
+      navigate(getCurrentItem.path);
+    }
+  }
 
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderIcon.map((menuIcon) => {
-        const isActive = location.pathname === menuIcon.path;
+        const isActive =
+          location.pathname === menuIcon.path &&
+          (menuIcon.id === "home"
+            ? !location.search
+            : location.search.includes(`categories=${menuIcon.id}`));
+
         return (
-          <Link
+          <div
             key={menuIcon.id}
-            to={menuIcon.path}
-            className={`relative text-sm font-semibold transition-all duration-300 hover:text-primary ${
+            onClick={() => handleNavigate(menuIcon)}
+            className={`cursor-pointer relative text-sm font-semibold transition-all duration-300 hover:text-primary ${
               isActive ? "text-primary" : "text-muted-foreground"
             } group`}
           >
@@ -45,7 +69,7 @@ const MenuIcons = () => {
                 isActive ? "w-full" : "w-0 group-hover:w-full"
               }`}
             ></span>
-          </Link>
+          </div>
         );
       })}
     </nav>

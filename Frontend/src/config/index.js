@@ -1,4 +1,4 @@
-  export const registerFromControls = [
+export const registerFromControls = [
   {
     name: "userName",
     label: "User",
@@ -143,12 +143,11 @@ export const productFormControls = [
 
 export const shoppingViewHeaderIcon = [
   { id: "home", label: "Home", path: "/shop/home" },
-
-  { id: "men", label: "Men", path: "/shop/listing" },
-  { id: "women", label: "Women", path: "/shop/listing" },
-  { id: "kids", label: "Kids", path: "/shop/listing" },
-  { id: "footwear", label: "Footwear", path: "/shop/listing" },
-  { id: "jewelry", label: "Jewelry", path: "/shop/listing" },
+  { id: "mens_clothing", label: "Men", path: "/shop/listing" },
+  { id: "womens_clothing", label: "Women", path: "/shop/listing" },
+  { id: "kids_clothing", label: "Kids", path: "/shop/listing" },
+  { id: "shoes", label: "Footwear", path: "/shop/listing" },
+  { id: "watches", label: "Watches", path: "/shop/listing" },
   { id: "accessories", label: "Accessories", path: "/shop/listing" },
   { id: "bags", label: "Bags", path: "/shop/listing" },
 ];

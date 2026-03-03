@@ -1,5 +1,6 @@
 import { fetchAllProducts, fetchProductDeatils } from "@/api/shop/product";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,7 +20,7 @@ import { createCart, fetchCartItems } from "@/api/shop/cart";
 import { toast } from "sonner";
 
 const ShoppingListing = () => {
-  const { productList, productDeatils } = useSelector(
+  const { productList, productDeatils, isLoading } = useSelector(
     (state) => state.shopingProductSlice,
   );
   const { user } = useSelector((state) => state.auth);
@@ -89,8 +90,6 @@ const ShoppingListing = () => {
         toast.error(data.payload.message);
       }
     });
-
-    // dispatch(createCart(getCurrentProductId));
   }
 
   useEffect(() => {
@@ -100,11 +99,23 @@ const ShoppingListing = () => {
   }, [productDeatils]);
 
   useEffect(() => {
+    setSortOption("price-lowtohigh");
     const savedFilter = sessionStorage.getItem("filter");
     if (savedFilter) setFilter(JSON.parse(savedFilter));
-
-    setSortOption("price-lowtohigh");
   }, []);
+
+  // Re-sync filter from session storage if the URL search parameters change
+  useEffect(() => {
+    const savedFilter = sessionStorage.getItem("filter");
+    if (savedFilter) {
+      setFilter((prev) => {
+        const parsed = JSON.parse(savedFilter);
+        return JSON.stringify(prev) !== JSON.stringify(parsed) ? parsed : prev;
+      });
+    } else {
+      setFilter((prev) => (Object.keys(prev).length > 0 ? {} : prev));
+    }
+  }, [searchParms]);
   useEffect(() => {
     if (filter !== null && sortOption !== null)
       dispatch(
@@ -156,16 +167,44 @@ const ShoppingListing = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 ">
-          {productList.length > 0
-            ? productList.map((product) => (
-                <ShopingProductTile
-                  key={product.id}
-                  product={product}
-                  handleGetProductDeatils={handleGetProductDeatils}
-                  handleAddToCard={handleAddToCard}
-                />
-              ))
-            : null}
+          {isLoading ? (
+            [...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="rounded-lg border bg-card shadow-sm overflow-hidden"
+              >
+                <Skeleton className="w-full h-64 rounded-none" />
+                <div className="p-4 space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-1/4" />
+                  </div>
+                  <div className="flex justify-between">
+                    <Skeleton className="h-5 w-1/4" />
+                    <Skeleton className="h-5 w-1/5" />
+                  </div>
+                </div>
+                <div className="p-4 pt-0">
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+              </div>
+            ))
+          ) : productList.length > 0 ? (
+            productList.map((product) => (
+              <ShopingProductTile
+                key={product.id}
+                product={product}
+                handleGetProductDeatils={handleGetProductDeatils}
+                handleAddToCard={handleAddToCard}
+              />
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-400">
+              <p className="text-lg font-medium">No Products Found</p>
+              <p className="text-sm mt-1">Try adjusting your filters</p>
+            </div>
+          )}
         </div>
       </div>
 
