@@ -3,6 +3,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  updateProfile,
 } from "../../controllers/auth/auth.controller.js";
 import { authChecked } from "../../middleware/auth/auth-checked.js";
 const router = express.Router();
@@ -21,5 +22,7 @@ router.get("/check-auth", authChecked, (req, res) => {
     user,
   });
 });
+
+router.put("/profile/:userId", updateProfile);
 
 export default router;

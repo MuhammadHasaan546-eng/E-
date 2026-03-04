@@ -51,7 +51,6 @@ const adminProductSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state) => {
         state.isLoading = false;
-        // state.productLists = [];
       });
   },
 });

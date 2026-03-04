@@ -2,6 +2,7 @@ import { chexkAuth } from "@/api/auth/check-auth";
 import { loginUser } from "@/api/auth/login";
 import { logoutUser } from "@/api/auth/logout";
 import { registerUser } from "@/api/auth/register";
+import { updateProfile } from "@/api/auth/update-profile";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -70,8 +71,21 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
     });
+
+    // update profile
+    builder.addCase(updateProfile.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(updateProfile.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload.success ? action.payload.user : state.user;
+    });
+    builder.addCase(updateProfile.rejected, (state) => {
+      state.isLoading = false;
+    });
   },
 });
 
 export const { setUser } = authSlice.actions;
+export { logoutUser, updateProfile };
 export default authSlice.reducer;

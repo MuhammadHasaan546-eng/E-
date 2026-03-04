@@ -103,12 +103,9 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
             </span>
           )}
 
-          {/* Title */}
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight pr-8">
             {productDetils.title}
           </h1>
-
-          {/* Star Rating Row */}
           <div className="flex items-center gap-2 mt-3">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
@@ -122,12 +119,9 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
             <span className="text-xs text-gray-400">· 128 reviews</span>
           </div>
 
-          {/* Description */}
           <p className="text-gray-500 mt-4 text-sm leading-relaxed line-clamp-3">
             {productDetils.description}
           </p>
-
-          {/* Price */}
           <div className="flex items-baseline gap-3 mt-5">
             {productDetils.salePrice > 0 ? (
               <>
@@ -149,7 +143,6 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
             )}
           </div>
 
-          {/* Divider */}
           <div className="my-5 border-t border-gray-100" />
 
           <Button
@@ -167,14 +160,12 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
             Add to Cart
           </Button>
 
-          {/* ── Reviews Section ── */}
           <div className="mt-8">
             <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
               <span className="inline-block w-1 h-5 bg-blue-500 rounded-full" />
               Customer Reviews
             </h2>
 
-            {/* Existing review */}
             <div className="flex gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
               <Avatar className="w-9 h-9 border-2 border-blue-100 shrink-0">
                 <AvatarFallback className="bg-blue-600 text-white text-sm font-bold">
@@ -203,7 +194,6 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
               </div>
             </div>
 
-            {/* Write a Review */}
             <div className="flex gap-2 mt-4 items-center">
               <Input
                 placeholder="Write your review..."

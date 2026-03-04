@@ -64,12 +64,11 @@ const AdminSidebar = ({ open, onOpenChange }) => {
 
   const handleNavigate = (path) => {
     navigate(path);
-    onOpenChange(false); // mobile drawer close
+    onOpenChange(false);
   };
 
   return (
     <>
-      {/* Mobile Sidebar */}
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="left" className="w-64 p-6">
           <div className="flex flex-col h-full">

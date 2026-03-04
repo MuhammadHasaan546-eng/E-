@@ -24,11 +24,12 @@ import { logoutUser } from "@/api/auth/logout";
 import UserCartWarp from "./cart-wrap";
 import { fetchCartItems } from "@/api/shop/cart";
 
-const MenuIcons = () => {
+const MenuIcons = ({ setOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   function handleNavigate(getCurrentItem) {
+    if (setOpen) setOpen(false);
     sessionStorage.removeItem("filter");
 
     if (
@@ -76,7 +77,7 @@ const MenuIcons = () => {
   );
 };
 
-const HeaderRightContent = () => {
+const HeaderRightContent = ({ setOpen }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ const HeaderRightContent = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    if (setOpen) setOpen(false);
   };
   useEffect(() => {
     dispatch(fetchCartItems(user.id));
@@ -140,7 +142,10 @@ const HeaderRightContent = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => navigate("/shop/account")}
+            onClick={() => {
+              navigate("/shop/account");
+              if (setOpen) setOpen(false);
+            }}
             className="cursor-pointer gap-2 transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
           >
             <UserRound className="h-4 w-4" />
@@ -162,11 +167,11 @@ const HeaderRightContent = () => {
 const ShoppinHeader = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
+  const [openMenu, setOpenMenu] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl shadow-sm transition-all duration-300">
       <div className="flex h-16 items-center justify-between px-4 md:px-6 max-w-7xl mx-auto relative">
-        {/* Logo */}
         <Link
           to="/shop/home"
           className="flex items-center gap-2 group transition-transform duration-300 hover:scale-[1.02]"
@@ -179,8 +184,7 @@ const ShoppinHeader = () => {
           </span>
         </Link>
 
-        {/* Mobile Sheet Menu */}
-        <Sheet>
+        <Sheet open={openMenu} onOpenChange={setOpenMenu}>
           <SheetTrigger asChild>
             <Button
               variant="ghost"
@@ -206,14 +210,13 @@ const ShoppinHeader = () => {
             </SheetHeader>
 
             <div className="flex flex-col space-y-6">
-              <MenuIcons />
+              <MenuIcons setOpen={setOpenMenu} />
               <div className="h-px w-full bg-border/50 rounded-full" />
-              <HeaderRightContent />
+              <HeaderRightContent setOpen={setOpenMenu} />
             </div>
           </SheetContent>
         </Sheet>
 
-        {/* Desktop Menu */}
         <div className="hidden lg:flex lg:items-center lg:gap-8 lg:absolute lg:left-1/2 lg:-translate-x-1/2">
           <MenuIcons />
         </div>

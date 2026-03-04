@@ -2,8 +2,6 @@ import User from "../../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-// register
-
 export const registerUser = async (req, res) => {
   const { userName, email, password } = req.body;
 
@@ -37,8 +35,6 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// login
-
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   const userExists = await User.findOne({ email });
@@ -64,6 +60,7 @@ export const loginUser = async (req, res) => {
           email: userExists.email,
           role: userExists.role,
           username: userExists.username,
+          avatar: userExists.avatar,
         },
         process.env.JWT_SECRET,
         {
@@ -87,6 +84,7 @@ export const loginUser = async (req, res) => {
             username: userExists.username,
             email: userExists.email,
             role: userExists.role,
+            avatar: userExists.avatar,
           },
         });
     }
@@ -98,8 +96,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// logout
-
 export const logoutUser = async (req, res) => {
   res.clearCookie("token").status(200).json({
     success: true,
@@ -107,7 +103,6 @@ export const logoutUser = async (req, res) => {
   });
 };
 
-// check auth
 const authMiddleware = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
@@ -124,6 +119,67 @@ const authMiddleware = async (req, res, next) => {
     return res.status(401).json({
       success: true,
       message: "Unauthorized user",
+    });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { username, avatar } = req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (username) user.username = username;
+    if (avatar) user.avatar = avatar;
+
+    await user.save();
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        username: user.username,
+        avatar: user.avatar,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "60mins",
+      },
+    );
+
+    const options = {
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      secure: false,
+    };
+
+    res
+      .cookie("token", token, options)
+      .status(200)
+      .json({
+        success: true,
+        message: "Profile updated successfully",
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar,
+        },
+      });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

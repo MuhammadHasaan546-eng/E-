@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "user",
   },
+  avatar: {
+    type: String,
+    default: "",
+  },
   isAdmin: {
     type: Boolean,
     default: false,

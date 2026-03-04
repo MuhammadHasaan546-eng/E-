@@ -9,6 +9,7 @@ import adminProductsRoutes from "./routes/admin/product-routes.js";
 import shopProductsRoutes from "./routes/shop/product.router.js";
 import authRoute from "./routes/auth/auth-router.js";
 import cartRoute from "./routes/shop/chart.router.js";
+import shopAddressRoute from "./routes/shop/address-routes.js";
 
 const app = express();
 
@@ -46,6 +47,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/admin/products", adminProductsRoutes);
 app.use("/api/shop/products", shopProductsRoutes);
 app.use("/api/shop/cart", cartRoute);
+app.use("/api/shop/address", shopAddressRoute);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

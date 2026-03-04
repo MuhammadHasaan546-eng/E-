@@ -60,11 +60,7 @@ export const productFormControls = [
     label: "Category",
     placeholder: "Select category",
     componentType: "select",
-    // options: [
-    //   { label: "Men", value: "men" },
-    //   { label: "Women", value: "women" },
-    //   { label: "Other", value: "other" },
-    // ],
+
     options: [
       { label: "Men's Clothing", value: "mens_clothing" },
       { label: "Women's Clothing", value: "womens_clothing" },
@@ -81,11 +77,6 @@ export const productFormControls = [
     placeholder: "Enter brand name",
     componentType: "select",
 
-    // options: [
-    //   { label: "Nike", value: "nike" },
-    //   { label: "Adidas", value: "adidas" },
-    //   { label: "Puma", value: "puma" },
-    // ],
     options: [
       { label: "Nike", value: "nike" },
       { label: "Adidas", value: "adidas" },
