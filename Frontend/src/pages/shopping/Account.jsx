@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../../components/ui/sheet";
 import axios from "axios";
 import ShoppingAddress from "../../components/shopping/address";
+import ShoppingOrder from "../../components/shopping/order";
 
 const ShoppingAccount = () => {
   const dispatch = useDispatch();
@@ -122,21 +123,7 @@ const ShoppingAccount = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col items-center justify-center py-16 text-center text-slate-500">
-                <div className="h-24 w-24 bg-slate-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-slate-100">
-                  <ShoppingBag size={40} className="text-slate-300" />
-                </div>
-                <h3 className="text-xl font-medium text-slate-700 tracking-wide mb-2">
-                  No orders yet
-                </h3>
-                <p className="max-w-md text-slate-500 font-light leading-relaxed">
-                  When you place an order, it will appear here so you can track
-                  its status and review your premium purchases.
-                </p>
-                <Button className="mt-8 bg-slate-900 text-white hover:bg-slate-800 rounded-full px-10 py-6 transition-transform hover:scale-105 active:scale-95 duration-300 shadow-xl shadow-slate-900/20 tracking-wider">
-                  Start Shopping
-                </Button>
-              </div>
+              <ShoppingOrder />
             </CardContent>
           </Card>
         );

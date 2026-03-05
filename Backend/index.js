@@ -10,6 +10,8 @@ import shopProductsRoutes from "./routes/shop/product.router.js";
 import authRoute from "./routes/auth/auth-router.js";
 import cartRoute from "./routes/shop/chart.router.js";
 import shopAddressRoute from "./routes/shop/address-routes.js";
+import shopOrderRouter from "./routes/shop/order-routes.js";
+import adminOrderRouter from "./routes/admin/admin-order.routes.js";
 
 const app = express();
 
@@ -48,6 +50,8 @@ app.use("/api/admin/products", adminProductsRoutes);
 app.use("/api/shop/products", shopProductsRoutes);
 app.use("/api/shop/cart", cartRoute);
 app.use("/api/shop/address", shopAddressRoute);
+app.use("/api/shop/order", shopOrderRouter);
+app.use("/api/admin/orders", adminOrderRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

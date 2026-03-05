@@ -15,7 +15,11 @@ const initialState = {
 const shopingCartSlice = createSlice({
   name: "shopingCart",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    clearCart: (state) => {
+      state.cartItems = [];
+    },
+  },
   extraReducers: (builder) => {
     // create cart
     builder
@@ -79,5 +83,7 @@ const shopingCartSlice = createSlice({
       });
   },
 });
+
+export const { clearCart } = shopingCartSlice.actions;
 
 export default shopingCartSlice.reducer;

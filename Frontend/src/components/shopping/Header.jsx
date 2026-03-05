@@ -221,7 +221,6 @@ const ShoppinHeader = () => {
           <MenuIcons />
         </div>
 
-        {/* Auth Section */}
         <div className="hidden lg:block">
           <HeaderRightContent />
         </div>

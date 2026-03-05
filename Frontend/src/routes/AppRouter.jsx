@@ -11,9 +11,11 @@ import AuthLogin from "@/pages/auth/Login";
 import AuthRegister from "@/pages/auth/Register";
 import NotFound from "@/pages/Error/NotFound";
 import ShoppingAccount from "@/pages/shopping/Account";
-import ShoppingCheckout from "@/pages/shopping/Checkout";
+import ShoppingCheckout from "@/pages/shopping/ShoppingCheckout";
 import ShoppingHome from "@/pages/shopping/Home";
 import ShoppingListing from "@/pages/shopping/Listing";
+import PaypalReturnPage from "@/pages/shopping/PaypalReturnPage";
+import PaymentSuccessPage from "@/pages/shopping/PaymentSuccessPage";
 import UnAuth from "@/pages/unauth";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -86,6 +88,8 @@ function AppRouter() {
         { path: "listing", element: <ShoppingListing /> },
         { path: "checkout", element: <ShoppingCheckout /> },
         { path: "account", element: <ShoppingAccount /> },
+        { path: "paypal-return", element: <PaypalReturnPage /> },
+        { path: "payment-success", element: <PaymentSuccessPage /> },
       ],
     },
 

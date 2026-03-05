@@ -26,7 +26,7 @@ const initialAddressFormData = {
   state: "",
 };
 
-const ShoppingAddress = () => {
+const ShoppingAddress = ({ selectedId, setSelectedAddr, hideHeader }) => {
   const [formData, setFormData] = useState(initialAddressFormData);
   const [currentEditedId, setCurrentEditedId] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -117,28 +117,30 @@ const ShoppingAddress = () => {
 
   return (
     <>
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-6 mb-6 gap-4">
-        <div>
-          <CardTitle className="text-2xl font-serif text-slate-800">
-            Saved Addresses
-          </CardTitle>
-          <CardDescription className="text-slate-500">
-            Manage your delivery locations.
-          </CardDescription>
-        </div>
-        <Button
-          onClick={() => {
-            setFormData(initialAddressFormData);
-            setCurrentEditedId(null);
-            setIsFormOpen(!isFormOpen);
-          }}
-          className="bg-slate-900 text-white hover:bg-slate-800 rounded-lg px-6"
-        >
-          {isFormOpen ? "Cancel" : "Add New Address"}
-        </Button>
-      </CardHeader>
+      {!hideHeader && (
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-6 mb-6 gap-4">
+          <div>
+            <CardTitle className="text-2xl font-serif text-slate-800">
+              Saved Addresses
+            </CardTitle>
+            <CardDescription className="text-slate-500">
+              Manage your delivery locations.
+            </CardDescription>
+          </div>
+          <Button
+            onClick={() => {
+              setFormData(initialAddressFormData);
+              setCurrentEditedId(null);
+              setIsFormOpen(!isFormOpen);
+            }}
+            className="bg-slate-900 text-white hover:bg-slate-800 rounded-lg px-6"
+          >
+            {isFormOpen ? "Cancel" : "Add New Address"}
+          </Button>
+        </CardHeader>
+      )}
 
-      <CardContent>
+      <CardContent className={hideHeader ? "p-0" : ""}>
         {/* The Form */}
         {isFormOpen && (
           <div className="mb-8 p-6 bg-slate-50/50 rounded-2xl border border-slate-100 animate-in fade-in slide-in-from-top-4">
@@ -278,6 +280,8 @@ const ShoppingAddress = () => {
           {addressList && addressList.length > 0 ? (
             addressList.map((singleAddressItem) => (
               <AddressCard
+                selectedId={selectedId}
+                setSelectedAddr={setSelectedAddr}
                 key={singleAddressItem._id || singleAddressItem.id}
                 addressInfo={singleAddressItem}
                 handleDeleteAddress={handleDeleteAddress}

@@ -11,6 +11,8 @@ import { ShoppingBag, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function UserCartWarp({ cartItems, setOpenCartSheet }) {
+  const navigate = useNavigate();
+
   const totalCartAmount =
     cartItems && cartItems.length > 0
       ? cartItems.reduce(
@@ -97,7 +99,13 @@ function UserCartWarp({ cartItems, setOpenCartSheet }) {
             </div>
           </div>
 
-          <Button className="w-full h-12 rounded-xl text-md font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group">
+          <Button
+            className="w-full h-12 rounded-xl text-md font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group"
+            onClick={() => {
+              navigate("/shop/checkout");
+              setOpenCartSheet(false);
+            }}
+          >
             Checkout
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>
