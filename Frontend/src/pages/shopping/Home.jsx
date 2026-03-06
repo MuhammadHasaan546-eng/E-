@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import fashionBanner from "@/assets/fashion_banner_1_png_1772470367314.png";
 import luxuryBanner from "@/assets/luxury_banner_2_png_1772470392721.png";
 import newSeasonBanner from "@/assets/new_season_banner_3_png_1772470431446.png";
+import banner1 from "@/assets/banner.jpg";
 
 // Temporary fallbacks for missing images - replace these imports when the real files are added
 const summerCollection = fashionBanner;
@@ -115,7 +116,7 @@ const ShoppingHome = () => {
       title: "Discover Premium Fashion",
       subtitle:
         "Explore our curated collection of the finest brands and trends",
-      image: fashionBanner,
+      image: banner1,
       gradient: "from-violet-600/80 via-purple-600/80 to-indigo-700/80",
     },
     {

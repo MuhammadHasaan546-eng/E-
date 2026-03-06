@@ -27,7 +27,11 @@ function UserCartWarp({ cartItems, setOpenCartSheet }) {
       : 0;
 
   return (
-    <SheetContent className="sm:max-w-md flex flex-col p-0 border-l border-border/40 bg-background/95 backdrop-blur-xl">
+    <SheetContent
+      className="sm:max-w-md flex flex-col p-0 border-l border-border/40 bg-background/95 backdrop-blur-xl"
+      aria-describedby={undefined}
+      onCloseAutoFocus={(e) => e.preventDefault()}
+    >
       <SheetHeader className="p-6 border-b border-border/40 bg-muted/20">
         <SheetTitle className="flex items-center gap-3 text-2xl font-extrabold tracking-tight">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">

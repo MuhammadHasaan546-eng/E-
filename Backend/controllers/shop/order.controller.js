@@ -1,6 +1,7 @@
 import Order from "../../models/Order.js";
 import Cart from "../../models/Cart.js";
 import paypal from "../../helpers/paypal.js";
+import Product from "../../models/Product.js";
 
 export const createOrder = async (req, res) => {
   try {

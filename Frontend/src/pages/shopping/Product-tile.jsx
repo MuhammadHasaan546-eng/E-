@@ -10,10 +10,10 @@ const ShopingProductTile = ({
   handleAddToCard,
 }) => {
   return (
-    <Card className="group relative w-full max-w-sm mx-auto overflow-hidden rounded-[2rem] border-none bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-700 hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] hover:-translate-y-3 cursor-pointer">
+    <Card className="group relative w-full mx-auto overflow-hidden rounded-[2rem] border-none bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-700 hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] hover:-translate-y-3 cursor-pointer ">
       <div
         onClick={() => handleGetProductDeatils(product._id)}
-        className="relative aspect-square overflow-hidden bg-muted/5 shadow-inner"
+        className="relative aspect-3/2 overflow-hidden bg-muted/5 shadow-inner"
       >
         <img
           src={product.image}
@@ -29,10 +29,21 @@ const ShopingProductTile = ({
             </span>
           </div>
         </div>
-
-        {product.salePrice > 0 ? (
+        {product.stock === 0 ? (
           <div className="absolute top-3 left-3 z-10">
             <Badge className="bg-red-500 text-white border-none px-3 py-1 font-black text-[9px] uppercase tracking-widest rounded-full shadow-lg shadow-red-500/20">
+              Out of Stock
+            </Badge>
+          </div>
+        ) : product.stock <= 10 ? (
+          <div className="absolute top-3 left-3 z-10">
+            <Badge className="bg-yellow-500 text-white border-none px-3 py-1 font-black text-[9px] uppercase tracking-widest rounded-full shadow-lg shadow-yellow-500/20">
+              {`Only ${product.stock} left`}
+            </Badge>
+          </div>
+        ) : product.salePrice > 0 ? (
+          <div className="absolute top-3 left-3 z-10">
+            <Badge className="bg-green-500 text-white border-none px-3 py-1 font-black text-[9px] uppercase tracking-widest rounded-full shadow-lg shadow-green-500/20">
               Sale
             </Badge>
           </div>
@@ -75,15 +86,24 @@ const ShopingProductTile = ({
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAddToCard(product._id);
-          }}
-          className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/10 transition-all duration-500 hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95"
-        >
-          Add to Cart
-        </Button>
+        {product.stock === 0 ? (
+          <Button
+            disabled
+            className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/10 transition-all duration-500 hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95"
+          >
+            Out of Stock
+          </Button>
+        ) : (
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToCard(product._id);
+            }}
+            className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/10 transition-all duration-500 hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95"
+          >
+            Add to Cart
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

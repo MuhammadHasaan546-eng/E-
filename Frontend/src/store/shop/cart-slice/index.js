@@ -33,7 +33,6 @@ const shopingCartSlice = createSlice({
       .addCase(createCart.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.cartItems = [];
         console.log(action.payload);
       });
 
@@ -64,7 +63,6 @@ const shopingCartSlice = createSlice({
       .addCase(deleteCartItem.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.cartItems = [];
       });
 
     // update cart
@@ -79,7 +77,6 @@ const shopingCartSlice = createSlice({
       .addCase(updateCartItem.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        state.cartItems = [];
       });
   },
 });

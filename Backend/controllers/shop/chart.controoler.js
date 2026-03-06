@@ -17,18 +17,35 @@ export const addChart = async (req, res) => {
         message: "Product not found",
       });
     }
+
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = await new Cart({ userId, items: [] });
     }
+
     const findCurrentProduct = cart.items.findIndex(
       (item) => item.productId.toString() === productId,
     );
+
+    const currentCartQuantity =
+      findCurrentProduct === -1 ? 0 : cart.items[findCurrentProduct].quantity;
+    const totalNewQuantity = currentCartQuantity + quantity;
+
+    if (product.stock < quantity) {
+      return res.status(400).json({
+        success: false,
+        message: `Only ${product.stock} items available.`,
+      });
+    }
+
     if (findCurrentProduct !== -1) {
-      cart.items[findCurrentProduct].quantity += quantity;
+      cart.items[findCurrentProduct].quantity = totalNewQuantity;
     } else {
       cart.items.push({ productId, quantity });
     }
+
+    product.stock -= quantity;
+    await product.save();
     await cart.save();
 
     return res.status(200).json({
@@ -124,6 +141,29 @@ export const updateChartItem = async (req, res) => {
         message: "Product not found in cart",
       });
     }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const oldQuantity = cart.items[findCurrentProduct].quantity;
+    const delta = quantity - oldQuantity;
+
+    if (delta > 0 && product.stock < delta) {
+      return res.status(400).json({
+        success: false,
+        message: `Only ${product.stock} more items available.`,
+      });
+    }
+
+    // Adjust stock: subtract delta (if delta is negative, stock increases)
+    product.stock -= delta;
+    await product.save();
+
     cart.items[findCurrentProduct].quantity = quantity;
     await cart.save();
     await cart.populate({
@@ -176,6 +216,18 @@ export const deleteChartItem = async (req, res) => {
         message: "Cart not found",
       });
     }
+    const itemToDelete = cart.items.find(
+      (item) => item.productId._id.toString() === productId,
+    );
+
+    if (itemToDelete) {
+      const product = await Product.findById(productId);
+      if (product) {
+        product.stock += itemToDelete.quantity;
+        await product.save();
+      }
+    }
+
     cart.items = cart.items.filter(
       (item) => item.productId._id.toString() !== productId,
     );

@@ -30,7 +30,6 @@ export const createCart = createAsyncThunk(
 export const fetchCartItems = createAsyncThunk(
   "shop/cart/fetch",
   async (userId, thunkAPI) => {
-    console.log(userId, "userId");
     try {
       const response = await axios.get(
         `http://localhost:3000/api/shop/cart/get/${userId}`,
@@ -40,7 +39,6 @@ export const fetchCartItems = createAsyncThunk(
           },
         },
       );
-      console.log(response.data);
       return await response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

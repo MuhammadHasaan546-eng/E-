@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createCart, fetchCartItems } from "@/api/shop/cart";
 import { toast } from "sonner";
 import { setProductDetails } from "@/store/shop/product-slice";
+import { fetchAllProducts } from "@/api/shop/product";
 
 const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
   const dispatch = useDispatch();
@@ -35,7 +36,14 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
     ).then((data) => {
       if (data?.payload?.success) {
         dispatch(fetchCartItems(user?.id));
-        toast.success(data.payload.message);
+        // Refresh product list to update stock counts globally
+        dispatch(
+          fetchAllProducts({
+            filterParams: {},
+            sortParams: "price-lowtohigh",
+          }),
+        );
+        toast.success(data.payload.message || "Item added to cart");
       } else {
         toast.error(data?.payload?.message || "Failed to add to cart");
       }
@@ -54,6 +62,7 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
       <Dialog.Content
         className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-white w-full h-full md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-lg md:p-4 md:sm:p-6 md:max-w-[90vw] md:sm:max-w-[80vw] md:lg:max-w-[70vw] md:max-h-[90vh] md:overflow-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 overflow-y-auto pr-2"
         aria-describedby={undefined}
+        onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <button
           onClick={handleDialogClose}
@@ -136,21 +145,40 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
             )}
           </div>
 
+          <div className="mt-4 flex items-center gap-2">
+            <span
+              className={`text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full ${
+                productDetils.stock === 0
+                  ? "bg-red-50 text-red-600"
+                  : productDetils.stock <= 5
+                    ? "bg-amber-50 text-amber-600"
+                    : "bg-emerald-50 text-emerald-600"
+              }`}
+            >
+              {productDetils.stock === 0
+                ? "Out of Stock"
+                : `${productDetils.stock} items remaining`}
+            </span>
+          </div>
+
           <div className="my-5 border-t border-gray-100" />
 
           <Button
-            className="
+            className={`
               w-full py-6 text-base font-bold rounded-2xl
-              bg-linear-to-r from-blue-600 to-indigo-600
-              hover:from-blue-700 hover:to-indigo-700
-              text-white shadow-xl shadow-blue-500/30
-              flex items-center justify-center gap-2
-              transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
-            "
+              text-white shadow-xl flex items-center justify-center gap-2
+              transition-all duration-300
+              ${
+                productDetils.stock === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
+              }
+            `}
+            disabled={productDetils.stock === 0}
             onClick={() => handleAddToCart(productDetils._id)}
           >
             <ShoppingCart size={20} />
-            Add to Cart
+            {productDetils.stock === 0 ? "Out of Stock" : "Add to Cart"}
           </Button>
 
           <div className="mt-8">

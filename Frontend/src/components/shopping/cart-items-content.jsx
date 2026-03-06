@@ -6,6 +6,7 @@ import { deleteCartItem, updateCartItem } from "@/api/shop/cart";
 import { toast } from "sonner";
 
 function UserCartItemsContent({ cartItem }) {
+  const { productList } = useSelector((state) => state.shopingProductSlice);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
@@ -27,7 +28,9 @@ function UserCartItemsContent({ cartItem }) {
       }),
     ).then((data) => {
       if (data?.payload?.success) {
-        toast("Cart updated");
+        toast.success("Cart updated");
+      } else {
+        toast.error(data?.payload?.message || "Failed to update cart");
       }
     });
   };
@@ -37,7 +40,9 @@ function UserCartItemsContent({ cartItem }) {
       deleteCartItem({ userId: user.id, productId: getCartItem.productId }),
     ).then((data) => {
       if (data?.payload?.success) {
-        toast.error("Item removed from cart");
+        toast.success("Item removed from cart");
+      } else {
+        toast.error(data?.payload?.message || "Failed to remove item");
       }
     });
   };

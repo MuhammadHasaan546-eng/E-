@@ -41,7 +41,7 @@ const ShoppingCheckout = () => {
       : 0;
 
   const handlePlaceOrder = () => {
-    if (cartItems.length === 0) {
+    if (items.length === 0) {
       toast.error("Your cart is empty. Please add items to proceed");
       return;
     }
@@ -182,15 +182,15 @@ const ShoppingCheckout = () => {
                     Order Summary
                   </h2>
                   <p className="text-slate-500 text-sm">
-                    {cartItems?.length} items in your bag
+                    {items.length} items in your bag
                   </p>
                 </div>
               </div>
 
               <div className="p-8 space-y-6">
                 <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar space-y-4">
-                  {cartItems && cartItems.length > 0 ? (
-                    cartItems.map((item) => (
+                  {items && items.length > 0 ? (
+                    items.map((item) => (
                       <div
                         key={item.productId}
                         className="flex items-center gap-4 group"
@@ -264,7 +264,7 @@ const ShoppingCheckout = () => {
                   className="w-full h-14 bg-slate-900 text-white hover:bg-slate-800 rounded-2xl text-lg font-bold shadow-lg shadow-slate-900/20 transition-all active:scale-[0.98] group flex items-center justify-center gap-3"
                   disabled={
                     !cartItems ||
-                    cartItems.length === 0 ||
+                    items.length === 0 ||
                     isLoading ||
                     isPaymentStart
                   }

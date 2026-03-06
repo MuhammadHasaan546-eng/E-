@@ -104,7 +104,7 @@ const HeaderRightContent = ({ setOpen }) => {
           <BaggageClaim className="h-[1.1rem] w-[1.1rem]" />
           {cartItems?.items?.length > 0 && (
             <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-4 ring-background shadow-sm animate-in zoom-in duration-500">
-              {cartItems.items.length}
+              {cartItems?.items?.length}
             </span>
           )}
           <span className="sr-only">Cart</span>
@@ -209,6 +209,8 @@ const ShoppinHeader = () => {
           <SheetContent
             side="right"
             className="w-full max-w-xs p-8 shadow-2xl sm:max-w-sm rounded-l-[2rem] border-primary/5 backdrop-blur-xl bg-background/95"
+            aria-describedby={undefined}
+            onCloseAutoFocus={(e) => e.preventDefault()}
           >
             <SheetHeader className="mb-12">
               <SheetTitle className="text-left flex items-center gap-3">

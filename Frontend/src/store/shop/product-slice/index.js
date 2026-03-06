@@ -15,6 +15,16 @@ const shopingProductSlice = createSlice({
     setProductDetails: (state, action) => {
       state.productDeatils = null;
     },
+    updateProductStock: (state, action) => {
+      const { productId, quantity } = action.payload;
+      const index = state.productList.findIndex((p) => p._id === productId);
+      if (index !== -1) {
+        state.productList[index].stock += quantity;
+      }
+      if (state.productDeatils && state.productDeatils._id === productId) {
+        state.productDeatils.stock += quantity;
+      }
+    },
   },
   extraReducers: (builder) => {
     // fetch all products
@@ -44,6 +54,7 @@ const shopingProductSlice = createSlice({
   },
 });
 
-export const { setProductDetails } = shopingProductSlice.actions;
+export const { setProductDetails, updateProductStock } =
+  shopingProductSlice.actions;
 
 export default shopingProductSlice.reducer;

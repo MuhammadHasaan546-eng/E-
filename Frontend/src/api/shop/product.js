@@ -10,7 +10,6 @@ export const fetchAllProducts = createAsyncThunk(
         sortBy: sortParams,
       }).toString();
 
-      console.log(quary.toString());
       const response = await axios.get(
         `http://localhost:3000/api/shop/products/get?${quary}`,
 

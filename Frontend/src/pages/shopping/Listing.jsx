@@ -17,6 +17,7 @@ import ProductFilter from "@/components/product/filter";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping/product-details";
 import { createCart, fetchCartItems } from "@/api/shop/cart";
+import { updateProductStock } from "@/store/shop/product-slice";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -82,7 +83,19 @@ const ShoppingListing = () => {
 
   // get add to cart
   function handleAddToCard(getCurrentProductId) {
-    console.log(getCurrentProductId);
+    // let getCartItem = cartItems.items || [];
+    // if (getCartItem.length) {
+    //   const indexOfCurrentItem = getCartItem.findIndex(
+    //     (item) => item.product._id === getCurrentProductId,
+    //   );
+    //   const getQuantity = getCartItem[indexOfCurrentItem].quantity;
+    //   if (indexOfCurrentItem !== -1) {
+    //     if (getQuantity >= productList[getCurrentProductId].stock) {
+    //       toast.error("Product is out of stock");
+    //       return;
+    //     }
+    //   }
+    // }
     dispatch(
       createCart({
         userId: user.id,
@@ -92,6 +105,12 @@ const ShoppingListing = () => {
     ).then((data) => {
       if (data.payload.success) {
         dispatch(fetchCartItems(user.id));
+        dispatch(
+          updateProductStock({
+            productId: getCurrentProductId,
+            quantity: -1,
+          }),
+        );
         toast.success(data.payload.message);
       } else {
         toast.error(data.payload.message);
@@ -138,11 +157,7 @@ const ShoppingListing = () => {
   }, [filter]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 p-4 md:p-10 max-w-screen-2xl mx-auto">
-      <div className="hidden md:block">
-        <ProductFilter filter={filter} handleFilter={handleFilter} />
-      </div>
-
+    <div className="flex flex-col gap-6 p-4 md:p-10 max-w-screen-2xl mx-auto w-full">
       <div className="bg-background w-full rounded-3xl border border-primary/5 shadow-sm overflow-hidden flex flex-col">
         <div className="p-6 md:p-8 border-b border-primary/5 flex items-center justify-between gap-6 bg-linear-to-b from-muted/20 to-transparent">
           <div className="space-y-1">
@@ -159,7 +174,7 @@ const ShoppingListing = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="md:hidden h-10 px-4 rounded-xl border-primary/10 flex items-center gap-2 hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
+                  className="h-10 px-4 rounded-xl border-primary/10 flex items-center gap-2 hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
                 >
                   <Filter className="h-4 w-4" />
                   <span className="text-xs font-bold uppercase tracking-wider">
@@ -170,6 +185,8 @@ const ShoppingListing = () => {
               <SheetContent
                 side="left"
                 className="w-full max-w-xs p-0 border-r border-primary/5"
+                aria-describedby={undefined}
+                onCloseAutoFocus={(e) => e.preventDefault()}
               >
                 <SheetHeader className="p-6 border-b border-primary/5">
                   <SheetTitle className="text-left flex items-center gap-3">
@@ -223,9 +240,9 @@ const ShoppingListing = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ">
           {isLoading ? (
-            [...Array(8)].map((_, i) => (
+            [...Array(10)].map((_, i) => (
               <div
                 key={i}
                 className="rounded-2xl border border-primary/5 bg-card shadow-sm overflow-hidden"
