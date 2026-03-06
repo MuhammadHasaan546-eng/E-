@@ -7,13 +7,16 @@ import store from "./store/store.js";
 
 import { Toaster } from "sonner";
 import AppRouter from "./routes/AppRouter";
+import SmoothScroll from "./components/common/SmoothScroll";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <StrictMode>
       <Provider store={store}>
         {/* <RouterProvider router={router} /> */}
-        <AppRouter />
+        <SmoothScroll>
+          <AppRouter />
+        </SmoothScroll>
         <Toaster />
       </Provider>
     </StrictMode>

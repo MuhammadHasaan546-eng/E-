@@ -85,7 +85,8 @@ const ShoppingOrder = () => {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-slate-50">
@@ -110,31 +111,31 @@ const ShoppingOrder = () => {
               {orderList && orderList.length > 0 ? (
                 orderList.map((order) => (
                   <tr
-                    key={order?._id}
+                    key={order._id}
                     className="group hover:bg-slate-50/50 transition-colors"
                   >
                     <td className="px-8 py-6 font-bold text-slate-900 tracking-tight">
-                      {order?._id}
+                      {order._id}
                     </td>
                     <td className="px-8 py-6 text-slate-500 font-medium">
-                      {order?.orderDate.split("T")[0]}
+                      {order.orderDate.split("T")[0]}
                     </td>
                     <td className="px-8 py-6">
                       <Badge
-                        variant={getStatusVariant(order?.orderStatus)}
+                        variant={getStatusVariant(order.orderStatus)}
                         className="px-3 py-1 gap-2 border-slate-200 capitalize"
                       >
-                        {getStatusIcon(order?.orderStatus)}
-                        {order?.orderStatus}
+                        {getStatusIcon(order.orderStatus)}
+                        {order.orderStatus}
                       </Badge>
                     </td>
                     <td className="px-8 py-6 font-black text-slate-900">
-                      ${order?.totalAmount.toFixed(2)}
+                      ${order.totalAmount.toFixed(2)}
                     </td>
                     <td className="px-8 py-6 text-right">
                       <Button
                         variant="ghost"
-                        onClick={() => handleViewDetails(order?._id)}
+                        onClick={() => handleViewDetails(order._id)}
                         className="rounded-full hover:bg-slate-900 hover:text-white transition-all group/btn"
                       >
                         Details
@@ -156,6 +157,66 @@ const ShoppingOrder = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile/Tablet Card View */}
+        <div className="lg:hidden divide-y divide-slate-100">
+          {orderList && orderList.length > 0 ? (
+            orderList.map((order) => (
+              <div
+                key={order._id}
+                className="p-6 space-y-4 hover:bg-slate-50/50 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      Order ID
+                    </p>
+                    <p className="font-bold text-slate-900 tracking-tight">
+                      {order._id}
+                    </p>
+                  </div>
+                  <Badge
+                    variant={getStatusVariant(order.orderStatus)}
+                    className="px-3 py-1 gap-2 border-slate-200 capitalize text-[10px]"
+                  >
+                    {getStatusIcon(order.orderStatus)}
+                    {order.orderStatus}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      Date
+                    </p>
+                    <p className="text-slate-600 font-medium text-sm">
+                      {order.orderDate.split("T")[0]}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      Amount
+                    </p>
+                    <p className="font-black text-slate-900 text-sm">
+                      ${order.totalAmount.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={() => handleViewDetails(order._id)}
+                  className="w-full rounded-2xl bg-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white transition-all font-bold tracking-widest text-[10px] uppercase h-12"
+                >
+                  VIEW DETAILS
+                </Button>
+              </div>
+            ))
+          ) : (
+            <div className="p-12 text-center text-slate-400">
+              No orders found.
+            </div>
+          )}
+        </div>
       </div>
 
       <Dialog
@@ -165,12 +226,12 @@ const ShoppingOrder = () => {
           dispatch(resetOrderDetails());
         }}
       >
-        <DialogContent className="sm:max-w-[600px] border-0 shadow-2xl rounded-3xl overflow-hidden p-0 bg-slate-50">
+        <DialogContent className="sm:max-w-[600px] border-0 shadow-2xl rounded-3xl overflow-hidden p-0 bg-slate-50 ">
           {orderDetails && (
             <>
-              <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
-                  <ShoppingBag size={120} />
+              <div className="bg-slate-900 p-6 sm:p-8 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 sm:p-8 opacity-10 ">
+                  <ShoppingBag className="h-20 w-20 sm:h-[120px] sm:w-[120px]" />
                 </div>
                 <div className="relative z-10 flex flex-col gap-2">
                   <div className="flex items-center gap-3">
@@ -179,29 +240,29 @@ const ShoppingOrder = () => {
                       Order Details
                     </span>
                   </div>
-                  <DialogTitle className="text-3xl font-serif tracking-wide sm:max-w-[80%] break-all">
-                    {orderDetails?._id}
+                  <DialogTitle className="text-2xl sm:text-3xl font-serif tracking-wide sm:max-w-[80%] break-all">
+                    {orderDetails._id}
                   </DialogTitle>
-                  <DialogDescription className="text-slate-400 font-light italic">
-                    Placed on {orderDetails?.orderDate.split("T")[0]}
+                  <DialogDescription className="text-slate-400 font-light text-xs sm:text-sm italic">
+                    Placed on {orderDetails.orderDate.split("T")[0]}
                   </DialogDescription>
                 </div>
               </div>
 
-              <div className="p-8 space-y-8">
-                <div className="grid grid-cols-2 gap-8">
+              <div className="p-6 sm:p-8 space-y-6 sm:space-y-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
                       <Truck className="h-3 w-3" /> Delivery Status
                     </h4>
                     <div className="flex items-center gap-3">
                       <div
-                        className={`h-10 w-10 rounded-xl flex items-center justify-center ${orderDetails?.orderStatus === "delivered" ? "bg-green-100 text-green-600" : "bg-slate-200 text-slate-500"}`}
+                        className={`h-10 w-10 rounded-xl flex items-center justify-center ${orderDetails.orderStatus === "delivered" ? "bg-green-100 text-green-600" : "bg-slate-200 text-slate-500"}`}
                       >
-                        {getStatusIcon(orderDetails?.orderStatus)}
+                        {getStatusIcon(orderDetails.orderStatus)}
                       </div>
                       <span className="font-bold text-slate-900 capitalize">
-                        {orderDetails?.orderStatus}
+                        {orderDetails.orderStatus}
                       </span>
                     </div>
                   </div>
@@ -211,10 +272,10 @@ const ShoppingOrder = () => {
                     </h4>
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs uppercase">
-                        {orderDetails?.paymentMethod}
+                        {orderDetails.paymentMethod}
                       </div>
                       <span className="font-bold text-slate-900 capitalize">
-                        {orderDetails?.paymentStatus}
+                        {orderDetails.paymentStatus}
                       </span>
                     </div>
                   </div>
@@ -226,7 +287,7 @@ const ShoppingOrder = () => {
                   </h4>
                   <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
                     <div className="divide-y divide-slate-50">
-                      {orderDetails?.cartItems?.map((item, idx) => (
+                      {orderDetails.cartItems.map((item, idx) => (
                         <div
                           key={idx}
                           className="p-4 flex justify-between items-center group"
@@ -245,20 +306,20 @@ const ShoppingOrder = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="bg-slate-900 p-6 flex justify-between items-end">
+                    <div className="bg-slate-900 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 sm:gap-0">
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
                           Order total
                         </span>
                         <span className="text-3xl font-black text-white ml-[-2px] tracking-tight">
-                          ${orderDetails?.totalAmount.toFixed(2)}
+                          ${orderDetails.totalAmount.toFixed(2)}
                         </span>
                       </div>
                       <Button
                         variant="outline"
                         className="rounded-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-9 px-4 text-xs font-bold tracking-widest gap-2"
                       >
-                        <Printer className="h-3 w-3" />
+                        <Printer className="h-3 w-3 text-slate-500" />
                         INVOICE
                       </Button>
                     </div>

@@ -9,7 +9,7 @@ import AdminOrder from "./pages/admin/Order";
 
 function App() {
   return (
-    <div className="flex flex-col overflow-hidden bg-white ">
+    <div className="flex flex-col bg-white">
       <h1> Header component</h1>
 
       {/* <Routes>

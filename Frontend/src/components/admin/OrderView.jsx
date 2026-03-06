@@ -39,13 +39,19 @@ import {
   Download,
   Filter,
 } from "lucide-react";
+// import {
+//   getAllOrdersForAdmin,
+//   getOrderDetailsForAdmin,
+//   resetOrderDetails,
+//   updateOrderStatus as updateStatusAction,
+// } from "../../store/admin/order-slice";
+import { toast } from "sonner";
 import {
   getAllOrdersForAdmin,
   getOrderDetailsForAdmin,
-  resetOrderDetails,
-  updateOrderStatus as updateStatusAction,
-} from "../../store/admin/order-slice";
-import { toast } from "sonner";
+  updateOrderStatus,
+} from "@/api/admin/order/order";
+import { resetOrderDetails } from "@/store/shop/order-slice";
 
 const AdminOrdersView = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -59,14 +65,14 @@ const AdminOrdersView = () => {
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
       case "delivered":
-        return <CheckCircle2 className="h-4 w-4" />;
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
       case "shipped":
-        return <Truck className="h-4 w-4" />;
+        return <Truck className="h-4 w-4 text-blue-500" />;
       case "processing":
       case "pending":
-        return <Clock className="h-4 w-4" />;
+        return <Clock className="h-4 w-4 text-yellow-500" />;
       default:
-        return <Package className="h-4 w-4" />;
+        return <Package className="h-4 w-4 text-red-500" />;
     }
   };
 
@@ -89,7 +95,7 @@ const AdminOrdersView = () => {
   };
 
   const handleUpdateStatus = (id, orderStatus) => {
-    dispatch(updateStatusAction({ id, orderStatus })).then((data) => {
+    dispatch(updateOrderStatus({ id, orderStatus })).then((data) => {
       if (data?.payload?.success) {
         toast.success("Order status updated successfully", {
           position: "bottom-center",
@@ -135,7 +141,8 @@ const AdminOrdersView = () => {
       </div>
 
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-900">
@@ -160,31 +167,31 @@ const AdminOrdersView = () => {
               {orderList && orderList.length > 0 ? (
                 orderList.map((order) => (
                   <tr
-                    key={order?._id}
+                    key={order._id}
                     className="group hover:bg-slate-50/50 transition-colors"
                   >
                     <td className="px-8 py-6">
                       <span
                         className="font-bold text-slate-900 tracking-tight group-hover:underline cursor-pointer"
-                        onClick={() => handleOpenDetails(order?._id)}
+                        onClick={() => handleOpenDetails(order._id)}
                       >
-                        {order?._id}
+                        {order._id}
                       </span>
                     </td>
                     <td className="px-8 py-6 text-slate-500 font-medium">
-                      {order?.orderDate.split("T")[0]}
+                      {order.orderDate.split("T")[0]}
                     </td>
                     <td className="px-8 py-6">
                       <Badge
-                        variant={getStatusVariant(order?.orderStatus)}
+                        variant={getStatusVariant(order.orderStatus)}
                         className="px-3 py-1 gap-2 border-slate-200 bg-white text-slate-900 hover:bg-slate-900 hover:text-white transition-all capitalize"
                       >
-                        {getStatusIcon(order?.orderStatus)}
-                        {order?.orderStatus}
+                        {getStatusIcon(order.orderStatus)}
+                        {order.orderStatus}
                       </Badge>
                     </td>
                     <td className="px-8 py-6 font-black text-slate-900">
-                      ${order?.totalAmount.toFixed(2)}
+                      ${order.totalAmount.toFixed(2)}
                     </td>
                     <td className="px-8 py-6 text-right">
                       <DropdownMenu>
@@ -206,14 +213,14 @@ const AdminOrdersView = () => {
                           </DropdownMenuLabel>
                           <DropdownMenuSeparator className="bg-slate-50" />
                           <DropdownMenuItem
-                            onClick={() => handleOpenDetails(order?._id)}
+                            onClick={() => handleOpenDetails(order._id)}
                             className="rounded-xl px-3 py-2 cursor-pointer focus:bg-slate-50 gap-2"
                           >
                             <ChevronRight className="h-4 w-4" /> View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() =>
-                              handleUpdateStatus(order?._id, "shipped")
+                              handleUpdateStatus(order._id, "shipped")
                             }
                             className="rounded-xl px-3 py-2 cursor-pointer focus:bg-slate-50 gap-2 text-blue-600"
                           >
@@ -221,7 +228,7 @@ const AdminOrdersView = () => {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() =>
-                              handleUpdateStatus(order?._id, "delivered")
+                              handleUpdateStatus(order._id, "delivered")
                             }
                             className="rounded-xl px-3 py-2 cursor-pointer focus:bg-slate-50 gap-2 text-green-600"
                           >
@@ -246,6 +253,113 @@ const AdminOrdersView = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile/Tablet Card View */}
+        <div className="lg:hidden divide-y divide-slate-100">
+          {orderList && orderList.length > 0 ? (
+            orderList.map((order) => (
+              <div
+                key={order._id}
+                className="p-6 space-y-4 hover:bg-slate-50/50 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      Order ID
+                    </p>
+                    <p
+                      className="font-bold text-slate-900 tracking-tight underline cursor-pointer"
+                      onClick={() => handleOpenDetails(order._id)}
+                    >
+                      {order._id}
+                    </p>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full hover:bg-slate-100"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="rounded-2xl border-slate-100 shadow-xl p-2 min-w-[160px]"
+                    >
+                      <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-3 py-2">
+                        Order Actions
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-slate-50" />
+                      <DropdownMenuItem
+                        onClick={() => handleOpenDetails(order._id)}
+                        className="rounded-xl px-3 py-2 cursor-pointer focus:bg-slate-50 gap-2"
+                      >
+                        <ChevronRight className="h-4 w-4" /> View Details
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleUpdateStatus(order._id, "shipped")}
+                        className="rounded-xl px-3 py-2 cursor-pointer focus:bg-slate-50 gap-2 text-blue-600"
+                      >
+                        <Truck className="h-4 w-4" /> Mark as Shipped
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          handleUpdateStatus(order._id, "delivered")
+                        }
+                        className="rounded-xl px-3 py-2 cursor-pointer focus:bg-slate-50 gap-2 text-green-600"
+                      >
+                        <CheckCircle2 className="h-4 w-4" /> Mark as Delivered
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      Date
+                    </p>
+                    <p className="text-slate-600 font-medium text-sm">
+                      {order.orderDate.split("T")[0]}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      Amount
+                    </p>
+                    <p className="font-black text-slate-900 text-sm">
+                      ${order.totalAmount.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <Badge
+                    variant={getStatusVariant(order.orderStatus)}
+                    className="px-3 py-1 gap-2 border-slate-200 bg-white text-slate-900 hover:bg-slate-900 hover:text-white transition-all capitalize text-[10px]"
+                  >
+                    {getStatusIcon(order.orderStatus)}
+                    {order.orderStatus}
+                  </Badge>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-[10px] font-bold tracking-widest text-slate-400 hover:text-slate-900 p-0 h-auto"
+                    onClick={() => handleOpenDetails(order._id)}
+                  >
+                    VIEW FULL DETAILS →
+                  </Button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="p-12 text-center text-slate-400">
+              No orders found.
+            </div>
+          )}
+        </div>
       </div>
 
       <Sheet
@@ -261,9 +375,9 @@ const AdminOrdersView = () => {
         >
           {orderDetails && (
             <div className="flex flex-col min-h-full">
-              <div className="bg-slate-900 p-10 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-10 opacity-10">
-                  <ShoppingBag size={180} />
+              <div className="bg-slate-900 p-6 sm:p-10 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 sm:p-10 opacity-10">
+                  <ShoppingBag className="h-[120px] w-[120px] sm:h-[180px] sm:w-[180px]" />
                 </div>
                 <div className="relative z-10 space-y-4">
                   <div className="flex items-center gap-3">
@@ -274,16 +388,16 @@ const AdminOrdersView = () => {
                       Order Management
                     </span>
                   </div>
-                  <SheetTitle className="text-4xl font-serif tracking-wide text-white break-all">
+                  <SheetTitle className="text-2xl sm:text-4xl font-serif tracking-wide text-white break-all">
                     {orderDetails?._id}
                   </SheetTitle>
-                  <SheetDescription className="text-slate-400 font-light text-base">
+                  <SheetDescription className="text-slate-400 font-light text-sm sm:text-base">
                     Comprehensive breakdown for order processing
                   </SheetDescription>
                 </div>
               </div>
 
-              <div className="p-10 space-y-10 flex-1">
+              <div className="p-6 sm:p-10 space-y-8 sm:space-y-10 flex-1">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div className="space-y-6">
                     <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
@@ -291,10 +405,10 @@ const AdminOrdersView = () => {
                     </h4>
                     <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-1">
                       <p className="font-bold text-slate-900 text-lg capitalize">
-                        {orderDetails?.addressInfo?.pincode}
+                        {orderDetails.addressInfo?.pincode}
                       </p>
                       <p className="text-slate-500 font-medium text-sm italic">
-                        Contact: {orderDetails?.addressInfo?.phone}
+                        Contact: {orderDetails.addressInfo?.phone}
                       </p>
                     </div>
                   </div>
@@ -304,8 +418,8 @@ const AdminOrdersView = () => {
                     </h4>
                     <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                       <p className="text-slate-700 leading-relaxed font-medium">
-                        {orderDetails?.addressInfo?.address},{" "}
-                        {orderDetails?.addressInfo?.city}
+                        {orderDetails.addressInfo?.address},{" "}
+                        {orderDetails.addressInfo?.city}
                       </p>
                     </div>
                   </div>
@@ -317,7 +431,7 @@ const AdminOrdersView = () => {
                   </h4>
                   <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
                     <div className="divide-y divide-slate-50">
-                      {orderDetails?.cartItems?.map((item, idx) => (
+                      {orderDetails.cartItems?.map((item, idx) => (
                         <div
                           key={idx}
                           className="p-6 flex justify-between items-center group transition-colors hover:bg-slate-50/50"
@@ -336,13 +450,13 @@ const AdminOrdersView = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="bg-slate-900 p-8 flex justify-between items-end">
+                    <div className="bg-slate-900 p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 sm:gap-0">
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">
                           Order Revenue
                         </span>
-                        <span className="text-4xl font-black text-white ml-[-2px] tracking-tight tabular-nums">
-                          ${orderDetails?.totalAmount.toFixed(2)}
+                        <span className="text-3xl sm:text-4xl font-black text-white ml-[-2px] tracking-tight tabular-nums">
+                          ${orderDetails.totalAmount.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex flex-col items-end gap-3">
@@ -351,7 +465,7 @@ const AdminOrdersView = () => {
                           className="bg-slate-800 border-slate-700 text-white gap-2 px-3 py-1.5 h-auto rounded-xl uppercase"
                         >
                           <CreditCard className="h-3.5 w-3.5 text-slate-400" />
-                          {orderDetails?.paymentMethod}
+                          {orderDetails.paymentMethod}
                         </Badge>
                       </div>
                     </div>
@@ -365,28 +479,28 @@ const AdminOrdersView = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <Button
                       onClick={() =>
-                        handleUpdateStatus(orderDetails?._id, "processing")
+                        handleUpdateStatus(orderDetails._id, "processing")
                       }
                       className="rounded-2xl h-14 bg-white text-slate-900 border-2 border-slate-100 hover:border-slate-900 transition-all font-bold tracking-widest text-[10px] uppercase shadow-sm"
-                      disabled={orderDetails?.orderStatus === "processing"}
+                      disabled={orderDetails.orderStatus === "processing"}
                     >
                       PROCESSING
                     </Button>
                     <Button
                       onClick={() =>
-                        handleUpdateStatus(orderDetails?._id, "shipped")
+                        handleUpdateStatus(orderDetails._id, "shipped")
                       }
                       className="rounded-2xl h-14 bg-white text-slate-900 border-2 border-slate-100 hover:border-slate-900 transition-all font-bold tracking-widest text-[10px] uppercase shadow-sm"
-                      disabled={orderDetails?.orderStatus === "shipped"}
+                      disabled={orderDetails.orderStatus === "shipped"}
                     >
                       SHIPPED
                     </Button>
                     <Button
                       onClick={() =>
-                        handleUpdateStatus(orderDetails?._id, "delivered")
+                        handleUpdateStatus(orderDetails._id, "delivered")
                       }
                       className="rounded-2xl h-14 bg-white text-slate-900 border-2 border-slate-100 hover:border-slate-900 transition-all font-bold tracking-widest text-[10px] uppercase md:col-span-2 shadow-sm"
-                      disabled={orderDetails?.orderStatus === "delivered"}
+                      disabled={orderDetails.orderStatus === "delivered"}
                     >
                       DELIVERED
                     </Button>
@@ -394,14 +508,14 @@ const AdminOrdersView = () => {
                 </div>
               </div>
 
-              <SheetFooter className="p-10 bg-white border-t border-slate-100">
+              <SheetFooter className="p-6 sm:p-10 bg-white border-t border-slate-100 mt-auto">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setIsDetailsOpen(false);
                     dispatch(resetOrderDetails());
                   }}
-                  className="rounded-2xl h-14 flex-1 font-bold tracking-widest text-xs uppercase"
+                  className="rounded-2xl h-14 w-full font-bold tracking-widest text-xs uppercase"
                 >
                   CLOSE VIEW
                 </Button>

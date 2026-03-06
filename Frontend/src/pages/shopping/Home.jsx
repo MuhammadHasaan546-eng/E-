@@ -204,7 +204,7 @@ const ShoppingHome = () => {
   const featuredProducts = productList?.slice(0, 8) || [];
 
   return (
-    <div className="flex flex-col gap-0 min-h-screen bg-gray-50/50">
+    <div className="flex flex-col gap-0 min-h-screen bg-gray-50/50   ">
       <div className="relative overflow-hidden p-4 md:p-6 lg:p-8">
         <div className="relative min-h-[500px] sm:min-h-[600px] md:min-h-[700px] transition-all duration-1000 ease-in-out rounded-[2rem] overflow-hidden shadow-2xl">
           {/* Slide Background Image */}

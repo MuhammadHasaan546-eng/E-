@@ -11,7 +11,7 @@ const AdminHeader = ({ onOpenChange }) => {
     dispatch(logoutUser());
   };
   return (
-    <header className="flex items-center justify-between px-4 py-3 bg-background border-b">
+    <header className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-background border-b">
       <Button className="lg:hidden" onClick={() => onOpenChange(true)}>
         <Menu />
         <span className="sr-only">Toggle menu</span>

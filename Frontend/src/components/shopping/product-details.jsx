@@ -49,18 +49,11 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
 
   return (
     <Dialog.Root open={open} onOpenChange={handleDialogClose}>
-      <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md transition-all duration-300" />
+      <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
 
       <Dialog.Content
-        className="
-          fixed z-50 inset-0 bg-white overflow-y-auto
-          md:inset-auto md:top-1/2 md:left-1/2
-          md:-translate-x-1/2 md:-translate-y-1/2
-          md:w-full md:max-w-5xl md:max-h-[88vh]
-          md:rounded-3xl md:grid md:grid-cols-2 md:overflow-hidden
-          md:shadow-[0_32px_80px_rgba(0,0,0,0.25)]
-          focus:outline-none
-        "
+        className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-white w-full h-full md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-lg md:p-4 md:sm:p-6 md:max-w-[90vw] md:sm:max-w-[80vw] md:lg:max-w-[70vw] md:max-h-[90vh] md:overflow-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 overflow-y-auto pr-2"
+        aria-describedby={undefined}
       >
         <button
           onClick={handleDialogClose}
@@ -78,7 +71,7 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
           <VisuallyHidden>{productDetils.title}</VisuallyHidden>
         </Dialog.Title>
 
-        <div className="relative w-full h-[70vh] sm:h-[75vh] md:h-full md:min-h-[500px] bg-gradient-to-br from-slate-100 via-gray-50 to-blue-50 flex items-center justify-center p-6 sm:p-10 md:p-12 overflow-hidden">
+        <div className="relative w-full h-[70vh] sm:h-[75vh] md:h-full md:min-h-[500px] bg-linear-to-br from-slate-100 via-gray-50 to-blue-50 flex items-center justify-center p-6 sm:p-10 md:p-12 overflow-hidden">
           <div className="absolute -top-12 -left-12 w-48 h-48 bg-blue-100 rounded-full opacity-50 blur-3xl" />
           <div className="absolute -bottom-12 -right-12 w-56 h-56 bg-indigo-100 rounded-full opacity-40 blur-3xl" />
 
@@ -148,7 +141,7 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
           <Button
             className="
               w-full py-6 text-base font-bold rounded-2xl
-              bg-gradient-to-r from-blue-600 to-indigo-600
+              bg-linear-to-r from-blue-600 to-indigo-600
               hover:from-blue-700 hover:to-indigo-700
               text-white shadow-xl shadow-blue-500/30
               flex items-center justify-center gap-2

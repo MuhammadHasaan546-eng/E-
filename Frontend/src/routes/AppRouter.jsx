@@ -33,8 +33,8 @@ function AppRouter() {
   if (isLoading) {
     return (
       <div>
-        Loading...
-        <Skeleton className="h-16 w-full rounded-full" />
+        ..loading
+        <Skeleton className="h-screen w-full" />
       </div>
     );
   }
