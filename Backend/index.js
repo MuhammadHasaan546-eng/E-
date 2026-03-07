@@ -12,6 +12,7 @@ import cartRoute from "./routes/shop/chart.router.js";
 import shopAddressRoute from "./routes/shop/address-routes.js";
 import shopOrderRouter from "./routes/shop/order-routes.js";
 import adminOrderRouter from "./routes/admin/admin-order.routes.js";
+import searchRouter from "./routes/shop/search.route.js";
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use("/api/shop/cart", cartRoute);
 app.use("/api/shop/address", shopAddressRoute);
 app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/admin/orders", adminOrderRouter);
+app.use("/api/shop/search", searchRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

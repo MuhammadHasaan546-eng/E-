@@ -117,31 +117,31 @@ const ShoppingHome = () => {
       subtitle:
         "Explore our curated collection of the finest brands and trends",
       image: banner1,
-      gradient: "from-violet-600/80 via-purple-600/80 to-indigo-700/80",
+      // gradient: "from-violet-600/80 via-purple-600/80 to-indigo-700/80",
     },
     {
       title: "Luxury Meets Comfort",
       subtitle: "From Nike to Gucci — your favorite brands, all in one place",
       image: luxuryBanner,
-      gradient: "from-rose-600/80 via-pink-600/80 to-fuchsia-700/80",
+      // gradient: "from-rose-600/80 via-pink-600/80 to-fuchsia-700/80",
     },
     {
       title: "New Season, New Style",
       subtitle: "Up to 50% off on selected premium collections",
       image: newSeasonBanner,
-      gradient: "from-emerald-600/80 via-teal-600/80 to-cyan-700/80",
+      // gradient: "from-emerald-600/80 via-teal-600/80 to-cyan-700/80",
     },
     {
       title: "Vibrant Summer Collection",
       subtitle: "Fresh colors and airy fabrics for your next getaway",
       image: summerCollection,
-      gradient: "from-amber-500/80 via-orange-600/80 to-red-600/80",
+      // gradient: "from-amber-500/80 via-orange-600/80 to-red-600/80",
     },
     {
       title: "Urban Streetwear Essentials",
       subtitle: "Rule the streets with our exclusive urban drops and sneakers",
       image: urbanStreetwear,
-      gradient: "from-gray-800/80 via-gray-900/80 to-black/80",
+      // gradient: "from-gray-800/80 via-gray-900/80 to-black/80",
     },
   ];
 

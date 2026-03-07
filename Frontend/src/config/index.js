@@ -141,6 +141,7 @@ export const shoppingViewHeaderIcon = [
   { id: "watches", label: "Watches", path: "/shop/listing" },
   { id: "accessories", label: "Accessories", path: "/shop/listing" },
   { id: "bags", label: "Bags", path: "/shop/listing" },
+  { id: "search", label: "Search", path: "/shop/search" },
 ];
 
 export const brandOptionMap = {

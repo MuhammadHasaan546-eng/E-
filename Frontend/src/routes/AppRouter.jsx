@@ -21,6 +21,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import SearchPage from "@/pages/shopping/Search";
 
 function AppRouter() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -90,6 +91,7 @@ function AppRouter() {
         { path: "account", element: <ShoppingAccount /> },
         { path: "paypal-return", element: <PaypalReturnPage /> },
         { path: "payment-success", element: <PaymentSuccessPage /> },
+        { path: "search", element: <SearchPage /> },
       ],
     },
 
