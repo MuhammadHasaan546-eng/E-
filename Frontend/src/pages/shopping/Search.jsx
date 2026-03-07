@@ -260,7 +260,7 @@ const ProductCard = ({
       onClick={() => handleGetProductDeatils(product?._id)}
       className="group relative w-full mx-auto overflow-hidden rounded-[2rem] border-none bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-700 hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 cursor-pointer"
     >
-      <div className="relative aspect-[3/2] overflow-hidden bg-muted/5">
+      <div className="relative aspect-3/2 overflow-hidden bg-muted/5">
         {product.image ? (
           <img
             src={product.image}
@@ -315,9 +315,9 @@ const ProductCard = ({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <StarRating rating={4} size={12} />
+          <StarRating rating={product.averageRating || 0} size={12} />
           <span className="text-[10px] text-muted-foreground/50 font-medium">
-            (128)
+            ({product.totalReviews || 0})
           </span>
         </div>
 
@@ -377,7 +377,7 @@ const ProductCard = ({
 
 const SkeletonCard = () => (
   <div className="flex flex-col rounded-[2rem] bg-white overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] animate-pulse">
-    <div className="aspect-[3/2] bg-muted/30" />
+    <div className="aspect-3/2 bg-muted/30" />
     <div className="p-4 space-y-3">
       <div className="h-3 w-1/3 rounded-full bg-muted/40" />
       <div className="h-5 w-4/5 rounded-full bg-muted/40" />
@@ -419,12 +419,12 @@ const SearchPage = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedKeyword(keyword.trim()), 400);
+    const t = setTimeout(() => setDebouncedKeyword(keyword.trim()), 200);
     return () => clearTimeout(t);
   }, [keyword]);
 
   useEffect(() => {
-    if (debouncedKeyword.length >= 2) {
+    if (debouncedKeyword.length > 0) {
       dispatch(searchProducts({ keyword: debouncedKeyword }));
     }
   }, [debouncedKeyword, dispatch]);
@@ -507,7 +507,7 @@ const SearchPage = () => {
     filters.brands.length +
     (priceRange[1] < MAX_PRICE ? 1 : 0);
 
-  const showGrid = debouncedKeyword.length >= 2;
+  const showGrid = debouncedKeyword.length > 0;
 
   return (
     <div className="min-h-screen bg-background">

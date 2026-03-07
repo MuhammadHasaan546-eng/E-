@@ -13,7 +13,7 @@ export const chexkAuth = createAsyncThunk(
               "no-cache, no-store, must-revalidate, proxy-revalidate",
           },
         }),
-        new Promise((resolve) => setTimeout(resolve, 1000)),
+        new Promise((resolve) => setTimeout(resolve, 2000)),
       ]);
       return response.data;
     } catch (error) {

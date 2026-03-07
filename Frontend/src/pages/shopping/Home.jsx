@@ -2,12 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import fashionBanner from "@/assets/fashion_banner_1_png_1772470367314.png";
 import luxuryBanner from "@/assets/luxury_banner_2_png_1772470392721.png";
-import newSeasonBanner from "@/assets/new_season_banner_3_png_1772470431446.png";
+
+import { motion } from "framer-motion";
 import banner1 from "@/assets/banner.jpg";
+import banner2 from "@/assets/banner2.jpg";
+import banner3 from "@/assets/banner3.jpg";
+import banner4 from "@/assets/banner4.jpg";
 
 // Temporary fallbacks for missing images - replace these imports when the real files are added
 const summerCollection = fashionBanner;
 const urbanStreetwear = luxuryBanner;
+const newSeasonBanner = banner3;
 import {
   ShoppingCart,
   StarIcon,
@@ -122,7 +127,7 @@ const ShoppingHome = () => {
     {
       title: "Luxury Meets Comfort",
       subtitle: "From Nike to Gucci — your favorite brands, all in one place",
-      image: luxuryBanner,
+      image: banner2,
       // gradient: "from-rose-600/80 via-pink-600/80 to-fuchsia-700/80",
     },
     {
@@ -134,7 +139,7 @@ const ShoppingHome = () => {
     {
       title: "Vibrant Summer Collection",
       subtitle: "Fresh colors and airy fabrics for your next getaway",
-      image: summerCollection,
+      image: banner4,
       // gradient: "from-amber-500/80 via-orange-600/80 to-red-600/80",
     },
     {
@@ -210,10 +215,15 @@ const ShoppingHome = () => {
         <div className="relative min-h-[500px] sm:min-h-[600px] md:min-h-[700px] transition-all duration-1000 ease-in-out rounded-[2rem] overflow-hidden shadow-2xl">
           {/* Slide Background Image */}
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
+            className="absolute inset-0 transition-all duration-1000 ease-in-out"
             style={{
               backgroundImage: `url(${heroSlides[heroIndex].image})`,
-              transform: "scale(1.05)",
+              backgroundSize: "cover", // Image poore area ko cover karegi
+              backgroundPosition: "center top", // Fashion images ke liye 'top' behtar hai taake face na kate
+              backgroundRepeat: "no-repeat",
+              transform: "scale(1.05)", // Aapka existing zoom effect
+              width: "100%",
+              height: "100%",
             }}
           />
           {/* Gradient Overlay */}
@@ -290,50 +300,54 @@ const ShoppingHome = () => {
 
       <div className="max-w-7xl mx-auto w-full px-4 md:px-6 py-8 flex flex-col gap-10">
         {/* ═══════════ CATEGORIES SECTION ═══════════ */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
+        <section className="py-12">
+          <div className="flex items-end justify-between mb-10 border-b border-gray-100 pb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+              <span className="text-[#d4af37] text-[10px] font-bold tracking-[4px] uppercase block mb-2">
+                Curated Selections
+              </span>
+              <h2 className="text-3xl font-light text-gray-900 tracking-tight uppercase">
                 Shop by Category
               </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Browse our curated collections
-              </p>
             </div>
             <Button
-              variant="ghost"
-              className="text-violet-600 hover:text-violet-700 font-semibold group"
+              variant="link"
+              className="text-gray-400 hover:text-[#d4af37] p-0 h-auto font-light tracking-widest text-xs uppercase transition-colors group"
               onClick={() => navigate("/shop/listing")}
             >
-              View All
-              <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+              View All Collections
+              <ChevronRight className="w-3 h-3 ml-1 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6">
             {filterOptions.categories.map((category) => {
               const IconComponent = categoryIconMap[category.id] || ShoppingBag;
-              const gradient =
-                categoryGradientMap[category.id] || "from-gray-500 to-gray-600";
               return (
-                <div
+                <motion.div
                   key={category.id}
+                  whileHover={{ y: -8 }}
                   className="group cursor-pointer"
                   onClick={() => handleCategoryClick(category.id)}
                 >
-                  <div className="relative overflow-hidden rounded-2xl bg-white border border-gray-100 p-5 hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
-                    <div
-                      className={`w-14 h-14 rounded-xl bg-linear-to-br ${gradient} flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-500`}
-                    >
-                      <IconComponent className="w-7 h-7 text-white" />
+                  <div className="relative flex flex-col items-center justify-center bg-white border border-gray-50 p-8 transition-all duration-500 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.03)] group-hover:border-[#d4af37]/20">
+                    {/* Minimalist Icon Container */}
+                    <div className="relative w-16 h-16 flex items-center justify-center mb-5">
+                      {/* Background Decorative Circle */}
+                      <div className="absolute inset-0 bg-[#d4af37]/5 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 ease-out" />
+
+                      <IconComponent className="w-7 h-7 text-gray-400 group-hover:text-[#d4af37] transition-colors duration-500 relative z-10 font-light" />
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-800 group-hover:text-gray-900">
+
+                    {/* Label */}
+                    <h3 className="text-[10px] font-bold text-gray-500 group-hover:text-gray-900 tracking-[2px] uppercase text-center transition-colors">
                       {category.label}
                     </h3>
-                    <div
-                      className={`absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r ${gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}
-                    />
+
+                    {/* Bottom Border Animation */}
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-[#d4af37] group-hover:w-1/2 transition-all duration-500" />
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>

@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { brandOptionMap, categoryOptionMap } from "@/config";
+import { StarIcon } from "lucide-react";
 import React from "react";
 
 const ShopingProductTile = ({
@@ -65,6 +66,20 @@ const ShopingProductTile = ({
               {categoryOptionMap[product.category]}
             </span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2 mt-1">
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <StarIcon
+                key={i}
+                className={`w-3 h-3 ${i < Math.round(product.averageRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-200 fill-gray-200"}`}
+              />
+            ))}
+          </div>
+          <span className="text-[10px] text-muted-foreground/50 font-medium">
+            ({product.totalReviews || 0})
+          </span>
         </div>
 
         <div className="flex items-center gap-3">

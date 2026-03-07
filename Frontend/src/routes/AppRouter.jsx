@@ -23,6 +23,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import SearchPage from "@/pages/shopping/Search";
 import Loading from "@/components/common/IsLoading";
+import { AnimatePresence } from "framer-motion";
 
 function AppRouter() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -32,9 +33,6 @@ function AppRouter() {
   useEffect(() => {
     dispatch(chexkAuth());
   }, [dispatch]);
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const router = createBrowserRouter([
     {
@@ -100,10 +98,15 @@ function AppRouter() {
       element: <NotFound />,
     },
   ]);
+
   return (
-    <>
-      <RouterProvider router={router} />
-    </>
+    <AnimatePresence mode="wait">
+      {isLoading ? (
+        <Loading key="loading" />
+      ) : (
+        <RouterProvider key="router" router={router} />
+      )}
+    </AnimatePresence>
   );
 }
 
