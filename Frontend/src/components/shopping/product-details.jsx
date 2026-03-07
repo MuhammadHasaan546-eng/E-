@@ -1,4 +1,3 @@
-import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { StarIcon, X, ShoppingCart, Tag, Send } from "lucide-react";
@@ -9,13 +8,62 @@ import { useDispatch, useSelector } from "react-redux";
 import { createCart, fetchCartItems } from "@/api/shop/cart";
 import { toast } from "sonner";
 import { setProductDetails } from "@/store/shop/product-slice";
-import { fetchAllProducts } from "@/api/shop/product";
+import { fetchAllProducts, fetchProductDeatils } from "@/api/shop/product";
+import { addProductReview, getProductReviews } from "@/api/shop/review";
+import { useEffect, useState } from "react";
 
 const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { reviews } = useSelector((state) => state.shopReview);
+  const [reviewMsg, setReviewMsg] = useState("");
+  const [rating, setRating] = useState(0);
+
+  useEffect(() => {
+    if (productDetils?._id) {
+      dispatch(getProductReviews(productDetils._id));
+    }
+  }, [productDetils, dispatch]);
 
   if (!productDetils) return null;
+
+  const averageRating =
+    reviews && reviews.length > 0
+      ? (
+          reviews.reduce((acc, rev) => acc + rev.reviewValue, 0) /
+          reviews.length
+        ).toFixed(1)
+      : "0";
+
+  function handleAddReview() {
+    if (rating === 0) {
+      toast.error("Please select a rating");
+      return;
+    }
+    if (reviewMsg.trim() === "") {
+      toast.error("Please enter a review message");
+      return;
+    }
+
+    dispatch(
+      addProductReview({
+        productId: productDetils?._id,
+        userId: user?.id,
+        userName: user?.username,
+        message: reviewMsg,
+        reviewValue: rating,
+      }),
+    ).then((data) => {
+      if (data?.payload?.success) {
+        setReviewMsg("");
+        setRating(0);
+        dispatch(getProductReviews(productDetils._id));
+        toast.success("Review added successfully!");
+      } else {
+        toast.error(data?.payload?.message || "Failed to add review");
+      }
+    });
+  }
 
   const discount =
     productDetils.salePrice > 0
@@ -57,10 +105,12 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
 
   return (
     <Dialog.Root open={open} onOpenChange={handleDialogClose}>
-      <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
 
-      <Dialog.Content
-        className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-white w-full h-full md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-lg md:p-4 md:sm:p-6 md:max-w-[90vw] md:sm:max-w-[80vw] md:lg:max-w-[70vw] md:max-h-[90vh] md:overflow-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 overflow-y-auto pr-2"
+        <Dialog.Content
+          data-lenis-prevent
+          className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-white w-full h-full md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-lg md:p-4 md:sm:p-6 md:max-w-[90vw] md:sm:max-w-[80vw] md:lg:max-w-[70vw] md:max-h-[90vh] md:overflow-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 overflow-y-auto pr-2"
         aria-describedby={undefined}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
@@ -113,12 +163,16 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
               {[...Array(5)].map((_, i) => (
                 <StarIcon
                   key={i}
-                  className={`w-4 h-4 ${i < 4 ? "fill-amber-400 text-amber-400" : "text-gray-200 fill-gray-200"}`}
+                  className={`w-4 h-4 ${i < Math.round(Number(averageRating)) ? "fill-amber-400 text-amber-400" : "text-gray-200 fill-gray-200"}`}
                 />
               ))}
             </div>
-            <span className="text-sm text-gray-500 font-medium">(4.0)</span>
-            <span className="text-xs text-gray-400">· 128 reviews</span>
+            <span className="text-sm text-gray-500 font-medium">
+              ({averageRating})
+            </span>
+            <span className="text-xs text-gray-400">
+              · {reviews.length} reviews
+            </span>
           </div>
 
           <p className="text-gray-500 mt-4 text-sm leading-relaxed line-clamp-3">
@@ -187,49 +241,93 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
               Customer Reviews
             </h2>
 
-            <div className="flex gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-              <Avatar className="w-9 h-9 border-2 border-blue-100 shrink-0">
-                <AvatarFallback className="bg-blue-600 text-white text-sm font-bold">
-                  H
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-900 text-sm">
-                    Muhammad Hasaan
-                  </h3>
-                  <span className="text-xs text-gray-400">2 days ago</span>
-                </div>
-                <div className="flex gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <StarIcon
-                      key={i}
-                      className={`w-3.5 h-3.5 ${i < 4 ? "fill-amber-400 text-amber-400" : "text-gray-200 fill-gray-200"}`}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-600 leading-relaxed mt-1.5">
-                  Amazing quality and fast delivery. Highly recommend this
-                  product to everyone!
+            <div className="grid gap-3 max-h-[300px] overflow-y-auto pr-2">
+              {reviews && reviews.length > 0 ? (
+                reviews.map((rev) => (
+                  <div
+                    key={rev._id}
+                    className="flex gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100"
+                  >
+                    <Avatar className="w-9 h-9 border-2 border-blue-100 shrink-0">
+                      <AvatarFallback className="bg-blue-600 text-white text-sm font-bold">
+                        {rev.userName ? rev.userName[0].toUpperCase() : "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900 text-sm">
+                          {rev.userName}
+                        </h3>
+                        <span className="text-xs text-gray-400">
+                          {new Date(rev.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <StarIcon
+                            key={i}
+                            className={`w-3.5 h-3.5 ${i < rev.reviewValue ? "fill-amber-400 text-amber-400" : "text-gray-200 fill-gray-200"}`}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed mt-1.5">
+                        {rev.message}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-4">
+                  No reviews yet. Be the first to review!
                 </p>
-              </div>
+              )}
             </div>
 
-            <div className="flex gap-2 mt-4 items-center">
-              <Input
-                placeholder="Write your review..."
-                className="flex-1 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-sm transition-all"
-              />
-              <Button
-                size="icon"
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 shrink-0 w-10 h-10"
-              >
-                <Send size={16} />
-              </Button>
+            <div className="mt-6 p-4 border border-gray-100 rounded-2xl bg-white shadow-sm">
+              <h3 className="text-sm font-bold text-gray-800 mb-3">
+                Rate this product
+              </h3>
+              <div className="flex gap-1 mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className={`p-1 transition-all duration-300 hover:scale-125 active:scale-95 ${
+                      star <= rating
+                        ? "text-amber-500"
+                        : "text-gray-300 hover:text-amber-400"
+                    }`}
+                    onClick={() => setRating(star)}
+                  >
+                    <StarIcon
+                      className={`w-7 h-7 drop-shadow-sm ${
+                        star <= rating ? "fill-amber-500" : "fill-transparent"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-2 items-center">
+                <Input
+                  value={reviewMsg}
+                  onChange={(e) => setReviewMsg(e.target.value)}
+                  placeholder="Share your thoughts..."
+                  className="flex-1 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-sm transition-all h-10"
+                />
+                <Button
+                  onClick={handleAddReview}
+                  size="icon"
+                  className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 shrink-0 w-10 h-10"
+                >
+                  <Send size={16} />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </Dialog.Content>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 };

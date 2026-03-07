@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import SearchPage from "@/pages/shopping/Search";
+import Loading from "@/components/common/IsLoading";
 
 function AppRouter() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -32,12 +33,7 @@ function AppRouter() {
     dispatch(chexkAuth());
   }, [dispatch]);
   if (isLoading) {
-    return (
-      <div>
-        ..loading
-        <Skeleton className="h-screen w-full" />
-      </div>
-    );
+    return <Loading />;
   }
 
   const router = createBrowserRouter([

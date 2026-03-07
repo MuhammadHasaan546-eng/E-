@@ -13,6 +13,7 @@ import shopAddressRoute from "./routes/shop/address-routes.js";
 import shopOrderRouter from "./routes/shop/order-routes.js";
 import adminOrderRouter from "./routes/admin/admin-order.routes.js";
 import searchRouter from "./routes/shop/search.route.js";
+import reviewRouter from "./routes/shop/review.route.js";
 
 const app = express();
 
@@ -27,7 +28,7 @@ mongoose
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: [
       "Content-Type",
@@ -54,6 +55,7 @@ app.use("/api/shop/address", shopAddressRoute);
 app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/admin/orders", adminOrderRouter);
 app.use("/api/shop/search", searchRouter);
+app.use("/api/shop/review", reviewRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -1,52 +1,75 @@
 import React from "react";
-import { ShieldAlert, ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Lock } from "lucide-react"; // Agar Lucide icons use kar rahe hain
 
 const UnAuth = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden font-sans">
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-red-900/20 blur-[120px] rounded-full animate-pulse capitalize" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-zinc-800/20 blur-[120px] rounded-full animate-pulse" />
-
-      <div className="relative z-10 w-full max-w-md px-6 py-12 m-4 bg-zinc-900/40 backdrop-blur-xl border border-zinc-800/50 rounded-3xl shadow-2xl items-center flex flex-col text-center transition-all duration-500 hover:border-red-500/30 hover:shadow-red-500/5 group">
-        <div className="relative mb-8">
-          <div className="absolute inset-0 bg-red-500/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-700" />
-          <div className="relative bg-zinc-800/50 p-6 rounded-2xl border border-zinc-700/50 group-hover:border-red-500/50 transition-colors duration-500">
-            <ShieldAlert size={48} className="text-red-500" />
-          </div>
+    <div className="flex h-screen w-full flex-col items-center justify-center bg-[#050505] text-white overflow-hidden font-serif">
+      {/* Central Icon with Pulse Effect */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="relative mb-8"
+      >
+        <div className="absolute inset-0 bg-[#d4af37] blur-3xl opacity-10 rounded-full"></div>
+        <div className="relative border border-[#d4af37]/30 p-8 rounded-full">
+          <Lock size={48} strokeWidth={1} className="text-[#d4af37]" />
         </div>
+      </motion.div>
 
-        <h1 className="text-3xl font-bold text-zinc-100 mb-4 tracking-tight">
-          Access Denied
-        </h1>
-        <p className="text-zinc-400 text-lg leading-relaxed mb-10 max-w-[280px] mx-auto">
-          You don't have the necessary permissions to access this exclusive
-          area.
-        </p>
-
-        <button
-          onClick={() => navigate("/")}
-          className="group/btn relative w-full overflow-hidden rounded-xl bg-zinc-100 py-4 font-semibold text-zinc-950 transition-all duration-300 hover:bg-white active:scale-95 flex items-center justify-center gap-2"
+      <div className="z-10 text-center px-6">
+        {/* Title */}
+        <motion.h1
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="text-4xl md:text-5xl font-light tracking-[10px] uppercase mb-6"
         >
-          <ArrowLeft
-            size={18}
-            className="transition-transform duration-300 group-hover/btn:-translate-x-1"
-          />
-          <span>Return Home</span>
-        </button>
+          Limited Access
+        </motion.h1>
 
-        <div className="mt-8 pt-8 border-t border-zinc-800/50 w-full text-zinc-500 text-sm">
-          Error Code:{" "}
-          <span className="text-zinc-400 font-mono tracking-wider">
-            403_FORBIDDEN
-          </span>
-        </div>
+        {/* Message */}
+        <motion.p
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="max-w-md mx-auto text-gray-400 font-light tracking-wide leading-relaxed mb-10 italic"
+        >
+          Membership has its privileges. It appears your current account does
+          not hold the credentials required for this collection.
+        </motion.p>
+
+        {/* Buttons */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="flex flex-col md:flex-row gap-4 justify-center items-center"
+        >
+          <button
+            onClick={() => navigate("/auth/login")}
+            className="px-8 py-3 bg-[#d4af37] text-black text-xs uppercase tracking-[2px] font-bold hover:bg-white transition-all duration-500"
+          >
+            Sign In
+          </button>
+
+          <button
+            onClick={() => navigate("/")}
+            className="px-8 py-3 border border-white/20 text-white text-xs uppercase tracking-[2px] hover:border-[#d4af37] transition-all duration-500"
+          >
+            Return Home
+          </button>
+        </motion.div>
       </div>
 
-      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-zinc-800 to-transparent opacity-50" />
-      <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-zinc-800 to-transparent opacity-50" />
+      {/* Decorative Bottom Text */}
+      <div className="absolute bottom-10 left-0 right-0 text-center text-[10px] uppercase tracking-[5px] text-gray-600 opacity-50">
+        KoKhaN Private Concierge
+      </div>
     </div>
   );
 };
