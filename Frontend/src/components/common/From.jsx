@@ -1,10 +1,11 @@
+import React, { useState } from "react";
 import {
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Select,
 } from "../ui/select";
-import { Select } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -26,112 +27,112 @@ const CommonFrom = ({
   buttonText,
   isButtonDisabled,
 }) => {
+  const [errors, setErrors] = useState({}); // Errors store karne ke liye state
+
   const resolvedControls = fromControls ?? controls ?? [];
   const resolvedFormData = formData ?? fromData ?? {};
 
+  // Validation Logic
+  const validate = (name, value, control) => {
+    let errorMsg = "";
+
+    if (control.type === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) errorMsg = "Invalid email format";
+    }
+
+    if (control.type === "password" || name === "password") {
+      if (value.length < 8) errorMsg = "Password must be at least 8 characters";
+    }
+
+    if (control.required && !value) {
+      errorMsg = `${control.label} is required`;
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
+    return errorMsg;
+  };
+
+  const handleInputChange = (control, value) => {
+    setFromData({
+      ...resolvedFormData,
+      [control.name]: value,
+    });
+    // Type karte waqt hi validation check karega
+    validate(control.name, value, control);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Final check before submit
+    let allErrors = {};
+    resolvedControls.forEach((control) => {
+      const error = validate(
+        control.name,
+        resolvedFormData[control.name] || "",
+        control,
+      );
+      if (error) allErrors[control.name] = error;
+    });
+
+    if (Object.values(allErrors).some((msg) => msg !== "")) {
+      setErrors(allErrors);
+      return; // Agar error hai toh submit nahi hoga
+    }
+
+    onSubmit?.(resolvedFormData);
+  };
+
   const renderItemComponentType = (control) => {
-    let element = null;
     const value = resolvedFormData?.[control.name] ?? "";
+    const hasError = !!errors[control.name];
+
+    const commonProps = {
+      name: control.name,
+      id: control.name,
+      placeholder: control.placeholder,
+      value: value,
+      className: hasError
+        ? "border-destructive focus-visible:ring-destructive"
+        : "",
+      onChange: (e) => handleInputChange(control, e.target.value),
+    };
 
     switch (control.componentType) {
       case types.input:
-        element = (
-          <Input
-            name={control.name}
-            placeholder={control.placeholder}
-            id={control.name}
-            type={control.type}
-            value={value}
-            min={control.min}
-            max={control.max}
-            step={control.step}
-            minLength={control.minLength}
-            maxLength={control.maxLength}
-            onChange={(e) =>
-              setFromData({
-                ...resolvedFormData,
-                [control.name]: e.target.value,
-              })
-            }
-          />
-        );
-        break;
+        return <Input {...commonProps} type={control.type} />;
 
       case types.select:
-        element = (
+        return (
           <Select
-            onValueChange={(value) =>
-              setFromData({ ...resolvedFormData, [control.name]: value })
-            }
-            name={control.name}
+            onValueChange={(val) => handleInputChange(control, val)}
             value={value}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger
+              className={`w-full ${hasError ? "border-destructive" : ""}`}
+            >
               <SelectValue placeholder={control.placeholder} />
             </SelectTrigger>
             <SelectContent>
-              {control.options?.map((option) => (
+              {control.options?.map((opt) => (
                 <SelectItem
-                  key={option.value ?? option.id}
-                  value={option.value ?? option.id}
+                  key={opt.value ?? opt.id}
+                  value={opt.value ?? opt.id}
                 >
-                  {option.label}
+                  {opt.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         );
-        break;
 
       case types.textarea:
-        element = (
-          <Textarea
-            placeholder={control.placeholder}
-            id={control.name}
-            name={control.name}
-            value={value}
-            minLength={control.minLength}
-            maxLength={control.maxLength}
-            onChange={(e) =>
-              setFromData({
-                ...resolvedFormData,
-                [control.name]: e.target.value,
-              })
-            }
-          />
-        );
-        break;
+        return <Textarea {...commonProps} />;
 
       default:
-        element = (
-          <Input
-            name={control.name}
-            placeholder={control.placeholder}
-            id={control.name}
-            type={control.type}
-            value={value}
-            min={control.min}
-            max={control.max}
-            step={control.step}
-            minLength={control.minLength}
-            maxLength={control.maxLength}
-            onChange={(e) =>
-              setFromData({
-                ...resolvedFormData,
-                [control.name]: e.target.value,
-              })
-            }
-          />
-        );
-        break;
+        return <Input {...commonProps} type={control.type} />;
     }
-
-    return element;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit?.(resolvedFormData);
   };
 
   return (
@@ -141,11 +142,21 @@ const CommonFrom = ({
           <div key={control.name} className="grid w-full gap-1.5">
             <Label className="mb-1">{control.label}</Label>
             {renderItemComponentType(control)}
+            {/* Error Message Display */}
+            {errors[control.name] && (
+              <p className="text-xs text-destructive font-medium">
+                {errors[control.name]}
+              </p>
+            )}
           </div>
         ))}
       </div>
 
-      <Button disabled={isButtonDisabled} className="mt-4 w-full" type="submit">
+      <Button
+        disabled={isButtonDisabled || Object.values(errors).some((m) => m)}
+        className="mt-4 w-full"
+        type="submit"
+      >
         {buttonText || "Submit"}
       </Button>
     </form>

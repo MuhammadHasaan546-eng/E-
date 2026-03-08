@@ -27,10 +27,10 @@ function UserCartItemsContent({ cartItem }) {
         quantity: newQuantity,
       }),
     ).then((data) => {
-      if (data?.payload?.success) {
+      if (data.payload.success) {
         toast.success("Cart updated");
       } else {
-        toast.error(data?.payload?.message || "Failed to update cart");
+        toast.error(data.payload.message || "Failed to update cart");
       }
     });
   };
@@ -39,10 +39,10 @@ function UserCartItemsContent({ cartItem }) {
     dispatch(
       deleteCartItem({ userId: user.id, productId: getCartItem.productId }),
     ).then((data) => {
-      if (data?.payload?.success) {
+      if (data.payload.success) {
         toast.success("Item removed from cart");
       } else {
-        toast.error(data?.payload?.message || "Failed to remove item");
+        toast.error(data.payload.message || "Failed to remove item");
       }
     });
   };

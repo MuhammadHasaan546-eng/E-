@@ -86,6 +86,7 @@ const HeaderRightContent = ({ setOpen }) => {
   const handleLogout = () => {
     dispatch(logoutUser());
     if (setOpen) setOpen(false);
+    navigate("/");
   };
   useEffect(() => {
     dispatch(fetchCartItems(user.id));
@@ -93,7 +94,7 @@ const HeaderRightContent = ({ setOpen }) => {
 
   const cartItems = useSelector((state) => state.shopCart.cartItems);
   return (
-    <div className="flex lg:items-center lg:flex-row flex-col gap-5">
+    <div className="flex items-center gap-4">
       <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
         <Button
           variant="outline"
@@ -194,54 +195,54 @@ const ShoppinHeader = () => {
           </div>
         </Link>
 
-        <Sheet open={openMenu} onOpenChange={setOpenMenu}>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-300"
-            >
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle header menu</span>
-            </Button>
-          </SheetTrigger>
-
-          <SheetContent
-            side="right"
-            className="w-full max-w-xs p-8 shadow-2xl sm:max-w-sm rounded-l-[2rem] border-primary/5 backdrop-blur-xl bg-background/95"
-            aria-describedby={undefined}
-            onCloseAutoFocus={(e) => e.preventDefault()}
-          >
-            <SheetHeader className="mb-12">
-              <SheetTitle className="text-left flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20 text-primary-foreground">
-                  <HousePlug className="h-5 w-5" />
-                </div>
-                <div className="flex flex-col -space-y-1">
-                  <span className="font-black text-xl tracking-tighter">
-                    KOKHAN
-                  </span>
-                  <span className="text-[8px] uppercase tracking-[0.2em] font-black text-muted-foreground/60">
-                    Navigation
-                  </span>
-                </div>
-              </SheetTitle>
-            </SheetHeader>
-
-            <div className="flex flex-col space-y-8">
-              <MenuIcons setOpen={setOpenMenu} />
-              <div className="h-px w-full bg-linear-to-r from-transparent via-primary/10 to-transparent" />
-              <HeaderRightContent setOpen={setOpenMenu} />
-            </div>
-          </SheetContent>
-        </Sheet>
-
+        {/* Desktop Navigation */}
         <div className="hidden lg:flex lg:items-center lg:gap-10 lg:absolute lg:left-1/2 lg:-translate-x-1/2">
           <MenuIcons />
         </div>
 
-        <div className="hidden lg:block">
+        {/* Right Content & Mobile Menu Hamburger */}
+        <div className="flex items-center gap-4">
           <HeaderRightContent />
+
+          <Sheet open={openMenu} onOpenChange={setOpenMenu}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-300"
+              >
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle header menu</span>
+              </Button>
+            </SheetTrigger>
+
+            <SheetContent
+              side="right"
+              className="w-full max-w-xs p-8 shadow-2xl sm:max-w-sm rounded-l-[2rem] border-primary/5 backdrop-blur-xl bg-background/95"
+              aria-describedby={undefined}
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
+              <SheetHeader className="mb-12">
+                <SheetTitle className="text-left flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20 text-primary-foreground">
+                    <HousePlug className="h-5 w-5" />
+                  </div>
+                  <div className="flex flex-col -space-y-1">
+                    <span className="font-black text-xl tracking-tighter">
+                      KOKHAN
+                    </span>
+                    <span className="text-[8px] uppercase tracking-[0.2em] font-black text-muted-foreground/60">
+                      Navigation
+                    </span>
+                  </div>
+                </SheetTitle>
+              </SheetHeader>
+
+              <div className="flex flex-col space-y-8">
+                <MenuIcons setOpen={setOpenMenu} />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

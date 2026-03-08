@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductDeatils } from "@/api/shop/product";
 import { createCart, fetchCartItems } from "@/api/shop/cart";
 import ProductDetailsDialog from "@/components/shopping/product-details";
+import { CATEGORIES } from "@/config/index";
+import { BRANDS } from "@/config/index";
+import { SORT_OPTIONS } from "@/config/index";
 import {
   Search,
   SlidersHorizontal,
@@ -41,36 +44,6 @@ import {
 import { toast } from "sonner";
 import { brandOptionMap, categoryOptionMap } from "@/config";
 import { searchProducts } from "@/api/shop/search/search";
-
-const CATEGORIES = [
-  { id: "mens_clothing", label: "Men's Clothing" },
-  { id: "womens_clothing", label: "Women's Clothing" },
-  { id: "kids_clothing", label: "Kids' Clothing" },
-  { id: "shoes", label: "Shoes" },
-  { id: "accessories", label: "Accessories" },
-  { id: "bags", label: "Bags" },
-  { id: "watches", label: "Watches" },
-];
-
-const BRANDS = [
-  { id: "nike", label: "Nike" },
-  { id: "adidas", label: "Adidas" },
-  { id: "gucci", label: "Gucci" },
-  { id: "prada", label: "Prada" },
-  { id: "louis_vuitton", label: "Louis Vuitton" },
-  { id: "balenciaga", label: "Balenciaga" },
-  { id: "zara", label: "Zara" },
-  { id: "levis", label: "Levi's" },
-  { id: "puma", label: "Puma" },
-  { id: "converse", label: "Converse" },
-];
-
-const SORT_OPTIONS = [
-  { id: "price-lowtohigh", label: "Price: Low to High" },
-  { id: "price-hightolow", label: "Price: High to Low" },
-  { id: "title-atoz", label: "Title: A to Z" },
-  { id: "title-ztoa", label: "Title: Z to A" },
-];
 
 const MAX_PRICE = 2000;
 
@@ -522,7 +495,6 @@ const SearchPage = () => {
         />
 
         <div className="relative mx-auto max-w-4xl px-4 md:px-8">
-          {/* Label */}
           <div className="mb-5 flex items-center justify-center gap-2">
             <Sparkles size={13} className="text-primary/40" />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/40">
@@ -534,7 +506,7 @@ const SearchPage = () => {
           <h1 className="mb-8 text-center text-4xl font-black tracking-tighter text-primary md:text-6xl">
             Find Your{" "}
             <span className="relative inline-block">
-              <span className="relative z-10 text-amber-900  ">
+              <span className="relative z-10 text-yellow-600  ">
                 Perfect Style
               </span>
               <span className="absolute inset-x-0 bottom-1 h-3 z-0 rounded-full opacity-20 bg-primary" />

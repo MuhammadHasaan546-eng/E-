@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/sheet";
 import { Plus, PackageOpen } from "lucide-react";
 import { productFormControls } from "@/config";
-// import CommonFrom from "@/components/common/From";
 import CommonFrom from "@/components/common/From";
 import ProductImageUpload from "@/components/admin/ImageUpload";
 import { useDispatch } from "react-redux";
@@ -45,7 +44,6 @@ const AdminProduct = () => {
   const dispatch = useDispatch();
 
   const onSubmit = (event) => {
-    // TODO: Add validation logic here
     if (!isFromVaid()) {
       toast.error("Please fill all the fields");
       return;
@@ -96,7 +94,6 @@ const AdminProduct = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  // TODO: Add validation logic here
   const isFromVaid = () => {
     return Object.keys(fromData)
       .map((key) => fromData[key] !== "")

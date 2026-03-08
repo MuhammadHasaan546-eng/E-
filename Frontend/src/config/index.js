@@ -222,3 +222,76 @@ export const sortOptions = [
   { id: "title-atoz", label: "Title: A to Z" },
   { id: "title-ztoa", label: "Title: Z to A" },
 ];
+//// Home page
+/// brands
+export const brandColorMap = {
+  nike: "from-gray-900 to-gray-700",
+  adidas: "from-blue-900 to-blue-700",
+  puma: "from-red-600 to-rose-500",
+  under_armour: "from-red-700 to-red-500",
+  reebok: "from-blue-600 to-indigo-500",
+  new_balance: "from-red-600 to-gray-600",
+  asics: "from-blue-700 to-cyan-500",
+  converse: "from-red-600 to-orange-500",
+  vans: "from-gray-800 to-gray-600",
+  zara: "from-gray-900 to-gray-700",
+  hm: "from-red-500 to-rose-400",
+  levis: "from-red-700 to-red-500",
+  uniqlo: "from-red-500 to-rose-500",
+  gucci: "from-emerald-700 to-green-500",
+  louis_vuitton: "from-amber-800 to-yellow-600",
+  balenciaga: "from-gray-900 to-gray-700",
+  prada: "from-gray-800 to-gray-600",
+  skechers: "from-blue-600 to-sky-500",
+  timberland: "from-amber-700 to-yellow-500",
+  columbia: "from-blue-700 to-sky-500",
+  the_north_face: "from-red-600 to-gray-700",
+  crocs: "from-green-500 to-emerald-400",
+};
+
+// Featured brands (top brands to show prominently)
+export const featuredBrandIds = [
+  "nike",
+  "adidas",
+  "gucci",
+  "prada",
+  "zara",
+  "louis_vuitton",
+  "puma",
+  "converse",
+  "levis",
+  "the_north_face",
+  "balenciaga",
+  "vans",
+];
+//// Search
+
+export const CATEGORIES = [
+  { id: "mens_clothing", label: "Men's Clothing" },
+  { id: "womens_clothing", label: "Women's Clothing" },
+  { id: "kids_clothing", label: "Kids' Clothing" },
+  { id: "shoes", label: "Shoes" },
+  { id: "accessories", label: "Accessories" },
+  { id: "bags", label: "Bags" },
+  { id: "watches", label: "Watches" },
+];
+
+export const BRANDS = [
+  { id: "nike", label: "Nike" },
+  { id: "adidas", label: "Adidas" },
+  { id: "gucci", label: "Gucci" },
+  { id: "prada", label: "Prada" },
+  { id: "louis_vuitton", label: "Louis Vuitton" },
+  { id: "balenciaga", label: "Balenciaga" },
+  { id: "zara", label: "Zara" },
+  { id: "levis", label: "Levi's" },
+  { id: "puma", label: "Puma" },
+  { id: "converse", label: "Converse" },
+];
+
+export const SORT_OPTIONS = [
+  { id: "price-lowtohigh", label: "Price: Low to High" },
+  { id: "price-hightolow", label: "Price: High to Low" },
+  { id: "title-atoz", label: "Title: A to Z" },
+  { id: "title-ztoa", label: "Title: Z to A" },
+];

@@ -83,19 +83,6 @@ const ShoppingListing = () => {
 
   // get add to cart
   function handleAddToCard(getCurrentProductId) {
-    // let getCartItem = cartItems.items || [];
-    // if (getCartItem.length) {
-    //   const indexOfCurrentItem = getCartItem.findIndex(
-    //     (item) => item.product._id === getCurrentProductId,
-    //   );
-    //   const getQuantity = getCartItem[indexOfCurrentItem].quantity;
-    //   if (indexOfCurrentItem !== -1) {
-    //     if (getQuantity >= productList[getCurrentProductId].stock) {
-    //       toast.error("Product is out of stock");
-    //       return;
-    //     }
-    //   }
-    // }
     dispatch(
       createCart({
         userId: user.id,
@@ -130,7 +117,6 @@ const ShoppingListing = () => {
     if (savedFilter) setFilter(JSON.parse(savedFilter));
   }, []);
 
-  // Re-sync filter from session storage if the URL search parameters change
   useEffect(() => {
     const savedFilter = sessionStorage.getItem("filter");
     if (savedFilter) {

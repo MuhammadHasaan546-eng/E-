@@ -20,15 +20,20 @@ const AuthRegister = () => {
   const handleSubmit = (submittedForm) => {
     dispatch(registerUser(submittedForm)).then((data) => {
       if (data?.payload?.success) {
-        toast.success(data?.payload?.message);
-        navigate("/auth/login");
+        toast.success(data?.payload?.message || "Registration Successful!");
+
+        // Form ko reset sirf success par karein
+        setForm(initialState);
+
+        // Redirect to login
+        navigate("/auth/login", { replace: true });
       } else {
-        toast.warning(data?.payload?.message, { duration: 2000 });
-        navigate("/auth/register");
+        // Agar error aaye toh navigate karne ki zaroorat nahi, sirf toast dikhayein
+        toast.error(data?.payload?.message || "Something went wrong", {
+          duration: 2000,
+        });
       }
     });
-
-    setForm(initialState);
   };
 
   return (

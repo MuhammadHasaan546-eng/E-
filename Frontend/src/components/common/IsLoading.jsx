@@ -5,7 +5,6 @@ const Loading = () => {
   return (
     <motion.div
       key="loader"
-      // EXIT ANIMATION: Smoothly zooms out and blurs
       initial={{ opacity: 1 }}
       exit={{
         opacity: 0,
@@ -42,7 +41,6 @@ const Loading = () => {
           </div>
         </motion.div>
 
-        {/* Store Name with Smooth Letter Spacing */}
         <motion.h2
           className="text-white text-4xl font-extralight tracking-[20px] uppercase ml-[20px]"
           initial={{ opacity: 0, y: 10 }}
@@ -52,7 +50,6 @@ const Loading = () => {
           KoKhaN
         </motion.h2>
 
-        {/* Slow & Smooth Progress Bar */}
         <div className="mt-12 w-64 h-[1px] bg-white/5 overflow-hidden relative">
           <motion.div
             initial={{ x: "-100%" }}

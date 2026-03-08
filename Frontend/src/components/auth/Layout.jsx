@@ -6,10 +6,7 @@ import { ShoppingBag, Star, Sparkles, ShieldCheck } from "lucide-react";
 const AuthLayout = () => {
   return (
     <div className="flex min-h-screen w-full bg-white overflow-hidden">
-      {/* Left Side: Animated Brand Experience */}
       <div className="hidden lg:flex flex-col items-center justify-center bg-slate-950 w-1/2 px-12 relative overflow-hidden">
-        {/* --- ANIMATED BACKGROUND ELEMENTS --- */}
-        {/* Floating Gradient Orb 1 */}
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -20,7 +17,6 @@ const AuthLayout = () => {
           className="absolute top-[-5%] left-[-5%] w-96 h-96 bg-indigo-900/20 rounded-full blur-[100px]"
         />
 
-        {/* Floating Gradient Orb 2 */}
         <motion.div
           animate={{
             scale: [1, 1.3, 1],
@@ -36,9 +32,7 @@ const AuthLayout = () => {
           className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-slate-800/30 rounded-full blur-[120px]"
         />
 
-        {/* --- MAIN CONTENT --- */}
         <div className="relative z-10 w-full max-w-md text-center space-y-10">
-          {/* Animated Icon Container */}
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
@@ -52,7 +46,6 @@ const AuthLayout = () => {
           >
             <div className="relative p-6 rounded-[30px] bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl">
               <ShoppingBag className="h-14 w-14 text-white" />
-              {/* Floating Mini Stars */}
               <motion.div
                 animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
@@ -63,7 +56,6 @@ const AuthLayout = () => {
             </div>
           </motion.div>
 
-          {/* Text Content with Stagger Effect */}
           <div className="space-y-6">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -92,7 +84,6 @@ const AuthLayout = () => {
             </motion.p>
           </div>
 
-          {/* Trust Badges with Hover Animation */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -110,7 +101,6 @@ const AuthLayout = () => {
           </motion.div>
         </div>
 
-        {/* Bottom Tagline */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.3 }}
@@ -121,7 +111,6 @@ const AuthLayout = () => {
         </motion.p>
       </div>
 
-      {/* Right Side: Form Area */}
       <motion.div
         initial={{ x: 50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}

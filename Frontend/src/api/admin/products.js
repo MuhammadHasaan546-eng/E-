@@ -14,9 +14,8 @@ export const createProduct = createAsyncThunk(
           },
         },
       );
-      console.log("createProduct", response);
 
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data);
     }
@@ -44,9 +43,8 @@ export const fetchProducts = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   "admin/products/editProduct",
-  async ({ id, formData }) => {
+  async ({ id, formData }, thunkAPI) => {
     try {
-      console.log(id, formData);
       const response = await axios.put(
         `http://localhost:3000/api/admin/products/edit/${id}`,
         formData,
@@ -56,9 +54,8 @@ export const editProduct = createAsyncThunk(
           },
         },
       );
-      console.log("editProduct", response);
 
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data);
     }

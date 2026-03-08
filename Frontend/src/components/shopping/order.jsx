@@ -158,7 +158,6 @@ const ShoppingOrder = () => {
           </table>
         </div>
 
-        {/* Mobile/Tablet Card View */}
         <div className="lg:hidden divide-y divide-slate-100">
           {orderList && orderList.length > 0 ? (
             orderList.map((order) => (

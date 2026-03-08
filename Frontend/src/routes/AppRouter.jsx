@@ -1,4 +1,6 @@
 import { chexkAuth } from "@/api/auth/check-auth";
+import { getFeatureImages } from "@/api/common/feature";
+
 import App from "@/App";
 import AdminLayout from "@/components/admin/Layout";
 import AuthLayout from "@/components/auth/Layout";
@@ -7,6 +9,7 @@ import ShoppingLayout from "@/components/shopping/Layout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminOrder from "@/pages/admin/Order";
 import AdminProduct from "@/pages/admin/Product";
+import AdminFeatures from "@/pages/admin/Features";
 import AuthLogin from "@/pages/auth/Login";
 import AuthRegister from "@/pages/auth/Register";
 import NotFound from "@/pages/Error/NotFound";
@@ -16,7 +19,7 @@ import ShoppingHome from "@/pages/shopping/Home";
 import ShoppingListing from "@/pages/shopping/Listing";
 import PaypalReturnPage from "@/pages/shopping/PaypalReturnPage";
 import PaymentSuccessPage from "@/pages/shopping/PaymentSuccessPage";
-import UnAuth from "@/pages/unauth";
+import UnAuth from "@/pages/Error/index";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -32,6 +35,7 @@ function AppRouter() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(chexkAuth());
+    dispatch(getFeatureImages());
   }, [dispatch]);
 
   const router = createBrowserRouter([
@@ -48,7 +52,6 @@ function AppRouter() {
         </CheckedAuth>
       ),
       children: [
-        // { index: true, element: <Navigate to="login" /> },
         { path: "login", element: <AuthLogin /> },
         { path: "register", element: <AuthRegister /> },
       ],
@@ -66,6 +69,7 @@ function AppRouter() {
         { path: "dashboard", element: <AdminDashboard /> },
         { path: "products", element: <AdminProduct /> },
         { path: "orders", element: <AdminOrder /> },
+        { path: "features", element: <AdminFeatures /> },
       ],
     },
     {

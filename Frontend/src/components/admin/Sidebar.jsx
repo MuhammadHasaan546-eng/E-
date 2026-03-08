@@ -1,9 +1,9 @@
 import {
   ChartNoAxesCombined,
-  User,
   ChartSpline,
   LayoutDashboard,
   ShoppingBasket,
+  ImagePlus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -34,9 +34,9 @@ const adminSidebarMenues = [
   },
   {
     id: 4,
-    label: "Users",
-    path: "/admin/users",
-    icon: <User size={20} />,
+    label: "Features",
+    path: "/admin/features",
+    icon: <ImagePlus size={20} />,
   },
 ];
 

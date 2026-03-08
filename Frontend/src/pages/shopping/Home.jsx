@@ -1,21 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import fashionBanner from "@/assets/fashion_banner_1_png_1772470367314.png";
-import luxuryBanner from "@/assets/luxury_banner_2_png_1772470392721.png";
-
 import { motion } from "framer-motion";
-import banner1 from "@/assets/banner.jpg";
-import banner2 from "@/assets/banner2.jpg";
-import banner3 from "@/assets/banner3.jpg";
-import banner4 from "@/assets/banner4.jpg";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllProducts } from "@/api/shop/product";
+import { fetchProductDeatils } from "@/api/shop/product";
+import { createCart, fetchCartItems } from "@/api/shop/cart";
+import { filterOptions, brandOptionMap, categoryOptionMap } from "@/config";
+import ProductDetailsDialog from "@/components/shopping/product-details";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { getFeatureImages } from "@/api/common/feature";
+import { brandColorMap } from "@/config/index";
+import { featuredBrandIds } from "@/config/index";
+import banner from "@/assets/banner.jpg";
 
-// Temporary fallbacks for missing images - replace these imports when the real files are added
-const summerCollection = fashionBanner;
-const urbanStreetwear = luxuryBanner;
-const newSeasonBanner = banner3;
 import {
   ShoppingCart,
-  StarIcon,
   Shirt,
   ShoppingBag,
   Watch,
@@ -30,19 +32,7 @@ import {
   Heart,
   Crown,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProducts } from "@/api/shop/product";
-import { fetchProductDeatils } from "@/api/shop/product";
-import { createCart, fetchCartItems } from "@/api/shop/cart";
-import { filterOptions, brandOptionMap, categoryOptionMap } from "@/config";
-import { setProductDetails } from "@/store/shop/product-slice";
-import ProductDetailsDialog from "@/components/shopping/product-details";
-import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 
-// Category icons mapping
 const categoryIconMap = {
   mens_clothing: Shirt,
   womens_clothing: Sparkles,
@@ -53,102 +43,37 @@ const categoryIconMap = {
   watches: Watch,
 };
 
-// Category gradient colors
-const categoryGradientMap = {
-  mens_clothing: "from-blue-500 to-indigo-600",
-  womens_clothing: "from-pink-500 to-rose-600",
-  kids_clothing: "from-emerald-400 to-teal-600",
-  shoes: "from-orange-500 to-amber-600",
-  accessories: "from-violet-500 to-purple-600",
-  bags: "from-cyan-500 to-blue-600",
-  watches: "from-slate-600 to-zinc-800",
-};
-
-// Brand logo colors for distinct visual identity
-const brandColorMap = {
-  nike: "from-gray-900 to-gray-700",
-  adidas: "from-blue-900 to-blue-700",
-  puma: "from-red-600 to-rose-500",
-  under_armour: "from-red-700 to-red-500",
-  reebok: "from-blue-600 to-indigo-500",
-  new_balance: "from-red-600 to-gray-600",
-  asics: "from-blue-700 to-cyan-500",
-  converse: "from-red-600 to-orange-500",
-  vans: "from-gray-800 to-gray-600",
-  zara: "from-gray-900 to-gray-700",
-  hm: "from-red-500 to-rose-400",
-  levis: "from-red-700 to-red-500",
-  uniqlo: "from-red-500 to-rose-500",
-  gucci: "from-emerald-700 to-green-500",
-  louis_vuitton: "from-amber-800 to-yellow-600",
-  balenciaga: "from-gray-900 to-gray-700",
-  prada: "from-gray-800 to-gray-600",
-  skechers: "from-blue-600 to-sky-500",
-  timberland: "from-amber-700 to-yellow-500",
-  columbia: "from-blue-700 to-sky-500",
-  the_north_face: "from-red-600 to-gray-700",
-  crocs: "from-green-500 to-emerald-400",
-};
-
-// Featured brands (top brands to show prominently)
-const featuredBrandIds = [
-  "nike",
-  "adidas",
-  "gucci",
-  "prada",
-  "zara",
-  "louis_vuitton",
-  "puma",
-  "converse",
-  "levis",
-  "the_north_face",
-  "balenciaga",
-  "vans",
-];
-
 const ShoppingHome = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { productList, productDeatils, isLoading } = useSelector(
-    (state) => state.shopingProductSlice,
-  );
+  const {
+    productList,
+    productDeatils: productDetails,
+    isLoading,
+  } = useSelector((state) => state.shopingProductSlice);
+  const { featureImageList } = useSelector((state) => state.commonFeature);
   const { user } = useSelector((state) => state.auth);
-  const [openDetilsDialog, setOpenDetilsDialog] = useState(false);
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [heroIndex, setHeroIndex] = useState(0);
 
-  const heroSlides = [
-    {
-      title: "Discover Premium Fashion",
-      subtitle:
-        "Explore our curated collection of the finest brands and trends",
-      image: banner1,
-      // gradient: "from-violet-600/80 via-purple-600/80 to-indigo-700/80",
-    },
-    {
-      title: "Luxury Meets Comfort",
-      subtitle: "From Nike to Gucci — your favorite brands, all in one place",
-      image: banner2,
-      // gradient: "from-rose-600/80 via-pink-600/80 to-fuchsia-700/80",
-    },
-    {
-      title: "New Season, New Style",
-      subtitle: "Up to 50% off on selected premium collections",
-      image: newSeasonBanner,
-      // gradient: "from-emerald-600/80 via-teal-600/80 to-cyan-700/80",
-    },
-    {
-      title: "Vibrant Summer Collection",
-      subtitle: "Fresh colors and airy fabrics for your next getaway",
-      image: banner4,
-      // gradient: "from-amber-500/80 via-orange-600/80 to-red-600/80",
-    },
-    {
-      title: "Urban Streetwear Essentials",
-      subtitle: "Rule the streets with our exclusive urban drops and sneakers",
-      image: urbanStreetwear,
-      // gradient: "from-gray-800/80 via-gray-900/80 to-black/80",
-    },
-  ];
+  const heroSlides =
+    featureImageList && featureImageList.length > 0
+      ? featureImageList.map((item) => ({
+          title: item.title,
+          subtitle:
+            item.subtitle ||
+            "Exclusive drops and premium fashion tailored for you",
+          image: item.image,
+          gradient: "from-gray-900/40 via-gray-900/20 to-transparent",
+        }))
+      : [
+          {
+            title: "Welcome to KoKhaN",
+            subtitle: "Exclusive drops and premium fashion tailored for you",
+            image: banner,
+            gradient: "from-gray-900/40 via-gray-900/20 to-transparent",
+          },
+        ];
 
   // Auto-rotate hero
   useEffect(() => {
@@ -156,27 +81,26 @@ const ShoppingHome = () => {
       setHeroIndex((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
 
-  // Fetch products on mount
   useEffect(() => {
     dispatch(
       fetchAllProducts({ filterParams: {}, sortParams: "price-lowtohigh" }),
     );
+    dispatch(getFeatureImages());
   }, [dispatch]);
 
-  // Open product details dialog
   useEffect(() => {
-    if (productDeatils !== null) {
-      setOpenDetilsDialog(true);
+    if (productDetails !== null) {
+      setOpenDetailsDialog(true);
     }
-  }, [productDeatils]);
+  }, [productDetails]);
 
-  function handleGetProductDeatils(getCurrentProductId) {
+  function handleGetProductDetails(getCurrentProductId) {
     dispatch(fetchProductDeatils(getCurrentProductId));
   }
 
-  function handleAddToCard(getCurrentProductId) {
+  function handleAddToCart(getCurrentProductId) {
     dispatch(
       createCart({
         userId: user.id,
@@ -206,35 +130,30 @@ const ShoppingHome = () => {
     navigate(`/shop/listing?Brand=${brandId}`);
   }
 
-  // Get up to 8 products for display
   const featuredProducts = productList?.slice(0, 8) || [];
 
   return (
     <div className="flex flex-col gap-0 min-h-screen bg-gray-50/50   ">
       <div className="relative overflow-hidden p-4 md:p-6 lg:p-8">
         <div className="relative min-h-[500px] sm:min-h-[600px] md:min-h-[700px] transition-all duration-1000 ease-in-out rounded-[2rem] overflow-hidden shadow-2xl">
-          {/* Slide Background Image */}
           <div
             className="absolute inset-0 transition-all duration-1000 ease-in-out"
             style={{
               backgroundImage: `url(${heroSlides[heroIndex].image})`,
-              backgroundSize: "cover", // Image poore area ko cover karegi
-              backgroundPosition: "center top", // Fashion images ke liye 'top' behtar hai taake face na kate
+              backgroundSize: "cover",
+              backgroundPosition: "center top",
               backgroundRepeat: "no-repeat",
-              transform: "scale(1.05)", // Aapka existing zoom effect
+              transform: "scale(1.05)",
               width: "100%",
               height: "100%",
             }}
           />
-          {/* Gradient Overlay */}
           <div
             className={`absolute inset-0 bg-linear-to-br ${heroSlides[heroIndex].gradient} transition-all duration-1000`}
           />
 
-          {/* Inner Shadow / Inset */}
           <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] pointer-events-none" />
 
-          {/* Animated background shapes */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse" />
             <div
@@ -250,17 +169,31 @@ const ShoppingHome = () => {
                 <Zap className="w-4 h-4" />
                 <span>Hot Deals Available Now</span>
               </div>
-              <h1
-                className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight"
-                style={{
-                  textShadow: "0 2px 30px rgba(0,0,0,0.15)",
-                }}
-              >
-                {heroSlides[heroIndex].title}
-              </h1>
-              <p className="text-white/80 text-lg sm:text-xl mb-10 max-w-2xl leading-relaxed">
-                {heroSlides[heroIndex].subtitle}
-              </p>
+              <div className="overflow-hidden">
+                <motion.h1
+                  key={`title-${heroIndex}`}
+                  initial={{ y: 40, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight"
+                  style={{
+                    textShadow: "0 2px 30px rgba(0,0,0,0.15)",
+                  }}
+                >
+                  {heroSlides[heroIndex].title}
+                </motion.h1>
+              </div>
+              <div className="overflow-hidden">
+                <motion.p
+                  key={`subtitle-${heroIndex}`}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                  className="text-white/80 text-lg sm:text-xl mb-10 max-w-2xl leading-relaxed"
+                >
+                  {heroSlides[heroIndex].subtitle}
+                </motion.p>
+              </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   className="px-8 py-6 text-lg font-bold cursor-pointer  bg-red-500 text-gray-900 hover:bg-gray-100 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
@@ -331,21 +264,17 @@ const ShoppingHome = () => {
                   onClick={() => handleCategoryClick(category.id)}
                 >
                   <div className="relative flex flex-col items-center justify-center bg-white border border-gray-50 p-8 transition-all duration-500 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.03)] group-hover:border-[#d4af37]/20">
-                    {/* Minimalist Icon Container */}
                     <div className="relative w-16 h-16 flex items-center justify-center mb-5">
-                      {/* Background Decorative Circle */}
                       <div className="absolute inset-0 bg-[#d4af37]/5 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 ease-out" />
 
                       <IconComponent className="w-7 h-7 text-gray-400 group-hover:text-[#d4af37] transition-colors duration-500 relative z-10 font-light" />
                     </div>
 
-                    {/* Label */}
                     <h3 className="text-[10px] font-bold text-gray-500 group-hover:text-gray-900 tracking-[2px] uppercase text-center transition-colors">
                       {category.label}
                     </h3>
 
-                    {/* Bottom Border Animation */}
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-[#d4af37] group-hover:w-1/2 transition-all duration-500" />
+                    <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#d4af37] group-hover:w-full transition-all duration-700 ease-out" />
                   </div>
                 </motion.div>
               );
@@ -353,7 +282,7 @@ const ShoppingHome = () => {
           </div>
         </section>
 
-        {/* ═══════════ BRANDS SECTION ═══════════ */}
+        {/* ══════ BRANDS SECTION ═══════════ */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -418,7 +347,7 @@ const ShoppingHome = () => {
           </div>
         </section>
 
-        {/* ═══════════ FEATURED PRODUCTS ═══════════ */}
+        {/* ═══════════ FEATURED PRODUCTS ═════════/══ */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -470,7 +399,7 @@ const ShoppingHome = () => {
                 >
                   <div
                     className="relative overflow-hidden"
-                    onClick={() => handleGetProductDeatils(product._id)}
+                    onClick={() => handleGetProductDetails(product._id)}
                   >
                     <img
                       src={product.image}
@@ -486,14 +415,20 @@ const ShoppingHome = () => {
                     )}
 
                     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                      <button className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors">
-                        <Heart className="w-4 h-4 text-gray-600" />
+                      <button
+                        className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toast.success("Added to Wishlist!");
+                        }}
+                      >
+                        <Heart className="w-4 h-4 text-rose-500" />
                       </button>
                     </div>
                   </div>
 
                   <div className="p-4">
-                    <div onClick={() => handleGetProductDeatils(product._id)}>
+                    <div onClick={() => handleGetProductDetails(product._id)}>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-violet-700 transition-colors">
                         {product.title}
                       </h3>
@@ -534,7 +469,7 @@ const ShoppingHome = () => {
                         className="rounded-full bg-linear-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all duration-300 w-9 h-9 p-0"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleAddToCard(product._id);
+                          handleAddToCart(product._id);
                         }}
                       >
                         <ShoppingCart className="w-4 h-4" />
@@ -557,7 +492,7 @@ const ShoppingHome = () => {
         <section>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative rounded-2xl overflow-hidden bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700 p-8 text-white shadow-xl group cursor-pointer hover:shadow-2xl transition-all duration-500">
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1Ij48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYtMmgtNHY2aDR2Mkg0MHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2MmgtMnY0aDJ2LTJoNHYyaDJWNmgtMlY0aDJ6bS0yIDI0di0ySDI4djJoNnptMC00aC02djJoNnYtMnptMTIgMTJ2LTJoLTZ2Mmg2em0wLThoLTZ2Mmg2di0yem0wLThINDBWNGg2VjBoLTZ2Mmg0VjJIMzZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1Ij48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYtMmgtNHY2aDR2Mkg0MHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2MmgtMnY0aDJ2LTJoNHYyaDJWNmgtMlY0aDJ6bS0yIDI0di0ySDI4djJoNnptMC00aC-6djJoNnYtMnptMTIgMTJ2LTJoLTZ2Mmg2em0wLThoLTZ2Mmg2di0yem0wLThINDBWNGg2VjBoLTZ2Mmg0VjJIMzZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
               <div className="relative">
                 <div className="flex items-center gap-2 mb-3">
@@ -583,7 +518,7 @@ const ShoppingHome = () => {
             </div>
 
             <div className="relative rounded-2xl overflow-hidden bg-linear-to-br from-rose-500 via-pink-600 to-fuchsia-700 p-8 text-white shadow-xl group cursor-pointer hover:shadow-2xl transition-all duration-500">
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1Ij48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYtMmgtNHY2aDR2Mkg0MHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2MmgtMnY0aDJ2LTJoNHYyaDJWNmgtMlY0aDJ6bS0yIDI0di0ySDI4djJoNnptMC00aC02djJoNnYtMnptMTIgMTJ2LTJoLTZ2Mmg2em0wLThoLTZ2Mmg2di0yem0wLThINDBWNGg2VjBoLTZ2Mmg0VjJIMzZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1Ij48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYtMmgtNHY2aDR2Mkg0MHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2MmgtMnY0aDJ2LTJoNHYyaDJWNmgtMlY0aDJ6bS0yIDI0di0ySDI4djJoNnptMC00aC-6djJoNnYtMnptMTIgMTJ2LTJoLTZ2Mmg2em0wLThoLTZ2Mmg2di0yem0wLThINDBWNGg2VjBoLTZ2Mmg0VjJIMzZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
               <div className="relative">
                 <div className="flex items-center gap-2 mb-3">
@@ -639,12 +574,11 @@ const ShoppingHome = () => {
         </section>
       </div>
 
-      {/* Product Details Dialog */}
       <ProductDetailsDialog
-        open={openDetilsDialog}
-        setOpen={setOpenDetilsDialog}
-        productDetils={productDeatils}
-        handleAddToCard={handleAddToCard}
+        open={openDetailsDialog}
+        setOpen={setOpenDetailsDialog}
+        productDetils={productDetails}
+        handleAddToCart={handleAddToCart}
       />
     </div>
   );

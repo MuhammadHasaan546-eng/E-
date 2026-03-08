@@ -23,7 +23,7 @@ import { updateProfile } from "../../api/auth/update-profile";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../../components/ui/sheet";
-import axios from "axios";
+import { uploadImage } from "../../api/common/upload";
 import ShoppingAddress from "../../components/shopping/address";
 import ShoppingOrder from "../../components/shopping/order";
 
@@ -65,15 +65,10 @@ const ShoppingAccount = () => {
       let finalAvatarUrl = profileData.avatar;
 
       if (avatarFile) {
-        const formData = new FormData();
-        formData.append("my_file", avatarFile);
-        const uploadRes = await axios.post(
-          "http://localhost:3000/api/admin/products/upload-image",
-          formData,
-        );
+        const uploadRes = await uploadImage(avatarFile);
 
-        if (uploadRes?.data?.success) {
-          finalAvatarUrl = uploadRes.data.result.url;
+        if (uploadRes?.success) {
+          finalAvatarUrl = uploadRes.result.url;
         } else {
           toast.error("Failed to upload image");
           setIsUpdating(false);
@@ -177,7 +172,7 @@ const ShoppingAccount = () => {
                   </div>
                   <div className="text-center sm:text-left">
                     <h3 className="text-2xl font-serif text-slate-800 mb-1">
-                      {user?.username || "Guest User"}
+                      {user.username || "Guest User"}
                     </h3>
                     <p className="text-slate-500 font-light mb-4 text-sm sm:text-base">
                       Premium Member since 2026
@@ -219,7 +214,7 @@ const ShoppingAccount = () => {
                     </label>
                     <input
                       type="email"
-                      value={user?.email || ""}
+                      value={user.email || ""}
                       readOnly
                       disabled
                       className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-2 text-slate-400 outline-none cursor-not-allowed font-medium"
@@ -284,13 +279,13 @@ const ShoppingAccount = () => {
                 <div className="absolute inset-0 opacity-10 background-pattern-dots mix-blend-overlay"></div>
 
                 <div className="h-20 w-20 rounded-full bg-slate-800 flex items-center justify-center text-2xl font-serif shrink-0 border border-slate-700 shadow-xl mb-4 relative z-10">
-                  {user?.avatar ? (
+                  {user.avatar ? (
                     <img
                       src={user.avatar}
                       alt="Avatar"
                       className="w-full h-full object-cover rounded-full"
                     />
-                  ) : user?.username ? (
+                  ) : user.username ? (
                     user.username.substring(0, 2).toUpperCase()
                   ) : (
                     "JD"
@@ -298,7 +293,7 @@ const ShoppingAccount = () => {
                 </div>
                 <div className="relative z-10">
                   <h2 className="font-serif text-xl tracking-wide">
-                    Hello, {user?.username}
+                    Hello, {user.username}
                   </h2>
                   <p className="text-slate-400 text-sm font-medium tracking-wider uppercase mt-1">
                     Premium Member

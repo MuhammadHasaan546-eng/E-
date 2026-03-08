@@ -52,6 +52,7 @@ import {
   updateOrderStatus,
 } from "@/api/admin/order/order";
 import { resetOrderDetails } from "@/store/shop/order-slice";
+import AdminOrderDetailsSheet from "./OrderDetailsSheet";
 
 const AdminOrdersView = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -362,184 +363,11 @@ const AdminOrdersView = () => {
         </div>
       </div>
 
-      <Sheet
-        open={isDetailsOpen}
-        onOpenChange={() => {
-          setIsDetailsOpen(false);
-          dispatch(resetOrderDetails());
-        }}
-      >
-        <SheetContent
-          side="right"
-          className="w-full sm:max-w-xl border-0 shadow-2xl p-0 bg-slate-50 overflow-y-auto custom-scrollbar"
-        >
-          {orderDetails && (
-            <div className="flex flex-col min-h-full">
-              <div className="bg-slate-900 p-6 sm:p-10 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-6 sm:p-10 opacity-10">
-                  <ShoppingBag className="h-[120px] w-[120px] sm:h-[180px] sm:w-[180px]" />
-                </div>
-                <div className="relative z-10 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
-                      <CheckCircle2 className="h-4 w-4 text-slate-400" />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400">
-                      Order Management
-                    </span>
-                  </div>
-                  <SheetTitle className="text-2xl sm:text-4xl font-serif tracking-wide text-white break-all">
-                    {orderDetails?._id}
-                  </SheetTitle>
-                  <SheetDescription className="text-slate-400 font-light text-sm sm:text-base">
-                    Comprehensive breakdown for order processing
-                  </SheetDescription>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-10 space-y-8 sm:space-y-10 flex-1">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-6">
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-                      <User className="h-3.5 w-3.5" /> CUSTOMER INFO
-                    </h4>
-                    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-1">
-                      <p className="font-bold text-slate-900 text-lg capitalize">
-                        {orderDetails.addressInfo?.pincode}
-                      </p>
-                      <p className="text-slate-500 font-medium text-sm italic">
-                        Contact: {orderDetails.addressInfo?.phone}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-                      <MapPin className="h-3.5 w-3.5" /> SHIPPING ADDRESS
-                    </h4>
-                    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                      <p className="text-slate-700 leading-relaxed font-medium">
-                        {orderDetails.addressInfo?.address},{" "}
-                        {orderDetails.addressInfo?.city}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-                    <Package className="h-3.5 w-3.5" /> ORDER BREAKDOWN
-                  </h4>
-                  <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
-                    <div className="divide-y divide-slate-50">
-                      {orderDetails.cartItems?.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className="p-6 flex justify-between items-center group transition-colors hover:bg-slate-50/50"
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-bold text-slate-900 uppercase tracking-tight text-sm">
-                              {item.title}
-                            </span>
-                            <span className="text-xs text-slate-500 mt-1 font-medium italic">
-                              Qty: {item.quantity} × ${item.price?.toFixed(2)}
-                            </span>
-                          </div>
-                          <span className="font-black text-slate-900 text-lg tabular-nums">
-                            ${(item.quantity * item.price).toFixed(2)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bg-slate-900 p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 sm:gap-0">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">
-                          Order Revenue
-                        </span>
-                        <span className="text-3xl sm:text-4xl font-black text-white ml-[-2px] tracking-tight tabular-nums">
-                          ${orderDetails.totalAmount.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-end gap-3">
-                        <Badge
-                          variant="outline"
-                          className="bg-slate-800 border-slate-700 text-white gap-2 px-3 py-1.5 h-auto rounded-xl uppercase"
-                        >
-                          <CreditCard className="h-3.5 w-3.5 text-slate-400" />
-                          {orderDetails.paymentMethod}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-                    UPDATE STATUS
-                  </h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button
-                      onClick={() =>
-                        handleUpdateStatus(orderDetails._id, "processing")
-                      }
-                      className="rounded-2xl h-14 bg-white text-slate-900 border-2 border-slate-100 hover:border-slate-900 transition-all font-bold tracking-widest text-[10px] uppercase shadow-sm"
-                      disabled={orderDetails.orderStatus === "processing"}
-                    >
-                      PROCESSING
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        handleUpdateStatus(orderDetails._id, "shipped")
-                      }
-                      className="rounded-2xl h-14 bg-white text-slate-900 border-2 border-slate-100 hover:border-slate-900 transition-all font-bold tracking-widest text-[10px] uppercase shadow-sm"
-                      disabled={orderDetails.orderStatus === "shipped"}
-                    >
-                      SHIPPED
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        handleUpdateStatus(orderDetails._id, "delivered")
-                      }
-                      className="rounded-2xl h-14 bg-white text-slate-900 border-2 border-slate-100 hover:border-slate-900 transition-all font-bold tracking-widest text-[10px] uppercase md:col-span-2 shadow-sm"
-                      disabled={orderDetails.orderStatus === "delivered"}
-                    >
-                      DELIVERED
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <SheetFooter className="p-6 sm:p-10 bg-white border-t border-slate-100 mt-auto">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setIsDetailsOpen(false);
-                    dispatch(resetOrderDetails());
-                  }}
-                  className="rounded-2xl h-14 w-full font-bold tracking-widest text-xs uppercase"
-                >
-                  CLOSE VIEW
-                </Button>
-              </SheetFooter>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
-
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #e2e8f0;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #cbd5e1;
-        }
-      `}</style>
+      <AdminOrderDetailsSheet
+        isDetailsOpen={isDetailsOpen}
+        setIsDetailsOpen={setIsDetailsOpen}
+        orderDetails={orderDetails}
+      />
     </div>
   );
 };

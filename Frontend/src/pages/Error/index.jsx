@@ -1,14 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Lock } from "lucide-react"; // Agar Lucide icons use kar rahe hain
+import { Lock } from "lucide-react";
 
 const UnAuth = () => {
   const navigate = useNavigate();
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-[#050505] text-white overflow-hidden font-serif">
-      {/* Central Icon with Pulse Effect */}
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -32,7 +31,6 @@ const UnAuth = () => {
           Limited Access
         </motion.h1>
 
-        {/* Message */}
         <motion.p
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -43,7 +41,6 @@ const UnAuth = () => {
           not hold the credentials required for this collection.
         </motion.p>
 
-        {/* Buttons */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -66,7 +63,6 @@ const UnAuth = () => {
         </motion.div>
       </div>
 
-      {/* Decorative Bottom Text */}
       <div className="absolute bottom-10 left-0 right-0 text-center text-[10px] uppercase tracking-[5px] text-gray-600 opacity-50">
         KoKhaN Private Concierge
       </div>

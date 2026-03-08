@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import "dotenv/config";
 
 // import routes
 
@@ -14,6 +15,7 @@ import shopOrderRouter from "./routes/shop/order-routes.js";
 import adminOrderRouter from "./routes/admin/admin-order.routes.js";
 import searchRouter from "./routes/shop/search.route.js";
 import reviewRouter from "./routes/shop/review.route.js";
+import commontFeatures from "./routes/common/feature.router.js";
 
 const app = express();
 
@@ -56,6 +58,8 @@ app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/admin/orders", adminOrderRouter);
 app.use("/api/shop/search", searchRouter);
 app.use("/api/shop/review", reviewRouter);
+
+app.use("/api/common/feature", commontFeatures);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
