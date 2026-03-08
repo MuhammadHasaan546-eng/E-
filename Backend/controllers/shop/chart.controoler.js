@@ -160,7 +160,6 @@ export const updateChartItem = async (req, res) => {
       });
     }
 
-    // Adjust stock: subtract delta (if delta is negative, stock increases)
     product.stock -= delta;
     await product.save();
 

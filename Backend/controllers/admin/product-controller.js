@@ -115,18 +115,6 @@ export const editProduct = async (req, res) => {
       message: "Product updated successfully",
       data: findProduct,
     });
-
-    // const updatedProduct = {
-    //   ...findProduct,
-    //   title,
-    //   description,
-    //   image,
-    //   category,
-    //   brand,
-    //   stock,
-    //   price,
-    //   salePrice,
-    // };
   } catch (error) {
     console.log(error);
     res.status(500).json({

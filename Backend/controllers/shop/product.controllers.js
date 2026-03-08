@@ -1,4 +1,5 @@
 import Product from "../../models/Product.js";
+import ExpressError from "./../../utils/ExpressError.js";
 
 export const getFilterProduct = async (req, res) => {
   try {
@@ -44,11 +45,7 @@ export const getFilterProduct = async (req, res) => {
       data: products,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+    throw new ExpressError(500, "Internal Server Error", false);
   }
 };
 
@@ -68,10 +65,6 @@ export const getProductDeatils = async (req, res) => {
       data: product,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+    throw new ExpressError(500, "Internal Server Error", false);
   }
 };

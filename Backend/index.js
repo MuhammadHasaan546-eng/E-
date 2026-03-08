@@ -30,7 +30,7 @@ mongoose
 // CORS
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [process.env.REACT_VITE_URL],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: [
       "Content-Type",
@@ -67,7 +67,7 @@ app.use((err, req, res, next) => {
   const message = err.message || "Something went wrong";
   return res.status(statusCode).json({
     success: false,
-    message,
+    message: message,
   });
 });
 

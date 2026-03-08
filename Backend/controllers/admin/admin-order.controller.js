@@ -1,4 +1,5 @@
 import Order from "../../models/Order.js";
+import ExpressError from "../../utils/ExpressError.js";
 
 export const getAllOrdersForAdmin = async (req, res) => {
   try {
@@ -16,11 +17,7 @@ export const getAllOrdersForAdmin = async (req, res) => {
       data: orders,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Some error occurred!",
-    });
+    throw new ExpressError(500, "Internal Server Error", false);
   }
 };
 
@@ -32,10 +29,7 @@ export const updateOrderStatus = async (req, res) => {
     const order = await Order.findById(id);
 
     if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found!",
-      });
+      throw new ExpressError(404, "Order not found!");
     }
 
     order.orderStatus = orderStatus;
@@ -47,10 +41,6 @@ export const updateOrderStatus = async (req, res) => {
       message: "Order status updated successfully",
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Some error occurred!",
-    });
+    throw new ExpressError(404, "Some error occurred!", false);
   }
 };
