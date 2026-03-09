@@ -13,7 +13,6 @@ createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <StrictMode>
       <Provider store={store}>
-        {/* <RouterProvider router={router} /> */}
         <SmoothScroll>
           <AppRouter />
         </SmoothScroll>
