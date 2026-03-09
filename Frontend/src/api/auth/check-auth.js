@@ -1,12 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const chexkAuth = createAsyncThunk(
   "auth/checkauth",
   async (_, thunkAPI) => {
     try {
       const [response] = await Promise.all([
-        axios.get("http://localhost:3000/api/auth/check-auth", {
+        axios.get(`${BASE_URL}/api/auth/check-auth`, {
           withCredentials: true,
           headers: {
             "Cache-Control":

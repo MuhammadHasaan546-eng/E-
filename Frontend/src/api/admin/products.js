@@ -1,14 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const createProduct = createAsyncThunk(
   "admin/products/create",
   async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/admin/products/add",
+        `${BASE_URL}/api/admin/products/add`,
         formData,
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
@@ -24,17 +27,15 @@ export const createProduct = createAsyncThunk(
 
 export const fetchProducts = createAsyncThunk(
   "admin/products/fetch",
-  async (thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/admin/products/all",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await axios.get(`${BASE_URL}/api/admin/products/all`, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
-      return await response.data;
+      });
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data);
     }
@@ -46,9 +47,10 @@ export const editProduct = createAsyncThunk(
   async ({ id, formData }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/admin/products/edit/${id}`,
+        `${BASE_URL}/api/admin/products/edit/${id}`,
         formData,
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
@@ -67,7 +69,8 @@ export const deleteProduct = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/admin/products/delete/${id}`,
+        `${BASE_URL}/api/admin/products/delete/${id}`,
+        { withCredentials: true },
       );
 
       return response.data;

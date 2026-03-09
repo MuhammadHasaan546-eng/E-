@@ -1,22 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const addAddress = createAsyncThunk(
   "shop/address/add",
   async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/shop/address/add`,
+        `${BASE_URL}/api/shop/address/add`,
+        { formData },
         {
-          formData,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -28,9 +27,10 @@ export const fetchAddress = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/shop/address/get/${userId}`,
+        `${BASE_URL}/api/shop/address/get/${userId}`,
+        { withCredentials: true },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -39,21 +39,17 @@ export const fetchAddress = createAsyncThunk(
 
 export const editAddress = createAsyncThunk(
   "shop/address/edit",
-  async ({ userId, addressId, formData, thunkAPI }) => {
+  async ({ userId, addressId, formData }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/shop/address/update/${userId}/${addressId}`,
-
+        `${BASE_URL}/api/shop/address/update/${userId}/${addressId}`,
+        { formData },
         {
-          formData,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -62,18 +58,16 @@ export const editAddress = createAsyncThunk(
 
 export const deleteAddress = createAsyncThunk(
   "shop/address/delete",
-  async ({ userId, addressId, thunkAPI }) => {
+  async ({ userId, addressId }, thunkAPI) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/shop/address/delete/${userId}/${addressId}`,
-
+        `${BASE_URL}/api/shop/address/delete/${userId}/${addressId}`,
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

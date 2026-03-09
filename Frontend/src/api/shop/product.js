@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const fetchAllProducts = createAsyncThunk(
   "shop/products/fetch",
   async ({ filterParams, sortParams }, thunkAPI) => {
@@ -11,15 +13,14 @@ export const fetchAllProducts = createAsyncThunk(
       }).toString();
 
       const response = await axios.get(
-        `http://localhost:3000/api/shop/products/get?${quary}`,
-
+        `${BASE_URL}/api/shop/products/get?${quary}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -31,15 +32,14 @@ export const fetchProductDeatils = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/shop/products/get${id}`,
-
+        `${BASE_URL}/api/shop/products/get/${id}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

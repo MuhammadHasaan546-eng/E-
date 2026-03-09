@@ -1,26 +1,21 @@
 import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-// add to cart
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const createCart = createAsyncThunk(
   "shop/cart/create",
   async ({ userId, productId, quantity }, thunkAPI) => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/shop/cart/add`,
+        `${BASE_URL}/api/shop/cart/add`,
+        { userId, productId, quantity },
         {
-          userId,
-          productId,
-          quantity,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -32,56 +27,50 @@ export const fetchCartItems = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/shop/cart/get/${userId}`,
+        `${BASE_URL}/api/shop/cart/get/${userId}`,
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   },
 );
+
 export const deleteCartItem = createAsyncThunk(
   "shop/cart/delete",
   async ({ userId, productId }, thunkAPI) => {
-    console.log(userId, "userId", productId, "productId");
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/shop/cart/${userId}/${productId}`,
+        `${BASE_URL}/api/shop/cart/${userId}/${productId}`,
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   },
 );
+
 export const updateCartItem = createAsyncThunk(
   "shop/cart/update",
   async ({ userId, productId, quantity }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/shop/cart/update-cart`,
+        `${BASE_URL}/api/shop/cart/update-cart`,
+        { userId, productId, quantity },
         {
-          userId,
-          productId,
-          quantity,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      return await response.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

@@ -1,12 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async ({ userId, formData }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/auth/profile/${userId}`,
+        `${BASE_URL}/api/auth/profile/${userId}`,
         formData,
         {
           headers: {

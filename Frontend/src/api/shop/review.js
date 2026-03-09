@@ -1,14 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const addProductReview = createAsyncThunk(
   "shop/review/add",
   async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/shop/review/add",
+        `${BASE_URL}/api/shop/review/add`,
         formData,
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
@@ -26,7 +29,7 @@ export const getProductReviews = createAsyncThunk(
   async (productId, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/shop/review/get/${productId}`,
+        `${BASE_URL}/api/shop/review/get/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",

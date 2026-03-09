@@ -1,12 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (formData, thunkAPI) => {
     try {
       const [response] = await Promise.all([
-        axios.post("http://localhost:3000/api/auth/register", formData, {
+        axios.post(`${BASE_URL}/api/auth/register`, formData, {
           withCredentials: true,
         }),
         new Promise((resolve) => setTimeout(resolve, 2000)),
