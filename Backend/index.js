@@ -30,7 +30,7 @@ mongoose
 // CORS
 app.use(
   cors({
-    origin: [process.env.REACT_VITE_URL],
+    origin: [process.env.REACT_VITE_URL, "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: [
       "Content-Type",

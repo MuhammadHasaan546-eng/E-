@@ -71,7 +71,8 @@ export const loginUser = async (req, res) => {
       const options = {
         expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite: "none",
       };
       res
         .cookie("token", token, options)
@@ -97,10 +98,17 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-  res.clearCookie("token").status(200).json({
-    success: true,
-    message: "User logged out successfully",
-  });
+  res
+    .clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    })
+    .status(200)
+    .json({
+      success: true,
+      message: "User logged out successfully",
+    });
 };
 
 const authMiddleware = async (req, res, next) => {
@@ -159,7 +167,8 @@ export const updateProfile = async (req, res) => {
     const options = {
       expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: "none",
     };
 
     res
