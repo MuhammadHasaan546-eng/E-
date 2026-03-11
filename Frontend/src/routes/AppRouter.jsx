@@ -23,6 +23,7 @@ import UnAuth from "@/pages/Error/index";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import SearchPage from "@/pages/shopping/Search";
 
 
 const router = createBrowserRouter([
