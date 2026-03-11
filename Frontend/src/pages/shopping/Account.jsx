@@ -42,7 +42,7 @@ const ShoppingAccount = () => {
     dispatch(logoutUser()).then((res) => {
       if (res?.payload?.success) {
         toast.success("Logged out successfully");
-        navigate("/shop/home");
+        navigate("/");
       }
     });
   };
