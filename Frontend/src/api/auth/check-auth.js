@@ -7,20 +7,19 @@ export const chexkAuth = createAsyncThunk(
   "auth/checkauth",
   async (_, thunkAPI) => {
     try {
-      const [response] = await Promise.all([
-        axios.get(`${BASE_URL}/api/auth/check-auth`, {
-          withCredentials: true,
-          headers: {
-            "Cache-Control":
-              "no-cache, no-store, must-revalidate, proxy-revalidate",
-          },
-        }),
-        new Promise((resolve) => setTimeout(resolve, 2000)),
-      ]);
+      const response = await axios.get(`${BASE_URL}/api/auth/check-auth`, {
+        withCredentials: true,
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      });
+
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data ?? { success: false, message: error.message },
+        error.response?.data ?? { success: false, message: "Session Expired" },
       );
     }
   },
