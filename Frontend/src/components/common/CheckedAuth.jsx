@@ -1,11 +1,18 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
+import Loading from "./IsLoading";
 
 const CheckedAuth = ({ children }) => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, isAuthChecked } = useSelector(
+    (state) => state.auth,
+  );
   const location = useLocation();
   const role = user?.role;
+
+  if (!isAuthChecked) {
+    return <Loading />;
+  }
 
   if (
     !isAuthenticated &&

@@ -1,4 +1,4 @@
-import { chexkAuth } from "@/api/auth/check-auth";
+
 import { getFeatureImages } from "@/api/common/feature";
 
 import App from "@/App";
@@ -21,12 +21,9 @@ import PaypalReturnPage from "@/pages/shopping/PaypalReturnPage";
 import PaymentSuccessPage from "@/pages/shopping/PaymentSuccessPage";
 import UnAuth from "@/pages/Error/index";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
-import SearchPage from "@/pages/shopping/Search";
-import Loading from "@/components/common/IsLoading";
-import { AnimatePresence } from "framer-motion";
+
 
 const router = createBrowserRouter([
   {
@@ -94,7 +91,6 @@ const router = createBrowserRouter([
 ]);
 
 function AppRouter() {
-  const { isAuthChecked } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -102,15 +98,7 @@ function AppRouter() {
     dispatch(getFeatureImages());
   }, [dispatch]);
 
-  return (
-    <AnimatePresence mode="wait">
-      {!isAuthChecked ? (
-        <Loading key="loading" />
-      ) : (
-        <RouterProvider key="router" router={router} />
-      )}
-    </AnimatePresence>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default AppRouter;
