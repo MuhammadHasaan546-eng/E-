@@ -32,7 +32,7 @@ export const fetchProductDeatils = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/shop/products/get/${id}`,
+        `${BASE_URL}/api/shop/products/get-deatils/${id}`,
         {
           headers: {
             "Content-Type": "application/json",

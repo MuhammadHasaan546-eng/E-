@@ -1,7 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 
-const CheckedAuth = ({ isAuthenticated, user, children }) => {
+const CheckedAuth = ({ children }) => {
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const location = useLocation();
   const role = user?.role;
 

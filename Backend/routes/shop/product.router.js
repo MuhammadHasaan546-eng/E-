@@ -7,6 +7,6 @@ import {
 const router = express.Router();
 
 router.get("/get", getFilterProduct);
-router.get("/get:id", getProductDeatils);
+router.get("/get-deatils/:id", getProductDeatils);
 
 export default router;

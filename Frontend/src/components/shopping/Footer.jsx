@@ -5,6 +5,7 @@ import {
   Instagram,
   Twitter,
   Youtube,
+  Linkedin,
   Mail,
   Phone,
   MapPin,
@@ -106,18 +107,29 @@ const Footer = () => {
                 and executive precision.
               </p>
               <div className="flex items-center gap-4">
-                {[Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
-                  <button
+                {[
+                  { Icon: Facebook, href: "#" },
+                  { Icon: Instagram, href: "#" },
+                  { Icon: Twitter, href: "#" },
+                  { Icon: Youtube, href: "#" },
+                  {
+                    Icon: Linkedin,
+                    href: "https://www.linkedin.com/in/muhammad-hasaan-609a282a6/",
+                  },
+                ].map(({ Icon, href }, idx) => (
+                  <a
                     key={idx}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#D4AF37] hover:border-[#D4AF37] hover:scale-110 transition-all"
                   >
                     <Icon size={18} />
-                  </button>
+                  </a>
                 ))}
               </div>
             </motion.div>
 
-            {/* Links Columns */}
             {[
               {
                 title: "Collections",
@@ -230,7 +242,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Important Spacer: Ye spacer zaroori hai taake main content footer ke upar se nikal jaye */}
       <div className="hidden md:block h-[700px] pointer-events-none" />
     </footer>
   );

@@ -28,84 +28,83 @@ import SearchPage from "@/pages/shopping/Search";
 import Loading from "@/components/common/IsLoading";
 import { AnimatePresence } from "framer-motion";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+  },
+
+  {
+    path: "/auth",
+    element: (
+      <CheckedAuth>
+        <AuthLayout />
+      </CheckedAuth>
+    ),
+    children: [
+      { path: "login", element: <AuthLogin /> },
+      { path: "register", element: <AuthRegister /> },
+    ],
+  },
+
+  {
+    path: "/admin",
+    element: (
+      <CheckedAuth>
+        <AdminLayout />
+      </CheckedAuth>
+    ),
+    children: [
+      { index: true, element: <AdminDashboard /> },
+      { path: "dashboard", element: <AdminDashboard /> },
+      { path: "products", element: <AdminProduct /> },
+      { path: "orders", element: <AdminOrder /> },
+      { path: "features", element: <AdminFeatures /> },
+    ],
+  },
+  {
+    path: "/shop",
+    element: (
+      <CheckedAuth>
+        <ShoppingLayout />
+      </CheckedAuth>
+    ),
+    children: [
+      {
+        path: "home",
+        element: <ShoppingHome />,
+      },
+      { path: "listing", element: <ShoppingListing /> },
+      { path: "checkout", element: <ShoppingCheckout /> },
+      { path: "account", element: <ShoppingAccount /> },
+      { path: "paypal-return", element: <PaypalReturnPage /> },
+      { path: "payment-success", element: <PaymentSuccessPage /> },
+      { path: "search", element: <SearchPage /> },
+    ],
+  },
+
+  {
+    path: "/unauth-page",
+    element: <UnAuth />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
+
 function AppRouter() {
-  const { isAuthenticated, user, isLoading } = useSelector(
-    (state) => state.auth,
-  );
+  const { isAuthChecked } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(chexkAuth());
     dispatch(getFeatureImages());
   }, [dispatch]);
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <App />,
-    },
-
-    {
-      path: "/auth",
-      element: (
-        <CheckedAuth isAuthenticated={isAuthenticated} user={user}>
-          <AuthLayout />
-        </CheckedAuth>
-      ),
-      children: [
-        { path: "login", element: <AuthLogin /> },
-        { path: "register", element: <AuthRegister /> },
-      ],
-    },
-
-    {
-      path: "/admin",
-      element: (
-        <CheckedAuth isAuthenticated={isAuthenticated} user={user}>
-          <AdminLayout />
-        </CheckedAuth>
-      ),
-      children: [
-        { index: true, element: <AdminDashboard /> },
-        { path: "dashboard", element: <AdminDashboard /> },
-        { path: "products", element: <AdminProduct /> },
-        { path: "orders", element: <AdminOrder /> },
-        { path: "features", element: <AdminFeatures /> },
-      ],
-    },
-    {
-      path: "/shop",
-      element: (
-        <CheckedAuth isAuthenticated={isAuthenticated} user={user}>
-          <ShoppingLayout />
-        </CheckedAuth>
-      ),
-      children: [
-        {
-          path: "home",
-          element: <ShoppingHome />,
-        },
-        { path: "listing", element: <ShoppingListing /> },
-        { path: "checkout", element: <ShoppingCheckout /> },
-        { path: "account", element: <ShoppingAccount /> },
-        { path: "paypal-return", element: <PaypalReturnPage /> },
-        { path: "payment-success", element: <PaymentSuccessPage /> },
-        { path: "search", element: <SearchPage /> },
-      ],
-    },
-
-    {
-      path: "/unauth-page",
-      element: <UnAuth />,
-    },
-    {
-      path: "*",
-      element: <NotFound />,
-    },
-  ]);
-
   return (
     <AnimatePresence mode="wait">
-      {isLoading ? (
+      {!isAuthChecked ? (
         <Loading key="loading" />
       ) : (
         <RouterProvider key="router" router={router} />
