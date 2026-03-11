@@ -21,7 +21,11 @@ import PaymentSuccessPage from "@/pages/shopping/PaymentSuccessPage";
 import UnAuth from "@/pages/Error/index";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import SearchPage from "@/pages/shopping/Search";
 import { chexkAuth } from "@/api/auth/check-auth";
 
