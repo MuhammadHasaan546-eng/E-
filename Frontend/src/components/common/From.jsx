@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Loader2 } from "lucide-react";
 import {
   SelectContent,
   SelectItem,
@@ -26,6 +27,7 @@ const CommonFrom = ({
   onSubmit,
   buttonText,
   isButtonDisabled,
+  isLoading,
 }) => {
   const [errors, setErrors] = useState({}); // Errors store karne ke liye state
 
@@ -153,11 +155,18 @@ const CommonFrom = ({
       </div>
 
       <Button
-        disabled={isButtonDisabled || Object.values(errors).some((m) => m)}
+        disabled={isButtonDisabled || Object.values(errors).some((m) => m) || isLoading}
         className="mt-4 w-full"
         type="submit"
       >
-        {buttonText || "Submit"}
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please wait...
+          </>
+        ) : (
+          buttonText || "Submit"
+        )}
       </Button>
     </form>
   );

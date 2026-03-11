@@ -2,7 +2,7 @@ import { registerFromControls } from "./../../config/index.js";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CommonFrom from "./../../components/common/From";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { registerUser } from "@/api/auth/register.js";
 
@@ -16,6 +16,7 @@ const AuthRegister = () => {
   const [form, setForm] = useState(initialState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.auth);
 
   const handleSubmit = (submittedForm) => {
     dispatch(registerUser(submittedForm)).then((data) => {
@@ -58,6 +59,7 @@ const AuthRegister = () => {
         formData={form}
         setFromData={setForm}
         onSubmit={handleSubmit}
+        isLoading={isLoading}
       />
     </div>
   );

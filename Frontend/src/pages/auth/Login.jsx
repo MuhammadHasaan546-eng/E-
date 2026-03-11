@@ -2,7 +2,7 @@ import { loginFromControls } from "./../../config/index.js";
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import CommonFrom from "./../../components/common/From";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/api/auth/login.js";
 import { toast } from "sonner";
 const initialState = {
@@ -15,6 +15,7 @@ const AuthLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const { isLoading } = useSelector((state) => state.auth);
 
   const handleSubmit = (submittedForm) => {
     dispatch(loginUser(submittedForm)).then((data) => {
@@ -45,10 +46,11 @@ const AuthLogin = () => {
       </div>
       <CommonFrom
         fromControls={loginFromControls}
-        buttonText=" Sign in"
+        buttonText="Sign in"
         formData={form}
         setFromData={setForm}
         onSubmit={handleSubmit}
+        isLoading={isLoading}
       />
     </div>
   );
