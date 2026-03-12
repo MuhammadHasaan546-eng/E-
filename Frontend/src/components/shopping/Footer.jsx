@@ -38,9 +38,7 @@ const Footer = () => {
       className="relative w-full"
       style={{ clipPath: "polygon(0% 0, 100% 0, 100% 100%, 0 100%)" }}
     >
-      {/* ═══════════ STICKY REVEAL CONTAINER ═══════════ */}
       <div className="relative md:fixed bottom-0 left-0 w-full min-h-[600px] bg-slate-900 text-white flex flex-col justify-between overflow-hidden">
-        {/* Floating Background Text */}
         <motion.div
           animate={{ x: [0, -20, 0], y: [0, 10, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
@@ -95,9 +93,7 @@ const Footer = () => {
             ))}
           </div>
 
-          {/* 2. MAIN NAVIGATION CONTENT */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-            {/* Brand Column */}
             <motion.div {...fadeInUp} className="space-y-6">
               <h2 className="text-4xl font-black tracking-tighter text-[#D4AF37]">
                 KOKHAN<span className="text-white">.</span>
@@ -243,6 +239,49 @@ const Footer = () => {
       </div>
 
       <div className="hidden md:block h-[700px] pointer-events-none" />
+      {/* ═══════════ PAYMENT GATEWAY CARDS ═══════════ */}
+      <div className="flex flex-col items-center gap-5 py-8 mt-12 border-t border-white/10">
+        <span className="text-xs font-semibold text-gray-400 uppercase tracking-[4px]">
+          Secure Checkout
+        </span>
+
+        <div
+          className="flex items-center gap-8 md:gap-10 
+  bg-white/5 backdrop-blur-md 
+  px-6 py-4 rounded-2xl 
+  border border-white/10
+  shadow-lg
+  transition-all duration-500"
+        >
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+            alt="PayPal"
+            className="h-5 md:h-6 w-auto object-contain 
+     hover:grayscale-0 hover:opacity-100 
+      hover:scale-110 transition-all duration-500"
+          />
+
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+            alt="Mastercard"
+            className="h-6 md:h-8 w-auto object-contain 
+     hover:grayscale-0 hover:opacity-100 
+      hover:scale-110 transition-all duration-500"
+          />
+
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg"
+            alt="Google Pay"
+            className="h-5 md:h-6 w-auto object-contain 
+     hover:grayscale-0 hover:opacity-100 
+      hover:scale-110 transition-all duration-500"
+          />
+        </div>
+
+        <p className="text-[10px] text-gray-500 tracking-widest">
+          🔒 100% ENCRYPTED & SECURE PAYMENTS
+        </p>
+      </div>
     </footer>
   );
 };

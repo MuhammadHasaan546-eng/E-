@@ -9,7 +9,7 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { ArrowUpDownIcon, Filter } from "lucide-react";
+import { ArrowUpDownIcon, Filter, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ShopingProductTile from "./Product-tile";
@@ -28,9 +28,8 @@ import {
 } from "@/components/ui/sheet";
 
 const ShoppingListing = () => {
-  const { productList, productDeatils, isLoading } = useSelector(
-    (state) => state.shopingProductSlice,
-  );
+  const { productList, productDeatils, isLoading, isDetailsLoading } =
+    useSelector((state) => state.shopingProductSlice);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -78,7 +77,10 @@ const ShoppingListing = () => {
   }
   // getProductDeatils
   function handleGetProductDeatils(getCurrentProductId) {
-    dispatch(fetchProductDeatils(getCurrentProductId));
+    if (getCurrentProductId) {
+      setOpenDetilsDialog(true);
+      dispatch(fetchProductDeatils(getCurrentProductId));
+    }
   }
 
   // get add to cart
@@ -104,12 +106,6 @@ const ShoppingListing = () => {
       }
     });
   }
-
-  useEffect(() => {
-    if (productDeatils !== null) {
-      setOpenDetilsDialog(true);
-    }
-  }, [productDeatils]);
 
   useEffect(() => {
     setSortOption("price-lowtohigh");
@@ -143,67 +139,73 @@ const ShoppingListing = () => {
   }, [filter]);
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-10 max-w-screen-2xl mx-auto w-full">
-      <div className="bg-background w-full rounded-3xl border border-primary/5 shadow-sm overflow-hidden flex flex-col">
-        <div className="p-6 md:p-8 border-b border-primary/5 flex items-center justify-between gap-6 bg-linear-to-b from-muted/20 to-transparent">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-black text-primary tracking-tighter">
-              Collections
+    <div className="flex flex-col gap-6 p-4 md:p-10 max-w-screen-2xl mx-auto w-full bg-[#fcfcfc] ">
+      {/* ═══════════ MAIN CONTAINER ═══════════ */}
+      <div className="bg-white w-full border border-zinc-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] overflow-hidden flex flex-col">
+        {/* ═══════════ HEADER SECTION ═══════════ */}
+        <div className="p-6 md:p-10 border-b border-zinc-100 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-2">
+              <div className="h-[1px] w-8 bg-[#D4AF37]" />
+              <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em]">
+                Prêt-à-Porter
+              </span>
+            </div>
+            <h2 className="text-4xl font-black text-zinc-900 tracking-tighter uppercase">
+              Collections<span className="text-[#D4AF37]">.</span>
             </h2>
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-              {productList.length} Exceptional items found
+            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em]">
+              {productList.length} Exceptional Masterpieces Found
             </p>
           </div>
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-4">
+            {/* FILTER BUTTON */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="h-10 px-4 rounded-xl border-primary/10 flex items-center gap-2 hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
+                  className="h-12 px-6 rounded-none border-zinc-200 flex items-center gap-3 hover:bg-zinc-900 hover:text-white transition-all duration-500 group"
                 >
-                  <Filter className="h-4 w-4" />
-                  <span className="text-xs font-bold uppercase tracking-wider">
-                    Filters
+                  <Filter className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">
+                    Refine
                   </span>
                 </Button>
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-full max-w-xs p-0 border-r border-primary/5"
-                aria-describedby={undefined}
-                onCloseAutoFocus={(e) => e.preventDefault()}
+                className="w-full max-w-xs p-0 border-r border-zinc-100"
               >
-                <SheetHeader className="p-6 border-b border-primary/5">
+                <SheetHeader className="p-8 border-b border-zinc-100 bg-zinc-50/50">
                   <SheetTitle className="text-left flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Filter className="h-4 w-4" />
-                    </div>
-                    <span className="font-bold text-lg">Filters</span>
+                    <span className="font-black text-xl uppercase tracking-tighter">
+                      Refine Search
+                    </span>
                   </SheetTitle>
                 </SheetHeader>
-                <div className="overflow-y-auto h-full pb-20">
+                <div className="overflow-y-auto h-full pb-20 p-6">
                   <ProductFilter filter={filter} handleFilter={handleFilter} />
                 </div>
               </SheetContent>
             </Sheet>
 
+            {/* SORT DROPDOWN */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="h-10 px-4 rounded-xl border-primary/10 flex items-center gap-2 hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
+                  className="h-12 px-6 rounded-none border-zinc-200 flex items-center gap-3 hover:bg-zinc-900 hover:text-white transition-all duration-500"
                 >
                   <ArrowUpDownIcon className="h-4 w-4" />
-                  <span className="text-xs font-bold uppercase tracking-wider md:w-[80px]  ">
-                    Sort By
+                  <span className="text-[10px] font-black uppercase tracking-widest">
+                    Sort
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-[200px] rounded-2xl p-2 border-primary/5 shadow-2xl"
+                className="w-[220px] rounded-none p-2 border-zinc-100 shadow-2xl"
               >
                 <DropdownMenuRadioGroup
                   value={sortOption}
@@ -213,11 +215,9 @@ const ShoppingListing = () => {
                     <DropdownMenuRadioItem
                       value={option.id}
                       key={option.id}
-                      className="rounded-xl px-3 py-2 cursor-pointer transition-colors focus:bg-primary/10 focus:text-primary"
+                      className="px-4 py-3 cursor-pointer transition-colors focus:bg-zinc-50 text-[11px] font-bold uppercase tracking-tight"
                     >
-                      <span className="text-sm font-medium">
-                        {option.label}
-                      </span>
+                      {option.label}
                     </DropdownMenuRadioItem>
                   ))}
                 </DropdownMenuRadioGroup>
@@ -226,70 +226,56 @@ const ShoppingListing = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ">
+        {/* ═══════════ PRODUCT GRID ═══════════ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0 border-l border-zinc-100">
           {isLoading ? (
-            [...Array(10)].map((_, i) => (
+            [...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-primary/5 bg-card shadow-sm overflow-hidden"
+                className="border-r border-b border-zinc-100 p-8 space-y-6"
               >
-                <Skeleton className="w-full aspect-square rounded-none" />
-                <div className="p-5 space-y-4">
-                  <Skeleton className="h-6 w-3/4 rounded-lg" />
-                  <div className="flex justify-between items-center">
-                    <Skeleton className="h-4 w-1/4 rounded-md" />
-                    <Skeleton className="h-4 w-1/4 rounded-md" />
-                  </div>
-                  <Skeleton className="h-8 w-1/3 rounded-lg" />
-                  <Skeleton className="h-12 w-full rounded-xl" />
+                <Skeleton className="w-full aspect-[3/4] rounded-none bg-zinc-100" />
+                <div className="space-y-3">
+                  <Skeleton className="h-4 w-3/4 bg-zinc-100" />
+                  <Skeleton className="h-4 w-1/4 bg-zinc-100" />
                 </div>
               </div>
             ))
           ) : productList.length > 0 ? (
             productList.map((product) => (
-              <ShopingProductTile
+              <div
                 key={product.id}
-                product={product}
-                handleGetProductDeatils={handleGetProductDeatils}
-                handleAddToCard={handleAddToCard}
-              />
+                className="border-r border-b border-zinc-100"
+              >
+                <ShopingProductTile
+                  product={product}
+                  handleGetProductDeatils={handleGetProductDeatils}
+                  handleAddToCard={handleAddToCard}
+                />
+              </div>
             ))
           ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-40 sm:py-60 text-center animate-in fade-in zoom-in-95 duration-1000">
-              <div className="relative mb-10">
-                <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full scale-150 animate-pulse" />
-                <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-[2.5rem] bg-linear-to-br from-muted to-white border border-primary/5 flex items-center justify-center shadow-2xl">
-                  <ArrowUpDownIcon className="h-10 w-10 sm:h-12 sm:w-12 text-primary/10" />
+            /* NO MATCHES FOUND SECTION */
+            <div className="col-span-full flex flex-col items-center justify-center py-40 text-center bg-zinc-50/30">
+              <div className="relative mb-8">
+                <div className="h-20 w-20 rounded-none border border-[#D4AF37]/30 flex items-center justify-center rotate-45">
+                  <Search className="h-8 w-8 text-[#D4AF37] -rotate-45" />
                 </div>
               </div>
-
-              <div className="space-y-3 max-w-md px-6">
-                <h2 className="text-3xl sm:text-4xl font-black text-primary tracking-tighter">
-                  No matches found
-                </h2>
-                <p className="text-sm sm:text-base text-muted-foreground/60 font-medium leading-relaxed">
-                  We couldn't find any products matching your specific
-                  selection. Try broadening your scope or clearing all filters
-                  to start fresh.
-                </p>
-              </div>
-
-              <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setFilter({})}
-                  className="h-12 px-8 rounded-2xl border-primary/10 font-bold text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-500 active:scale-95"
-                >
-                  Clear all filters
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => window.location.reload()}
-                  className="h-12 px-8 rounded-2xl font-bold text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Refresh Page
-                </Button>
-              </div>
+              <h2 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase mb-2">
+                Selection Unavailable
+              </h2>
+              <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em] max-w-xs mx-auto leading-relaxed">
+                The requested filter combination yielded no results. Please
+                refine your criteria.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => setFilter({})}
+                className="mt-10 h-12 px-10 rounded-none border-zinc-900 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-zinc-900 hover:text-white transition-all"
+              >
+                Reset All Filters
+              </Button>
             </div>
           )}
         </div>
@@ -299,6 +285,7 @@ const ShoppingListing = () => {
         open={openDetilsDialog}
         setOpen={setOpenDetilsDialog}
         productDetils={productDeatils}
+        isDetailsLoading={isDetailsLoading}
         handleAddToCard={handleAddToCard}
       />
     </div>

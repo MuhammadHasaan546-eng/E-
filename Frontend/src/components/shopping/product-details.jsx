@@ -12,7 +12,9 @@ import { fetchAllProducts, fetchProductDeatils } from "@/api/shop/product";
 import { addProductReview, getProductReviews } from "@/api/shop/review";
 import { useEffect, useState } from "react";
 
-const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
+import { Skeleton } from "../ui/skeleton";
+
+const ProductDetailsDialog = ({ open, setOpen, productDetils, isDetailsLoading }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { reviews } = useSelector((state) => state.shopReview);
@@ -25,7 +27,51 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils }) => {
     }
   }, [productDetils, dispatch]);
 
-  if (!productDetils) return null;
+  // Show skeleton if loading or no data yet
+  if (isDetailsLoading || !productDetils) {
+    return (
+      <Dialog.Root open={open} onOpenChange={() => { if (!isDetailsLoading) { dispatch(setProductDetails(null)); setOpen(false); } }}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
+          <Dialog.Content
+            className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-white w-full h-full md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-lg md:p-6 md:max-w-[90vw] md:lg:max-w-[70vw] md:max-h-[90vh] grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto"
+            aria-describedby={undefined}
+          >
+            <Dialog.Title asChild>
+              <VisuallyHidden>Loading product details</VisuallyHidden>
+            </Dialog.Title>
+            {/* Left: image skeleton */}
+            <div className="relative w-full h-[70vh] md:h-full bg-zinc-50 flex items-center justify-center p-12">
+              <Skeleton className="w-full h-full max-w-[80%] max-h-[80%] rounded-none" />
+            </div>
+            {/* Right: content skeleton */}
+            <div className="flex flex-col p-6 sm:p-8 gap-4">
+              <Skeleton className="h-4 w-20 rounded-full" />
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-10 w-1/2" />
+              <Skeleton className="h-6 w-1/4 rounded-full" />
+              <div className="border-t border-gray-100 my-2" />
+              <Skeleton className="h-14 w-full rounded-2xl" />
+              <div className="mt-4 space-y-3">
+                <Skeleton className="h-4 w-1/3" />
+                {[1, 2].map((i) => (
+                  <div key={i} className="flex gap-3 p-4 bg-gray-50 rounded-2xl">
+                    <Skeleton className="w-9 h-9 rounded-full shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-3 w-1/3" />
+                      <Skeleton className="h-3 w-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    );
+  }
 
   const averageRating =
     reviews && reviews.length > 0
