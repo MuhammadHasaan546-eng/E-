@@ -33,6 +33,7 @@ const UniqueReveal = () => {
     damping: 25,
   });
 
+  // Scroll Animations
   const yImage = useTransform(smoothProgress, [0, 1], [-50, 50]);
   const rotateImage = useTransform(smoothProgress, [0, 1], [-3, 3]);
   const opacityText = useTransform(
@@ -41,10 +42,17 @@ const UniqueReveal = () => {
     [0, 1, 1, 0],
   );
 
+  // Mouse Parallax Animations
   const springMouseX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springMouseY = useSpring(mouseY, { stiffness: 50, damping: 20 });
   const mouseMoveX = useTransform(springMouseX, [-0.5, 0.5], [-20, 20]);
   const mouseMoveY = useTransform(springMouseY, [-0.5, 0.5], [-20, 20]);
+
+  // COMBINED Y TRANSFORM: This fixes the duplicate key "y" error
+  const combinedY = useTransform(
+    [yImage, mouseMoveY],
+    ([latestYImage, latestMouseMoveY]) => latestYImage + latestMouseMoveY,
+  );
 
   return (
     <section
@@ -52,6 +60,7 @@ const UniqueReveal = () => {
       onMouseMove={handleMouseMove}
       className="relative min-h-screen md:h-[110vh] flex items-center justify-center bg-white overflow-hidden py-20 md:py-0"
     >
+      {/* BACKGROUND MOVING TEXT */}
       <div className="absolute inset-0 flex flex-col justify-center pointer-events-none overflow-hidden opacity-40">
         <motion.div
           animate={{ x: [0, -1200] }}
@@ -61,7 +70,7 @@ const UniqueReveal = () => {
           {[...Array(15)].map((_, i) => (
             <h2
               key={i}
-              className="text-[25vw] md:text-[18vw] font-black text-gray-50 uppercase leading-none px-12"
+              className="text-[25vw] md:text-[18vw] font-black text-black uppercase leading-none px-12"
             >
               KOKHAN
             </h2>
@@ -86,12 +95,12 @@ const UniqueReveal = () => {
       </div>
 
       <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+        {/* LEFT: IMAGE CONTENT */}
         <motion.div
           style={{
-            y: yImage,
+            y: combinedY, // Uses the merged scroll + mouse value
             rotateZ: rotateImage,
             x: mouseMoveX,
-            y: mouseMoveY,
           }}
           className="relative w-full max-w-[500px] lg:max-w-none mx-auto aspect-[4/5] lg:h-[75vh] rounded-2xl md:rounded-[3rem] overflow-hidden shadow-2xl shadow-gray-200/50 border border-gray-100 group bg-gray-50/50 p-2"
         >
@@ -154,6 +163,7 @@ const UniqueReveal = () => {
         </motion.div>
       </div>
 
+      {/* DECORATIVE ELEMENTS */}
       <div className="absolute top-1/4 -right-20 w-80 h-80 bg-gray-100 rounded-full blur-[120px] pointer-events-none opacity-50" />
       <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-stone-100 rounded-full blur-[120px] pointer-events-none opacity-50" />
     </section>

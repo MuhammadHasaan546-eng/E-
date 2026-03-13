@@ -29,7 +29,7 @@ const CommonFrom = ({
   isButtonDisabled,
   isLoading,
 }) => {
-  const [errors, setErrors] = useState({}); // Errors store karne ke liye state
+  const [errors, setErrors] = useState({});
 
   const resolvedControls = fromControls ?? controls ?? [];
   const resolvedFormData = formData ?? fromData ?? {};
@@ -60,14 +60,12 @@ const CommonFrom = ({
       ...resolvedFormData,
       [control.name]: value,
     });
-    // Type karte waqt hi validation check karega
     validate(control.name, value, control);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Final check before submit
     let allErrors = {};
     resolvedControls.forEach((control) => {
       const error = validate(
@@ -80,7 +78,7 @@ const CommonFrom = ({
 
     if (Object.values(allErrors).some((msg) => msg !== "")) {
       setErrors(allErrors);
-      return; // Agar error hai toh submit nahi hoga
+      return;
     }
 
     onSubmit?.(resolvedFormData);
@@ -155,7 +153,9 @@ const CommonFrom = ({
       </div>
 
       <Button
-        disabled={isButtonDisabled || Object.values(errors).some((m) => m) || isLoading}
+        disabled={
+          isButtonDisabled || Object.values(errors).some((m) => m) || isLoading
+        }
         className="mt-4 w-full"
         type="submit"
       >
@@ -172,4 +172,4 @@ const CommonFrom = ({
   );
 };
 
-export default CommonFrom;
+export default React.memo(CommonFrom);

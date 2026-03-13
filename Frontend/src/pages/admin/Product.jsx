@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -20,6 +21,7 @@ import {
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import AdminProductTile from "@/components/admin/project-tile";
+import ProductSkeleton from "@/components/shopping/ProductSkeleton";
 const installFromData = {
   image: null,
   title: "",
@@ -40,10 +42,16 @@ const AdminProduct = () => {
   const [openCreateProduct, setCreateProductOpen] = useState(false);
   const [currentEditId, setCurrentEditId] = useState(null);
 
-  const { productLists } = useSelector((state) => state.adminProducts);
+  const { productLists, isLoading } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
 
-  const onSubmit = (event) => {
+  const isFromVaid = useCallback(() => {
+    return Object.keys(fromData)
+      .map((key) => fromData[key] !== "")
+      .every((item) => item);
+  }, [fromData]);
+
+  const onSubmit = useCallback((event) => {
     if (!isFromVaid()) {
       toast.error("Please fill all the fields");
       return;
@@ -78,27 +86,22 @@ const AdminProduct = () => {
             toast.success("Product added successfully");
           }
         });
-  };
+  }, [isFromVaid, currentEditId, dispatch, fromData, uploadImageUrl, installFromData]);
 
   // DeleteProduct
-  const handleDeleteProduct = (getCurrentProductId) => {
+  const handleDeleteProduct = useCallback((getCurrentProductId) => {
     dispatch(deleteProduct(getCurrentProductId)).then((data) => {
       if (data.payload.success) {
         dispatch(fetchProducts());
         toast.success("Product deleted successfully");
       }
     });
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  const isFromVaid = () => {
-    return Object.keys(fromData)
-      .map((key) => fromData[key] !== "")
-      .every((item) => item);
-  };
 
   return (
     <div className="w-full h-full p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -121,45 +124,96 @@ const AdminProduct = () => {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {productLists && productLists.length > 0 ? (
-          productLists.map((productItem) => (
-            <div
-              key={productItem._id}
-              className="animate-in fade-in zoom-in-95 duration-500"
-              style={{ animationFillMode: "both" }}
+      <motion.div 
+        layout
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.05 }
+          }
+        }}
+      >
+        <AnimatePresence mode="popLayout">
+          {isLoading ? (
+            [...Array(10)].map((_, i) => (
+              <motion.div
+                key={`admin-skeleton-${i}`}
+                layout
+                variants={{
+                  hidden: { opacity: 0, scale: 0.95, filter: "blur(10px)" },
+                  show: { opacity: 1, scale: 1, filter: "blur(0px)", transition: { duration: 0.4 } },
+                  exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
+                }}
+                initial="hidden"
+                animate="show"
+                exit="exit"
+                className="transform-gpu bg-white p-4 rounded-2xl border border-gray-100/50 shadow-sm"
+              >
+                <ProductSkeleton />
+              </motion.div>
+            ))
+          ) : productLists && productLists.length > 0 ? (
+            productLists.map((productItem) => (
+              <motion.div
+                key={productItem._id}
+                layout
+                variants={{
+                  hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
+                  show: { 
+                    opacity: 1, y: 0, filter: "blur(0px)",
+                    transition: { type: "spring", stiffness: 260, damping: 25, mass: 0.5 }
+                  },
+                  exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
+                }}
+                viewport={{ once: true, margin: "0px 0px 50px 0px" }}
+                whileInView="show"
+                initial="hidden"
+                exit="exit"
+                className="transform-gpu"
+              >
+                <AdminProductTile
+                  product={productItem}
+                  setCurrentEditId={setCurrentEditId}
+                  setOpenCurentProductDialog={setCreateProductOpen}
+                  setFromData={setFromData}
+                  handleDelete={handleDeleteProduct}
+                />
+              </motion.div>
+            ))
+          ) : (
+            <motion.div 
+              key="empty-state"
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-2xl border border-gray-100 border-dashed"
             >
-              <AdminProductTile
-                product={productItem}
-                setCurrentEditId={setCurrentEditId}
-                setOpenCurentProductDialog={setCreateProductOpen}
-                setFromData={setFromData}
-                handleDelete={handleDeleteProduct}
-              />
-            </div>
-          ))
-        ) : (
-          <div className="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-2xl border border-gray-100 border-dashed">
-            <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-6 shadow-inner">
-              <PackageOpen className="w-12 h-12 text-primary/40" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              No Products Found
-            </h3>
-            <p className="text-gray-500 mb-6 max-w-sm text-center">
-              Your inventory is currently empty. Start by adding your first
-              product to see it listed here.
-            </p>
-            <Button
-              onClick={() => setCreateProductOpen(true)}
-              variant="outline"
-              className="border-primary/20 text-primary hover:bg-primary/5 rounded-full px-8"
-            >
-              Add First Product
-            </Button>
-          </div>
-        )}
-      </div>
+              <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                <PackageOpen className="w-12 h-12 text-primary/40" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                No Products Found
+              </h3>
+              <p className="text-gray-500 mb-6 max-w-sm text-center">
+                Your inventory is currently empty. Start by adding your first
+                product to see it listed here.
+              </p>
+              <Button
+                onClick={() => setCreateProductOpen(true)}
+                variant="outline"
+                className="border-primary/20 text-primary hover:bg-primary/5 rounded-full px-8"
+              >
+                Add First Product
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
       <Sheet
         open={openCreateProduct}

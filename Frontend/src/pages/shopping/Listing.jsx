@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
 import { ArrowUpDownIcon, Filter, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import ShopingProductTile from "./Product-tile";
 import ProductFilter from "@/components/product/filter";
+import ProductSkeleton from "@/components/shopping/ProductSkeleton";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping/product-details";
 import { createCart, fetchCartItems } from "@/api/shop/cart";
@@ -26,6 +27,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import ShopingProductTile from "./Product-tile";
 
 const ShoppingListing = () => {
   const { productList, productDeatils, isLoading, isDetailsLoading } =
@@ -38,7 +40,7 @@ const ShoppingListing = () => {
   const [searchParms, SetsearchParms] = useSearchParams();
   const [openDetilsDialog, setOpenDetilsDialog] = useState(false);
 
-  function createSearchParamsHelper(filterParms) {
+  const createSearchParamsHelper = useCallback((filterParms) => {
     const quaryPrams = [];
 
     for (const [key, value] of Object.entries(filterParms)) {
@@ -48,52 +50,54 @@ const ShoppingListing = () => {
       }
     }
     return quaryPrams.join("&");
-  }
+  }, []);
 
-  const handleSolt = (value) => {
+  const handleSolt = useCallback((value) => {
     setSortOption(value);
-  };
-  function handleFilter(sectionId, optionId) {
-    let cpyFilter = { ...filter };
+  }, []);
+  const handleFilter = useCallback((sectionId, optionId) => {
+    setFilter((prevFilter) => {
+      let cpyFilter = { ...prevFilter };
 
-    if (cpyFilter[sectionId]) {
-      const index = cpyFilter[sectionId].indexOf(optionId);
+      if (cpyFilter[sectionId]) {
+        const index = cpyFilter[sectionId].indexOf(optionId);
 
-      if (index > -1) {
-        cpyFilter[sectionId] = cpyFilter[sectionId].filter(
-          (i) => i !== optionId,
-        );
+        if (index > -1) {
+          cpyFilter[sectionId] = cpyFilter[sectionId].filter(
+            (i) => i !== optionId,
+          );
 
-        if (cpyFilter[sectionId].length === 0) delete cpyFilter[sectionId];
+          if (cpyFilter[sectionId].length === 0) delete cpyFilter[sectionId];
+        } else {
+          cpyFilter[sectionId] = [...cpyFilter[sectionId], optionId];
+        }
       } else {
-        cpyFilter[sectionId] = [...cpyFilter[sectionId], optionId];
+        cpyFilter[sectionId] = [optionId];
       }
-    } else {
-      cpyFilter[sectionId] = [optionId];
-    }
 
-    setFilter(cpyFilter);
-    sessionStorage.setItem("filter", JSON.stringify(cpyFilter));
-  }
+      sessionStorage.setItem("filter", JSON.stringify(cpyFilter));
+      return cpyFilter;
+    });
+  }, []);
   // getProductDeatils
-  function handleGetProductDeatils(getCurrentProductId) {
+  const handleGetProductDeatils = useCallback((getCurrentProductId) => {
     if (getCurrentProductId) {
       setOpenDetilsDialog(true);
       dispatch(fetchProductDeatils(getCurrentProductId));
     }
-  }
+  }, [dispatch]);
 
   // get add to cart
-  function handleAddToCard(getCurrentProductId) {
+  const handleAddToCard = useCallback((getCurrentProductId) => {
     dispatch(
       createCart({
-        userId: user.id,
+        userId: user?.id,
         productId: getCurrentProductId,
         quantity: 1,
       }),
     ).then((data) => {
-      if (data.payload.success) {
-        dispatch(fetchCartItems(user.id));
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
         dispatch(
           updateProductStock({
             productId: getCurrentProductId,
@@ -105,7 +109,7 @@ const ShoppingListing = () => {
         toast.error(data.payload.message);
       }
     });
-  }
+  }, [dispatch, user?.id]);
 
   useEffect(() => {
     setSortOption("price-lowtohigh");
@@ -136,7 +140,7 @@ const ShoppingListing = () => {
       const crateQuaryString = createSearchParamsHelper(filter);
       SetsearchParms(new URLSearchParams(crateQuaryString));
     }
-  }, [filter]);
+  }, [filter, createSearchParamsHelper, SetsearchParms]);
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-10 max-w-screen-2xl mx-auto w-full bg-[#fcfcfc] ">
@@ -227,58 +231,96 @@ const ShoppingListing = () => {
         </div>
 
         {/* ═══════════ PRODUCT GRID ═══════════ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0 border-l border-zinc-100">
-          {isLoading ? (
-            [...Array(8)].map((_, i) => (
-              <div
-                key={i}
-                className="border-r border-b border-zinc-100 p-8 space-y-6"
+        <motion.div 
+          layout
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: { staggerChildren: 0.05 }
+            }
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0 border-l border-zinc-100"
+        >
+          <AnimatePresence mode="popLayout">
+            {isLoading ? (
+              [...Array(8)].map((_, i) => (
+                <motion.div 
+                  layout
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.95, filter: "blur(10px)" },
+                    show: { opacity: 1, scale: 1, filter: "blur(0px)", transition: { duration: 0.4 } },
+                    exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
+                  }}
+                  initial="hidden"
+                  animate="show"
+                  exit="exit"
+                  key={`skeleton-${i}`} 
+                  className="border-r border-b border-zinc-100 p-4 transform-gpu"
+                >
+                  <ProductSkeleton />
+                </motion.div>
+              ))
+            ) : productList.length > 0 ? (
+              productList.map((product) => (
+                <motion.div
+                  layout
+                  variants={{
+                    hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
+                    show: { 
+                      opacity: 1, y: 0, filter: "blur(0px)",
+                      transition: { type: "spring", stiffness: 260, damping: 25, mass: 0.5 }
+                    },
+                    exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
+                  }}
+                  viewport={{ once: true, margin: "0px 0px 50px 0px" }}
+                  whileInView="show"
+                  initial="hidden"
+                  exit="exit"
+                  key={`product-${product._id || product.id}`}
+                  className="border-r border-b border-zinc-100 transform-gpu bg-white"
+                >
+                  <ShopingProductTile
+                    product={product}
+                    handleGetProductDeatils={handleGetProductDeatils}
+                    handleAddToCard={handleAddToCard}
+                  />
+                </motion.div>
+              ))
+            ) : (
+              /* NO MATCHES FOUND SECTION */
+              <motion.div 
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="col-span-full flex flex-col items-center justify-center py-40 text-center bg-zinc-50/30"
               >
-                <Skeleton className="w-full aspect-[3/4] rounded-none bg-zinc-100" />
-                <div className="space-y-3">
-                  <Skeleton className="h-4 w-3/4 bg-zinc-100" />
-                  <Skeleton className="h-4 w-1/4 bg-zinc-100" />
+                <div className="relative mb-8">
+                  <div className="h-20 w-20 rounded-none border border-[#D4AF37]/30 flex items-center justify-center rotate-45">
+                    <Search className="h-8 w-8 text-[#D4AF37] -rotate-45" />
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : productList.length > 0 ? (
-            productList.map((product) => (
-              <div
-                key={product.id}
-                className="border-r border-b border-zinc-100"
-              >
-                <ShopingProductTile
-                  product={product}
-                  handleGetProductDeatils={handleGetProductDeatils}
-                  handleAddToCard={handleAddToCard}
-                />
-              </div>
-            ))
-          ) : (
-            /* NO MATCHES FOUND SECTION */
-            <div className="col-span-full flex flex-col items-center justify-center py-40 text-center bg-zinc-50/30">
-              <div className="relative mb-8">
-                <div className="h-20 w-20 rounded-none border border-[#D4AF37]/30 flex items-center justify-center rotate-45">
-                  <Search className="h-8 w-8 text-[#D4AF37] -rotate-45" />
-                </div>
-              </div>
-              <h2 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase mb-2">
-                Selection Unavailable
-              </h2>
-              <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em] max-w-xs mx-auto leading-relaxed">
-                The requested filter combination yielded no results. Please
-                refine your criteria.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => setFilter({})}
-                className="mt-10 h-12 px-10 rounded-none border-zinc-900 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-zinc-900 hover:text-white transition-all"
-              >
-                Reset All Filters
-              </Button>
-            </div>
-          )}
-        </div>
+                <h2 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase mb-2">
+                  Selection Unavailable
+                </h2>
+                <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em] max-w-xs mx-auto leading-relaxed">
+                  The requested filter combination yielded no results. Please
+                  refine your criteria.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => setFilter({})}
+                  className="mt-10 h-12 px-10 rounded-none border-zinc-900 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-zinc-900 hover:text-white transition-all"
+                >
+                  Reset All Filters
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
       <ProductDetailsDialog

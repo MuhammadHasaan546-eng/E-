@@ -18,7 +18,8 @@ const ShopingProductTile = ({
       >
         <img
           src={product.image}
-          className="w-full h-full object-cover transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-105"
+          decoding="async"
+          className="w-full h-full object-cover transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-105 transform-gpu will-change-transform"
           alt={product.title}
         />
 
@@ -124,4 +125,4 @@ const ShopingProductTile = ({
   );
 };
 
-export default ShopingProductTile;
+export default React.memo(ShopingProductTile);

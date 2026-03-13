@@ -141,4 +141,4 @@ const ProductImageUpload = ({
   );
 };
 
-export default ProductImageUpload;
+export default React.memo(ProductImageUpload);

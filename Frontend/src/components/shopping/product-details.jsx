@@ -10,11 +10,16 @@ import { toast } from "sonner";
 import { setProductDetails } from "@/store/shop/product-slice";
 import { fetchAllProducts, fetchProductDeatils } from "@/api/shop/product";
 import { addProductReview, getProductReviews } from "@/api/shop/review";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Skeleton } from "../ui/skeleton";
 
-const ProductDetailsDialog = ({ open, setOpen, productDetils, isDetailsLoading }) => {
+const ProductDetailsDialog = ({
+  open,
+  setOpen,
+  productDetils,
+  isDetailsLoading,
+}) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { reviews } = useSelector((state) => state.shopReview);
@@ -30,7 +35,15 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils, isDetailsLoading }
   // Show skeleton if loading or no data yet
   if (isDetailsLoading || !productDetils) {
     return (
-      <Dialog.Root open={open} onOpenChange={() => { if (!isDetailsLoading) { dispatch(setProductDetails(null)); setOpen(false); } }}>
+      <Dialog.Root
+        open={open}
+        onOpenChange={() => {
+          if (!isDetailsLoading) {
+            dispatch(setProductDetails(null));
+            setOpen(false);
+          }
+        }}
+      >
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
           <Dialog.Content
@@ -57,7 +70,10 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils, isDetailsLoading }
               <div className="mt-4 space-y-3">
                 <Skeleton className="h-4 w-1/3" />
                 {[1, 2].map((i) => (
-                  <div key={i} className="flex gap-3 p-4 bg-gray-50 rounded-2xl">
+                  <div
+                    key={i}
+                    className="flex gap-3 p-4 bg-gray-50 rounded-2xl"
+                  >
                     <Skeleton className="w-9 h-9 rounded-full shrink-0" />
                     <div className="flex-1 space-y-2">
                       <Skeleton className="h-3 w-1/3" />
@@ -176,19 +192,24 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils, isDetailsLoading }
             <VisuallyHidden>{productDetils.title}</VisuallyHidden>
           </Dialog.Title>
 
-          <div className="relative w-full h-[70vh] sm:h-[75vh] md:h-full md:min-h-[500px] bg-linear-to-br from-slate-100 via-gray-50 to-blue-50 flex items-center justify-center p-6 sm:p-10 md:p-12 overflow-hidden">
+          <div className="relative w-full h-[70vh] sm:h-[75vh] md:h-full md:min-h-[500px] bg-linear-to-br from-slate-100 via-gray-50 to-blue-50 flex items-center justify-center overflow-hidden">
+            {/* Decor Circles */}
             <div className="absolute -top-12 -left-12 w-48 h-48 bg-blue-100 rounded-full opacity-50 blur-3xl" />
             <div className="absolute -bottom-12 -right-12 w-56 h-56 bg-indigo-100 rounded-full opacity-40 blur-3xl" />
 
+            {/* FIXED IMAGE: Full display without scale */}
             <img
               src={productDetils.image}
               alt={productDetils.title}
-              className="relative z-10 w-full h-full max-w-[90%] max-h-[90%] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+              className="relative z-10 w-full h-full object-cover transform-gpu will-change-transform"
+              style={{
+                filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.1))",
+              }}
             />
 
             {discount && (
-              <span className="absolute top-4 left-4 z-20 flex items-center gap-1 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-red-500/30">
-                <Tag size={11} />
+              <span className="absolute top-4 left-4 z-20 flex items-center gap-1 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 shadow-xl">
+                <Tag size={12} className="mr-1" />
                 {discount}% OFF
               </span>
             )}
@@ -378,4 +399,4 @@ const ProductDetailsDialog = ({ open, setOpen, productDetils, isDetailsLoading }
   );
 };
 
-export default ProductDetailsDialog;
+export default React.memo(ProductDetailsDialog);

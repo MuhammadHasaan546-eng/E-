@@ -14,11 +14,12 @@ const AdminProductTile = ({
   return (
     <Card className="w-full max-w-sm mx-auto overflow-hidden border-0 bg-white shadow-sm hover:shadow-xl transition-all duration-500 group rounded-2xl">
       {/* Image Section */}
-      <div className="relative overflow-hidden aspect-[4/3]">
+      <div className="relative overflow-hidden aspect-4/3">
         <img
           src={product?.image}
           alt={product?.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 transform-gpu will-change-transform"
         />
 
         {/* Badges Overlay */}
@@ -35,7 +36,7 @@ const AdminProductTile = ({
           )}
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
 
       {/* Content Section */}
@@ -98,4 +99,4 @@ const AdminProductTile = ({
   );
 };
 
-export default AdminProductTile;
+export default React.memo(AdminProductTile);

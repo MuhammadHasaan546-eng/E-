@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProducts } from "@/api/shop/product";
@@ -9,6 +9,7 @@ import { fetchProductDeatils } from "@/api/shop/product";
 import { createCart, fetchCartItems } from "@/api/shop/cart";
 import { filterOptions, brandOptionMap, categoryOptionMap } from "@/config";
 import ProductDetailsDialog from "@/components/shopping/product-details";
+import ProductSkeleton from "@/components/shopping/ProductSkeleton";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { getFeatureImages } from "@/api/common/feature";
@@ -61,7 +62,7 @@ const ShoppingHome = () => {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [heroIndex, setHeroIndex] = useState(0);
 
-  const heroSlides =
+  const heroSlides = useMemo(() => 
     featureImageList && featureImageList.length > 0
       ? featureImageList.map((item) => ({
           title: item.title,
@@ -78,7 +79,9 @@ const ShoppingHome = () => {
             image: banner,
             gradient: "from-gray-900/40 via-gray-900/20 to-transparent",
           },
-        ];
+        ],
+    [featureImageList]
+  );
 
   // Auto-rotate hero
   useEffect(() => {
@@ -95,46 +98,58 @@ const ShoppingHome = () => {
     dispatch(getFeatureImages());
   }, [dispatch]);
 
-
-
-  function handleGetProductDetails(getCurrentProductId) {
+  const handleGetProductDetails = useCallback((getCurrentProductId) => {
     if (getCurrentProductId) {
       setOpenDetailsDialog(true);
       dispatch(fetchProductDeatils(getCurrentProductId));
     }
-  }
+  }, [dispatch]);
 
-  function handleAddToCart(getCurrentProductId) {
+  const handleAddToCart = useCallback((getCurrentProductId) => {
     dispatch(
       createCart({
-        userId: user.id,
+        userId: user?.id,
         productId: getCurrentProductId,
         quantity: 1,
       }),
     ).then((data) => {
-      if (data.payload.success) {
-        dispatch(fetchCartItems(user.id));
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
         toast.success(data.payload.message);
       } else {
         toast.error(data.payload.message);
       }
     });
-  }
+  }, [dispatch, user?.id]);
 
-  function handleCategoryClick(categoryId) {
+  const handleCategoryClick = useCallback((categoryId) => {
     sessionStorage.setItem(
       "filter",
       JSON.stringify({ categories: [categoryId] }),
     );
     navigate(`/shop/listing?categories=${categoryId}`);
-  }
+  }, [navigate]);
 
-  function handleBrandClick(brandId) {
+  const handleBrandClick = useCallback((brandId) => {
     sessionStorage.setItem("filter", JSON.stringify({ Brand: [brandId] }));
     navigate(`/shop/listing?Brand=${brandId}`);
-  }
+  }, [navigate]);
 
-  const featuredProducts = productList?.slice(0, 8) || [];
+  const featuredProducts = useMemo(() => productList?.slice(0, 8) || [], [productList]);
+
+  const backgroundAnimations = useMemo(
+    () => (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse" />
+        <div
+          className="absolute top-20 -left-20 w-60 h-60 bg-white/5 rounded-full blur-2xl"
+          style={{ animation: "pulse 3s ease-in-out infinite 1s" }}
+        />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
+      </div>
+    ),
+    []
+  );
 
   return (
     <div className="flex flex-col gap-0 min-h-screen bg-gray-50/50   ">
@@ -152,20 +167,19 @@ const ShoppingHome = () => {
               height: "100%",
             }}
           />
-          <div
-            className={`absolute inset-0 bg-linear-to-br ${heroSlides[heroIndex].gradient} transition-all duration-1000`}
-          />
+            <div
+              className="absolute inset-0 bg-linear-to-br transition-all duration-1000 transform-gpu"
+              style={{
+                backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
+                "--tw-gradient-from": `${heroSlides[heroIndex].gradient.split(" ")[0].replace("from-", "")}`,
+                "--tw-gradient-to": `${heroSlides[heroIndex].gradient.split(" ")[2].replace("to-", "")}`,
+                "--tw-gradient-stops": `var(--tw-gradient-from), var(--tw-gradient-to)`
+              }}
+            />
 
           <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] pointer-events-none" />
 
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse" />
-            <div
-              className="absolute top-20 -left-20 w-60 h-60 bg-white/5 rounded-full blur-2xl"
-              style={{ animation: "pulse 3s ease-in-out infinite 1s" }}
-            />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
-          </div>
+          {backgroundAnimations}
 
           <div className="relative px-6 py-20 sm:px-10 sm:py-28 md:py-36 max-w-7xl mx-auto">
             <div className="max-w-3xl">
@@ -390,113 +404,156 @@ const ShoppingHome = () => {
           </div>
 
           {/* ═══════════ PRODUCT GRID ═══════════ */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="animate-pulse space-y-4">
-                  <div className="aspect-[3/4] bg-gray-100 rounded-none w-full" />
-                  <div className="h-4 bg-gray-100 w-3/4" />
-                  <div className="h-4 bg-gray-100 w-1/4" />
-                </div>
-              ))}
-            </div>
-          ) : featuredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {featuredProducts.map((product) => (
-                <div
-                  key={product._id}
-                  className="group relative bg-white flex flex-col transition-all duration-500"
-                >
-                  {/* Image Container */}
-                  <div
-                    className="relative aspect-[3/4] overflow-hidden bg-gray-50 cursor-pointer"
-                    onClick={() => handleGetProductDetails(product._id)}
+          <motion.div 
+            layout 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.05 }
+              }
+            }}
+          >
+            <AnimatePresence mode="popLayout">
+              {isLoading ? (
+                [...Array(4)].map((_, i) => (
+                  <motion.div 
+                    key={`skeleton-${i}`}
+                    layout
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.95, filter: "blur(10px)" },
+                      show: { opacity: 1, scale: 1, filter: "blur(0px)", transition: { duration: 0.4 } },
+                      exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
+                    }}
+                    initial="hidden"
+                    animate="show"
+                    exit="exit"
+                    className="transform-gpu"
                   >
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                    />
-
-                    {/* Minimal Overlay */}
-                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                    {/* Luxury Badge */}
-                    {product.salePrice > 0 && (
-                      <div className="absolute top-4 left-4 bg-black text-white px-3 py-1 text-[9px] font-black uppercase tracking-widest shadow-2xl">
-                        OFFER
-                      </div>
-                    )}
-
-                    {/* Quick Action: Wishlist */}
-                    <button
-                      className="absolute top-4 right-4 w-10 h-10 bg-white opacity-0 translate-y-[-10px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 flex items-center justify-center hover:bg-[#D4AF37] hover:text-white"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toast.success("Added to Wishlist");
-                      }}
+                    <ProductSkeleton />
+                  </motion.div>
+                ))
+              ) : featuredProducts.length > 0 ? (
+                featuredProducts.map((product) => (
+                  <motion.div
+                    key={`product-${product._id || product.id}`}
+                    layout
+                    variants={{
+                      hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
+                      show: { 
+                        opacity: 1, y: 0, filter: "blur(0px)",
+                        transition: { type: "spring", stiffness: 260, damping: 25, mass: 0.5 }
+                      },
+                      exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
+                    }}
+                    viewport={{ once: true, margin: "0px 0px 50px 0px" }}
+                    whileInView="show"
+                    initial="hidden"
+                    exit="exit"
+                    className="group relative bg-white flex flex-col transition-all duration-500 transform-gpu"
+                  >
+                    {/* Image Container */}
+                    <div
+                      className="relative aspect-3/4 overflow-hidden bg-gray-50 cursor-pointer"
+                      onClick={() => handleGetProductDetails(product._id)}
                     >
-                      <Heart className="w-4 h-4" />
-                    </button>
+                      <img
+                        src={product.image}
+                        alt={product.title}
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 transform-gpu will-change-transform"
+                      />
 
-                    {/* Hover Bottom Action (Add to Cart) */}
-                    <div className="absolute bottom-0 left-0 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                      <Button
-                        className="w-full rounded-none bg-slate-900 text-white font-black text-[10px] uppercase tracking-[0.2em] py-6 hover:bg-[#D4AF37] transition-colors"
+                      {/* Minimal Overlay */}
+                      <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                      {/* Luxury Badge */}
+                      {product.salePrice > 0 && (
+                        <div className="absolute top-4 left-4 bg-black text-white px-3 py-1 text-[9px] font-black uppercase tracking-widest shadow-2xl">
+                          OFFER
+                        </div>
+                      )}
+
+                      {/* Quick Action: Wishlist */}
+                      <button
+                        className="absolute top-4 right-4 w-10 h-10 bg-white opacity-0 translate-y-[-10px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 flex items-center justify-center hover:bg-[#D4AF37] hover:text-white"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleAddToCart(product._id);
+                          toast.success("Added to Wishlist");
                         }}
                       >
-                        Add to Bag
-                      </Button>
-                    </div>
-                  </div>
+                        <Heart className="w-4 h-4" />
+                      </button>
 
-                  {/* Product Details */}
-                  <div className="py-5 space-y-2">
-                    <div className="flex justify-between items-start gap-4">
-                      <div
-                        className="cursor-pointer group/title"
-                        onClick={() => handleGetProductDetails(product._id)}
-                      >
-                        <p className="text-[10px] text-[#D4AF37] font-black uppercase tracking-widest mb-1">
-                          {brandOptionMap[product.brand] || "Exclusive"}
-                        </p>
-                        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-tight line-clamp-1 group-hover/title:text-[#D4AF37] transition-colors">
-                          {product.title}
-                        </h3>
+                      {/* Hover Bottom Action (Add to Cart) */}
+                      <div className="absolute bottom-0 left-0 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                        <Button
+                          className="w-full rounded-none bg-slate-900 text-white font-black text-[10px] uppercase tracking-[0.2em] py-6 hover:bg-[#D4AF37] transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(product._id);
+                          }}
+                        >
+                          Add to Bag
+                        </Button>
                       </div>
+                    </div>
 
-                      <div className="flex flex-col items-end">
-                        {product.salePrice > 0 ? (
-                          <>
+                    {/* Product Details */}
+                    <div className="py-5 space-y-2">
+                      <div className="flex justify-between items-start gap-4">
+                        <div
+                          className="cursor-pointer group/title"
+                          onClick={() => handleGetProductDetails(product._id)}
+                        >
+                          <p className="text-[10px] text-[#D4AF37] font-black uppercase tracking-widest mb-1">
+                            {brandOptionMap[product.brand] || "Exclusive"}
+                          </p>
+                          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-tight line-clamp-1 group-hover/title:text-[#D4AF37] transition-colors">
+                            {product.title}
+                          </h3>
+                        </div>
+
+                        <div className="flex flex-col items-end">
+                          {product.salePrice > 0 ? (
+                            <>
+                              <span className="text-sm font-black text-slate-900">
+                                ${product.salePrice}
+                              </span>
+                              <span className="text-[10px] text-slate-400 line-through">
+                                ${product.price}
+                              </span>
+                            </>
+                          ) : (
                             <span className="text-sm font-black text-slate-900">
-                              ${product.salePrice}
-                            </span>
-                            <span className="text-[10px] text-slate-400 line-through">
                               ${product.price}
                             </span>
-                          </>
-                        ) : (
-                          <span className="text-sm font-black text-slate-900">
-                            ${product.price}
-                          </span>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20 bg-slate-50 border border-dashed border-slate-200">
-              <ShoppingBag className="w-10 h-10 mx-auto mb-4 text-slate-300" />
-              <p className="font-black text-xs uppercase tracking-widest text-slate-400">
-                Inventory Empty
-              </p>
-            </div>
-          )}
+                  </motion.div>
+                ))
+              ) : (
+                <motion.div 
+                  key="empty-state"
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="col-span-full text-center py-20 bg-slate-50 border border-dashed border-slate-200 w-full"
+                >
+                  <ShoppingBag className="w-10 h-10 mx-auto mb-4 text-slate-300" />
+                  <p className="font-black text-xs uppercase tracking-widest text-slate-400">
+                    Inventory Empty
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </section>
 
         {/* ═══════════ SPECIAL OFFERS ═══════════ */}
